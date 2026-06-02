@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AZIT - 같이의 가치</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link class="html-embed" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        * { -webkit-tap-highlight-color: transparent; }
+        
+        .calendar-grid > div { 
+            min-height: 64px; height: 64px; 
+            display: flex; flex-direction: column; 
+            justify-content: flex-start; align-items: center;
+            padding: 4px 1px; box-sizing: border-box;
+            position: relative; overflow: hidden;
+        }
+        @media (max-width: 640px) {
+            .calendar-grid > div { min-height: 56px; height: 56px; padding: 2px 1px; }
+        }
+        .editable-cell { cursor: pointer; transition: all 0.2s; position: relative; }
+        .editable-cell:hover { background-color: rgba(234, 179, 8, 0.1); color: #f59e0b; }
+        .custom-datepicker {
+            position: absolute; z-index: 9999; width: 260px; background-color: #1e1e1e;
+            border: 1px solid #374151; border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.7); padding: 12px;
+        }
+    </style>
+</head>
+<body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
+
+    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이 레이어 -->
+    <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
+        <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
+            <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
+            <p class="text-xs font-black text-gray-300 tracking-wider leading-relaxed break-keep" id="globalLoadingText">구글 클라우드 마스터 서버와<br>실시간 데이터 동기화 이관 중...</p>
+        </div>
+    </div>
+
+    <!-- [PAGE 1] 아지트 인트로 커버 화면 -->
+    <div id="pageCover" class="fixed inset-0 z-50 flex flex-col justify-between p-6 transition-all duration-700 ease-in-out transform bg-cover bg-center" 
+         style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=1920&q=80');">
+        <div class="text-center mt-6 lg:mt-10 animate-fade-in">
+            <h1 class="text-7xl sm:text-[11rem] md:text-[14rem] lg:text-[18rem] font-black tracking-[0.15em] text-red-500 font-mono leading-none select-none pl-[0.15em]">AZIT</h1>
+            <p class="text-[10px] sm:text-sm lg:text-base text-gray-400 mt-2 tracking-[0.2em] font-bold uppercase">SINCE 2023 / CAMPING · HIKING · BACKPACKING</p>
+        </div>
+        <div class="text-center max-w-4xl mx-auto px-2">
+            <p class="text-xl lg:text-3xl text-gray-300 font-light italic mb-2">우리들만의 작은 공간</p>
+            <h2 class="text-4xl lg:text-8xl font-black tracking-wide my-4 text-white inline-block border-b-4 border-red-500 pb-4 select-none">같이의 가치</h2>
+            <p class="text-sm lg:text-xl text-gray-200 leading-relaxed drop-shadow-md break-keep mt-5">과거의 전성기 속에만 머물러 있기보다, 오늘을 우리 인생의 가장 빛나는 전성기로 만들어 가시길 바랍니다.</p>
+        </div>
+        <div class="mb-6 sm:mb-12 px-2 max-w-md mx-auto w-full flex flex-col gap-3">
+            <button onclick="switchPage('pageCalendar')" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-full text-base shadow-2xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] active:scale-95">아지트 입장하기 →</button>
+            <button onclick="openCoverRegisterModal()" class="w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold py-3.5 rounded-full text-xs tracking-wider shadow-xl flex items-center justify-center gap-1.5 transition-all active:scale-95">⚡ 신규 크루 간편 등록하기</button>
+        </div>
+    </div>
+
+    <!-- 신규회원 등록 모달 -->
+    <div id="coverRegisterModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-all duration-300">
+        <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl transform scale-95 transition-all" id="coverRegBox">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
+                <h3 class="text-sm font-black text-red-500 flex items-center gap-1.5"><i class="fa-solid fa-user-plus"></i> 아지트 신규 크루 등록 신청</h3>
+                <button onclick="closeCoverRegisterModal()" class="text-gray-500 hover:text-white transition p-1 text-sm">✕</button>
+            </div>
+            <div class="space-y-3.5 text-left text-xs">
+                <div><label class="block text-gray-400 font-bold mb-1">크루 닉네임 (필수)</label><input type="text" id="regNickname" placeholder="예시: 뭉치" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
+                <div><label class="block text-gray-400 font-bold mb-1">본명 (실명)</label><input type="text" id="regRealName" placeholder="예시: 홍길동" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
+                <div><label class="block text-gray-400 font-bold mb-1">성별</label><select id="regGender" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"><option value="-">미기입</option><option value="남성">남성</option><option value="여성">여성</option></select></div>
+                <div><label class="block text-gray-400 font-bold mb-1">출생 연도</label><input type="text" id="regBirthYear" placeholder="예시: 82" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
+                <div><label class="block text-gray-400 font-bold mb-1">연락처 (전화번호)</label><input type="text" id="regPhone" placeholder="예시: 000-0000-0000" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
+            </div>
+            <button id="btnSubmitCrew" onclick="submitCoverRegister()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl text-xs mt-5 shadow-lg flex items-center justify-center transition active:scale-95">크루 가입 명부 저장하기 <i class="fa-solid fa-check ml-1"></i></button>
+        </div>
+    </div>
+
+    <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
+    <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
+        <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-3 sm:py-4 flex flex-col justify-between items-center gap-2">
+            <div class="w-full flex justify-between items-center px-2">
+                <button onclick="switchPage('pageCover')" class="text-xs text-gray-400 hover:text-white flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 커버</button>
+                <span id="cloudStatusBadge" class="text-[10px] font-black px-2.5 py-1 rounded-full border transition-all duration-300 bg-amber-500/10 text-amber-400 border-amber-500/20">네트워크 상태 계측 중...</span>
+                <button onclick="verifyAdminAccess()" class="text-xs text-gray-500 hover:text-gray-400 transition"><i class="fa-solid fa-lock"></i> 관리자</button>
+            </div>
+            <div class="text-3xl sm:text-5xl font-black text-red-500 tracking-[0.15em] font-mono text-center mt-1">AZIT CREW</div>
+        </header>
+        <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div class="lg:col-span-7 bg-[#1e1e1e] border border-gray-800 rounded-2xl p-4 shadow-xl">
+                <div class="flex items-center gap-2 mb-4"><i class="fa-solid fa-calendar-check text-red-500 text-lg"></i><h3 class="text-lg font-bold">일정 참석 등록</h3></div>
+                <div class="mb-5"><label class="block text-sm text-gray-400 mb-2 font-semibold">아지트 크루 닉네임 입력</label><input type="text" id="crewName" placeholder="예시: 뭉치" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500 transition"></div>
+                <div class="bg-[#151515] rounded-xl p-3 sm:p-4 border border-gray-800/50">
+                    <div class="flex justify-start items-center mb-4 px-1">
+                        <div class="flex items-center gap-4 bg-[#1e1e1e] border border-gray-800 px-3 py-1.5 rounded-xl">
+                            <button onclick="moveMonth(-1)" class="w-7 h-7 rounded-lg bg-[#121212] border border-gray-800 hover:border-gray-600 flex items-center justify-center text-gray-400 hover:text-white transition active:scale-95"><i class="fa-solid fa-chevron-left text-[11px]"></i></button>
+                            <div class="text-xs font-black tracking-wider text-gray-200 min-w-[85px] text-center" id="calendarTitle">2026년 6월</div>
+                            <button onclick="moveMonth(1)" class="w-7 h-7 rounded-lg bg-[#121212] border border-gray-800 hover:border-gray-600 flex items-center justify-center text-gray-400 hover:text-white transition active:scale-95"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-gray-500 mb-2"><div class="text-red-500">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="text-blue-400">토</div></div>
+                    <div id="calendarDays" class="grid grid-cols-7 gap-1 text-center text-sm calendar-grid"></div>
+                </div>
+            </div>
+            <div class="lg:col-span-5 flex flex-col gap-5 lg:sticky lg:top-[125px]" id="setupCardSection">
+                <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 shadow-xl">
+                    <div class="flex items-center gap-2 border-b border-gray-800 pb-3"><i class="fa-solid fa-circle-info text-red-500 text-lg"></i><h4 class="text-sm font-bold text-gray-400">이용 안내 가이드</h4></div>
+                    <ul class="space-y-3 text-sm sm:text-base font-medium leading-relaxed mt-4">
+                        <li class="flex items-start gap-2.5"><span class="bg-red-500/10 text-red-500 text-xs w-5 h-5 mt-0.5 rounded-full flex items-center justify-center font-bold border border-red-500/20 shrink-0">1</span><p>한 번 누르면 <span class="text-red-500 font-black underline underline-offset-4">무박</span> 일정이 선택이 됩니다.</p></li>
+                        <li class="flex items-start gap-2.5"><span class="bg-gray-800 text-gray-400 text-xs w-5 h-5 mt-0.5 rounded-full flex items-center justify-center font-bold shrink-0">2</span><p>시작일과 마감일 설정 시 일정이 자동 계산됩니다.</p></li>
+                    </ul>
+                </div>
+                <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 shadow-xl" id="configCard">
+                    <div id="emptyConfigState" class="text-center py-10 px-4 text-gray-300 font-medium"><i class="fa-solid fa-arrow-pointer text-2xl text-red-500 mb-4 block animate-bounce"></i><p class="text-xl tracking-tight leading-relaxed break-keep">달력에서 날짜를 선택하시면 세부 카테고리 창이 연동됩니다.</p></div>
+                    <div id="activeConfigState" class="hidden">
+                        <h4 class="text-base font-bold mb-4 border-b border-gray-800 pb-3 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-red-500"></span> 상세 옵션</h4>
+                        <div class="bg-[#151515] rounded-xl p-4 border border-gray-800 mb-5 flex justify-between items-center"><div><span class="block text-[11px] text-gray-500">확정된 아지트 기간</span><span id="summaryDates" class="text-sm font-bold text-gray-200 mt-1 block"></span></div><span id="summaryNights" class="bg-red-500/10 border border-red-500/30 text-red-500 text-xs px-3 py-1.5 rounded-full font-bold"></span></div>
+                        <div class="mb-6"><div class="flex justify-between items-center mb-3"><label class="block text-xs text-gray-400">활동 카테고리 선택</label><span id="guardNotice" class="text-[10px] text-amber-500 hidden">⚠️ 무박은 백패킹 불가</span></div><div class="grid grid-cols-2 gap-2">
+                            <button onclick="setActivity('등산')" id="actClimb" class="flex flex-col items-center justify-center gap-1.5 py-4 border border-gray-800 bg-[#121212] rounded-xl text-xs transition font-semibold active:scale-95 disabled:opacity-25"><span class="text-lg">🥾</span><span>등산</span></button>
+                            <button onclick="setActivity('번개')" id="actFlash" class="flex flex-col items-center justify-center gap-1.5 py-4 border border-gray-800 bg-[#121212] rounded-xl text-xs transition font-semibold active:scale-95 disabled:opacity-25"><span class="text-lg">⚡</span><span>번개</span></button>
+                            <button onclick="setActivity('캠핑')" id="actCamp" class="flex flex-col items-center justify-center gap-1.5 py-4 border border-gray-800 bg-[#121212] rounded-xl text-xs transition font-semibold active:scale-95 disabled:opacity-25"><span class="text-lg">⛺</span><span id="campBtnLabel">캠핑</span></button>
+                            <button onclick="setActivity('백패킹')" id="actBack" class="flex flex-col items-center justify-center gap-1.5 py-4 border border-gray-800 bg-[#121212] rounded-xl text-xs transition font-semibold active:scale-95 disabled:opacity-25"><span class="text-lg">🎒</span><span>백패킹</span></button>
+                        </div></div>
+                        <button id="btnSubmitFinal" onclick="submitFinalForm()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-xl text-sm shadow-lg flex items-center justify-center transition active:scale-95">참석 일정 제출 완료하기 <i class="fa-solid fa-check ml-1"></i></button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- [PAGE 3] 관리자 대시보드 메인 관제 화면 -->
+    <div id="pageAdmin" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0e0e0e]">
+        <header class="border-b border-gray-800 bg-[#151515] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-lg">
+            <button onclick="switchPage('pageCalendar')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 일정 화면으로</button>
+            <span id="adminCloudStatusBadge" class="text-[10px] font-black px-2.5 py-1 rounded-full border bg-amber-500/10 text-amber-400 border-amber-500/20">계측 중...</span>
+            <div class="text-[10px] sm:text-xs text-gray-500 font-mono uppercase">2026 MGMT</div>
+        </header>
+        <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 lg:p-6 flex flex-col gap-6">
+            <div class="bg-[#151515] p-4 sm:p-5 border border-gray-800 rounded-2xl flex flex-col gap-4 shadow-md">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                    <div><h2 class="text-lg sm:text-xl font-black text-white">관리자 보드</h2><p class="text-xs text-gray-400 mt-1">월별 스케줄 기반 적극성 통계와 누적 데이터를 통합 관리합니다.</p></div>
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto">
+                        <div class="flex items-center gap-3 bg-[#1e1e1e] border border-gray-800 px-3 py-2 rounded-xl">
+                            <div class="flex items-center gap-2">
+                                <button onclick="moveAdminMonth(-1)" class="text-gray-400 hover:text-white transition px-2 py-0.5 bg-[#121212] rounded border border-gray-800 active:scale-95"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+                                <span id="adminHeaderYearLabel" class="text-xs font-black text-green-400 min-w-[85px] text-center">2026년 6월</span>
+                                <button onclick="moveAdminMonth(1)" class="text-gray-400 hover:text-white transition px-2 py-0.5 bg-[#121212] rounded border border-gray-800 active:scale-95"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                            </div>
+                        </div>
+                        <button onclick="changeAdminPassword()" class="text-xs bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 px-3 py-2 rounded-xl transition text-purple-400 font-black flex items-center gap-1.5 active:scale-95"><i class="fa-solid fa-key"></i> 암호 변경</button>
+                        <button onclick="clearTargetMonthDatabase()" id="btnTargetMonthLabel" class="text-xs bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-3 py-2 rounded-xl transition text-amber-400 font-black flex items-center gap-1.5 active:scale-95"><i class="fa-solid fa-calendar-minus"></i> 리셋</button>
+                        <button onclick="switchPage('pageMemberManage')" class="text-xs bg-green-600 hover:bg-green-700 border border-green-500 px-3 py-2 rounded-xl transition text-white font-black flex items-center gap-1.5"><i class="fa-solid fa-address-book"></i> 크루원 목록 ➡️</button>
+                        <button onclick="clearDatabase()" class="text-xs bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 px-3 py-2 rounded-xl transition text-red-400 font-bold active:scale-95"><i class="fa-solid fa-trash-can"></i> 초기화</button>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+                    <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center justify-between border-b border-gray-800 pb-3"><span>🏆 월별 활동 크루원 순위</span><span id="rankMonthLabel" class="text-xs font-mono text-green-400 bg-green-400/5 px-2.5 py-1 rounded-lg border border-green-500/10">6월 기준</span></h3>
+                    <div class="overflow-x-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="rankTableBody" class="divide-y divide-gray-800/40"></tbody></table></div>
+                </div>
+                <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-800 pb-2 mb-4 gap-2"><h3 class="text-base font-bold text-gray-200 flex items-center gap-2"><i class="fa-solid fa-chart-line text-sky-400"></i> 반기별 누적 참여 크루원 순위</h3><div class="flex bg-[#121212] p-1 rounded-lg border border-gray-800 text-[11px] font-bold self-start sm:self-auto">
+                        <button onclick="setHalfYearRankFilter(1)" id="btnHalfFirst" class="px-3 py-1 rounded bg-sky-500 text-white font-bold transition">전반기</button><button onclick="setHalfYearRankFilter(2)" id="btnHalfSecond" class="px-3 py-1 rounded text-gray-400 hover:text-white transition">하반기</button>
+                    </div></div>
+                    <div class="overflow-x-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="halfRankTableBody" class="divide-y divide-gray-800/40"></tbody></table></div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+                    <h3 class="text-base font-bold text-gray-200 mb-3 flex items-center gap-2 border-b border-gray-800 pb-3"><i class="fa-solid fa-users text-blue-400"></i> <span id="summaryMonthAttendeesLabel">6월</span> 일정 참여 명단</h3>
+                    <div class="max-h-[300px] overflow-y-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="monthAttendeeListBody" class="divide-y divide-gray-800/30"></tbody></table></div>
+                </div>
+                
+                <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+                    <div class="flex flex-col xl:flex-row xl:items-center justify-between border-b border-gray-800 pb-2 mb-4 gap-2">
+                        <h3 class="text-base font-bold text-gray-200 flex items-center gap-2"><i class="fa-solid fa-crown text-amber-500"></i> 개설자 순위</h3>
+                        <div class="overflow-x-auto no-scrollbar flex whitespace-nowrap gap-1 bg-[#121212] p-1 rounded-lg border border-gray-800 text-[10px] font-bold max-w-full">
+                            <button onclick="setHostRankFilter('all')" id="btnHost_all" class="px-2.5 py-1 rounded bg-amber-500 text-black font-black transition shrink-0">전체</button>
+                            <button onclick="setHostRankFilter('h1')" id="btnHost_h1" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">전반기</button>
+                            <button onclick="setHostRankFilter('h2')" id="btnHost_h2" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">하반기</button>
+                            <button onclick="setHostRankFilter('q1')" id="btnHost_q1" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">1Q</button>
+                            <button onclick="setHostRankFilter('q2')" id="btnHost_q2" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">2Q</button>
+                            <button onclick="setHostRankFilter('q3')" id="btnHost_q3" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">3Q</button>
+                            <button onclick="setHostRankFilter('q4')" id="btnHost_q4" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">4Q</button>
+                        </div>
+                    </div>
+                    <div class="max-h-[300px] overflow-y-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="hostRankTableBody" class="divide-y divide-gray-800/40"></tbody></table></div>
+                </div>
+            </div>
+
+            <div class="bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col max-h-[640px]">
+                <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center gap-2 border-b border-gray-800 pb-3 shrink-0"><i class="fa-solid fa-folder-open text-green-400"></i> 전체 누적 타임라인</h3>
+                <div id="groupedCrewTimeline" class="space-y-4 overflow-y-auto pr-1 no-scrollbar flex-1"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
+    <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
+        <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md"><button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button><div class="text-sm sm:text-lg font-black text-white">크루원 목록 관리소</div><button onclick="openCoverRegisterModal()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded-xl text-[11px] transition active:scale-95">+ 크루 추가</button></header>
+        <main class="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-4 lg:p-6">
+            <div class="bg-[#141414] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-2xl">
+                <div class="mb-4">
+                    <h3 class="text-base font-bold text-white">크루 데이터 실시간 원격 제어 명부</h3>
+                    <div class="flex flex-wrap items-center gap-1.5 mt-3">
+                        <span class="text-[11px] text-gray-400 font-bold mr-1">⚡ 마스터 정렬:</span>
+                        <button onclick="setMemberSort('gender')" id="sortBtn_gender" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">성별순 정렬</button>
+                        <button onclick="setMemberSort('birthYear')" id="sortBtn_birthYear" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">나이순 정렬</button>
+                        <button onclick="setMemberSort('none')" id="sortBtn_none" class="bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">정렬 초기화</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto no-scrollbar border border-gray-800 rounded-xl bg-[#111]">
+                    <table class="w-full text-left text-xs min-w-[880px]">
+                        <thead>
+                            <tr class="border-b border-gray-800 text-gray-400 bg-[#1c1c1c] font-semibold">
+                                <th class="py-3.5 px-4 w-[11%]">크루 닉네임</th>
+                                <th class="py-3.5 px-3 w-[11%]">실명 (암호화)</th>
+                                <th class="py-3.5 px-3 text-red-400 w-[9%]">성별</th>
+                                <th class="py-3.5 px-3 text-amber-400 w-[9%]">출생 연도</th>
+                                <th class="py-3.5 px-3 w-[14%]">연락처 (암호화)</th>
+                                <th class="py-3.5 px-3 text-green-400 w-[11%]">회원 등급</th>
+                                <th class="py-3.5 px-3 w-[14%]">단톡방 입장 날짜</th>
+                                <th class="py-3.5 px-3 text-orange-400 w-[11%]">누적 취소횟수</th>
+                                <th class="py-3.5 px-4 text-center w-[10%]">제어</th>
+                            </tr>
+                        </thead>
+                        <tbody id="masterCrewTableBody" class="divide-y divide-gray-800/60"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let currentYear = 2026, currentMonth = 6, rangeStart = null, rangeEnd = null, selectedActivity = '', currentHalfRankFilter = 1;
+        let memberSortCriteria = 'none', currentHostFilter = 'all';
+        let db = [], staticCrewMembers = [];
+        let adminPassword = localStorage.getItem('azit_pw') || '1234';
+        let isSubmitting = false;
+        
+        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwakk00sVsjpBbSu-iKWYgHEYu4QzgsK_afPBBUUy_Gesuh6bUk1RjagebJhFWqEcyp/exec"; 
+        
+        function toggleGlobalLoadingOverlay(show, messageText) {
+            const overlay = document.getElementById('globalLoadingOverlay');
+            const txtNode = document.getElementById('globalLoadingText');
+            if (!overlay) return;
+            if (show) {
+                if(messageText) txtNode.innerHTML = messageText;
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 20);
+            } else {
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function encryptData(text) {
+            if(!text || text === '-' || text === '미등록') return text;
+            let result = '';
+            for(let i=0; i<text.length; i++) { result += String.fromCharCode(text.charCodeAt(i) + 3); }
+            return btoa(unescape(encodeURIComponent(result)));
+        }
+        function decryptData(cipher) {
+            if(!cipher || cipher === '-' || cipher === '미등록') return cipher;
+            try {
+                let decoded = decodeURIComponent(escape(atob(cipher)));
+                let result = '';
+                for(let i=0; i<decoded.length; i++) { result += String.fromCharCode(decoded.charCodeAt(i) - 3); }
+                return result;
+            } catch(e) { return cipher; } 
+        }
+
+        window.onload = async function() { 
+            await fetchCloudData(); 
+            refreshUI(); 
+            document.addEventListener('click', function(e) { 
+                if(!e.target.closest('.editable-cell') && !e.target.closest('.custom-datepicker')) { 
+                    closeAllInlinePickers(); 
+                } 
+            }); 
+        };
+        
+        function refreshUI() { renderCalendar(); updateLabels(); updateAdminDashboard(); }
+        function moveMonth(dir) { currentMonth += dir; if(currentMonth > 12) { currentMonth = 1; currentYear++; } else if(currentMonth < 1) { currentMonth = 12; currentYear--; } clearSelection(); refreshUI(); }
+        function moveAdminMonth(dir) { currentMonth += dir; if(currentMonth > 12) { currentMonth = 1; currentYear++; } else if(currentMonth < 1) { currentMonth = 12; currentYear--; } clearSelection(); refreshUI(); }
+        function clearSelection() { rangeStart = null; rangeEnd = null; selectedActivity = ''; syncConfigCardUI(); }
+
+        function updateNetworkStatusDOM(text, variant) {
+            const b1 = document.getElementById('cloudStatusBadge');
+            const b2 = document.getElementById('adminCloudStatusBadge');
+            [b1, b2].forEach(b => {
+                if(!b) return;
+                b.innerText = text;
+                b.className = "text-[10px] font-black px-2.5 py-1 rounded-full border transition-all duration-300 ";
+                if(variant === 'success') b.classList.add("bg-green-500/10", "text-green-400", "border-green-500/20");
+                else if(variant === 'fail') b.classList.add("bg-red-500/10", "text-red-400", "border-red-500/20");
+                else b.classList.add("bg-amber-500/10", "text-amber-400", "border-amber-500/20");
+            });
+        }
+
+        async function fetchCloudData() {
+            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+            if (CLEAN_URL === "아지트크루여기로" || !CLEAN_URL) {
+                db = JSON.parse(localStorage.getItem('azit_db')) || [];
+                staticCrewMembers = JSON.parse(localStorage.getItem('azit_crews')) || [];
+                updateNetworkStatusDOM("⚠️ 오프라인 모드 (로컬 저장소 전용)", "local");
+                return;
+            }
+            try {
+                const res = await fetch(`${CLEAN_URL}?action=get`);
+                const data = await res.json();
+                if (data.db) db = data.db;
+                if (data.crews) staticCrewMembers = data.crews;
+                updateNetworkStatusDOM("🟢 실시간 구글 클라우드 동기화 완료", "success");
+            } catch(e) { 
+                console.error("Cloud Fetch Error", e);
+                db = JSON.parse(localStorage.getItem('azit_db')) || [];
+                staticCrewMembers = JSON.parse(localStorage.getItem('azit_crews')) || [];
+                updateNetworkStatusDOM("🔴 연동 오류 (CORS 규제 또는 구글 권한 거부)", "fail");
+            }
+        }
+
+        function updateLabels() {
+            const displayTitle = `${currentYear}년 ${currentMonth}월`;
+            if(document.getElementById('calendarTitle')) document.getElementById('calendarTitle').innerText = displayTitle;
+            if(document.getElementById('adminHeaderYearLabel')) document.getElementById('adminHeaderYearLabel').innerText = displayTitle;
+            if(document.getElementById('rankMonthLabel')) document.getElementById('rankMonthLabel').innerText = `${displayTitle} 기준`;
+            if(document.getElementById('btnTargetMonthLabel')) document.getElementById('btnTargetMonthLabel').innerHTML = `<i class="fa-solid fa-calendar-minus"></i> 리셋`;
+            if(document.getElementById('summaryMonthAttendeesLabel')) document.getElementById('summaryMonthAttendeesLabel').innerText = `${currentMonth}월`;
+        }
+
+        function renderCalendar() {
+            const container = document.getElementById('calendarDays'); if(!container) return; container.innerHTML = '';
+            const totalDays = new Date(currentYear, currentMonth, 0).getDate();
+            const startDayIndex = new Date(currentYear, currentMonth - 1, 1).getDay();
+            for(let i = 0; i < startDayIndex; i++) { const e = document.createElement('div'); e.className = 'bg-transparent'; container.appendChild(e); }
+            for(let day = 1; day <= totalDays; day++) {
+                const dayCell = document.createElement('div'); dayCell.className = 'relative flex flex-col rounded-xl font-bold cursor-pointer transition select-none border text-xs bg-[#1a1a1a] border-transparent hover:border-gray-700';
+                const dayOfWeek = (startDayIndex + day - 1) % 7;
+                if(dayOfWeek === 0) dayCell.classList.add('text-red-500'); else if(dayOfWeek === 6) dayCell.classList.add('text-blue-400'); else dayCell.classList.add('text-gray-300');
+                const numSpan = document.createElement('span'); numSpan.className = 'block text-center w-full'; numSpan.innerText = day; dayCell.appendChild(numSpan);
+                
+                const badgeContainer = document.createElement('div'); 
+                badgeContainer.className = 'absolute bottom-1 left-0 right-0 flex flex-row flex-nowrap justify-center items-center gap-0.5 w-full overflow-hidden select-none pointer-events-none text-[10px]';
+                
+                const matches = db.filter(item => item.year === currentYear && item.month === currentMonth && day >= item.startDay && day <= item.endDay);
+                if(matches.length > 0) {
+                    [...new Set(matches.map(r => r.type))].forEach(t => {
+                        const icon = document.createElement('span'); icon.className = 'inline-block shrink-0';
+                        if(t === '캠핑' || t === '게스트캠핑') icon.innerText = '⛺'; else if(t === '등산') icon.innerText = '🥾'; else if(t === '백패킹') icon.innerText = '🎒'; else if(t === '번개') icon.innerText = '⚡'; badgeContainer.appendChild(icon);
+                    });
+                }
+                dayCell.appendChild(badgeContainer);
+                if (rangeStart && rangeStart.year === currentYear && rangeStart.month === currentMonth && rangeStart.day === day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]'); }
+                else if (rangeEnd && rangeEnd.year === currentYear && rangeEnd.month === currentMonth && day === day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]'); }
+                else if (rangeStart && rangeEnd && rangeStart.year === currentYear && rangeStart.month === currentMonth && day > rangeStart.day && day < rangeEnd.day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500/20 border-dashed border-red-500/40 text-red-400'); }
+                dayCell.onclick = () => handleDateClick(day); container.appendChild(dayCell);
+            }
+        }
+
+        function handleDateClick(day) {
+            if (!rangeStart || (rangeStart && rangeEnd && rangeStart.day !== rangeEnd.day)) { rangeStart = { year: currentYear, month: currentMonth, day: day }; rangeEnd = { year: currentYear, month: currentMonth, day: day }; selectedActivity = ''; }
+            else if (rangeStart && rangeEnd && rangeStart.day === rangeEnd.day) { if (day > rangeStart.day) { rangeEnd = { year: currentYear, month: currentMonth, day: day }; selectedActivity = ''; } else { rangeStart = { year: currentYear, month: currentMonth, day: day }; rangeEnd = { year: currentYear, month: currentMonth, day: day }; selectedActivity = ''; } }
+            syncConfigCardUI(); renderCalendar();
+        }
+
+        function syncConfigCardUI() {
+            const empty = document.getElementById('emptyConfigState'), active = document.getElementById('activeConfigState'); if(!empty) return;
+            if (rangeStart && rangeEnd) {
+                empty.classList.add('hidden'); active.classList.remove('hidden');
+                document.getElementById('summaryDates').innerText = `${rangeStart.month}월 ${rangeStart.day}일` + (rangeStart.day !== rangeEnd.day ? ` ~ ${rangeEnd.month}월 ${rangeEnd.day}일` : '');
+                const diff = rangeEnd.day - rangeStart.day, label = document.getElementById('summaryNights');
+                if(diff === 0) { label.innerText = "당일치기 무박 모임"; document.getElementById('actBack').disabled = true; document.getElementById('guardNotice').classList.remove('hidden'); }
+                else { label.innerText = `${diff}박 ${diff+1}일`; document.getElementById('actBack').disabled = false; document.getElementById('guardNotice').classList.add('hidden'); }
+            } else { empty.classList.remove('hidden'); active.classList.add('hidden'); }
+            updateActivityButtonStyles();
+        }
+
+        function setActivity(type) { if(rangeStart && rangeEnd && (rangeEnd.day - rangeStart.day === 0) && type === '백패킹') return; selectedActivity = type; updateActivityButtonStyles(); }
+        function updateActivityButtonStyles() {
+            const btns = [document.getElementById('actClimb'), document.getElementById('actFlash'), document.getElementById('actCamp'), document.getElementById('actBack')];
+            btns.forEach(b => { if(!b) return; b.className = b.className.replace(/bg-orange-500\/10|border-orange-500|text-orange-400|bg-green-500\/10|border-green-500|text-green-400|bg-yellow-500\/10|border-yellow-500|text-yellow-400|bg-sky-500\/10|border-sky-500|text-sky-400/, ''); b.classList.add('bg-[#121212]', 'border-gray-800', 'text-white'); });
+            const s = selectedActivity;
+            if (s === '등산') document.getElementById('actClimb').classList.add('bg-green-500/10', 'border-green-500', 'text-green-400');
+            else if (s === '번개') document.getElementById('actFlash').classList.add('bg-yellow-500/10', 'border-yellow-500', 'text-yellow-400');
+            else if (s === '캠핑') document.getElementById('actCamp').classList.add('bg-orange-500/10', 'border-orange-500', 'text-orange-400');
+            else if (s === '백패킹') document.getElementById('actBack').classList.add('bg-sky-500/10', 'border-sky-500', 'text-sky-400');
+        }
+
+        async function submitFinalForm() {
+            if (isSubmitting) return;
+            const nick = document.getElementById('crewName').value.trim(); if(!nick || !rangeStart || !selectedActivity) { alert('닉네임과 일정을 정확히 입력해 주세요.'); return; }
+            
+            isSubmitting = true;
+            toggleGlobalLoadingOverlay(true, `[${nick}] 크루원의 일정을<br>구글 마스터 시트에 반영 중...`);
+
+            const diff = rangeEnd.day - rangeStart.day; let type = selectedActivity; if(diff === 0 && type === '캠핑') type = '게스트캠핑';
+            const timestamp = new Date().toLocaleDateString();
+            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+            
+            const crewExists = staticCrewMembers.some(m => m.nickname === nick);
+            if (!crewExists) {
+                const todayStr = new Date().toISOString().split('T')[0];
+                if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
+                    try {
+                        const crewQuery = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData('-'))}&gender=${encodeURIComponent('-')}&birthYear=${encodeURIComponent('-')}&phone=${encodeURIComponent(encryptData('-'))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(todayStr)}&cancelCount=${encodeURIComponent('0')}`;
+                        await fetch(CLEAN_URL + crewQuery, { mode: 'no-cors' });
+                    } catch(e) { console.error("Auto Background Register Error", e); }
+                } else {
+                    staticCrewMembers.push({ nickname: nick, name: encryptData('-'), gender: '-', birthYear: '-', phone: encryptData('-'), grade: '준회원', joinDate: todayStr, cancelCount: '0' });
+                    localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
+                }
+            }
+            
+            if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
+                try {
+                    const query = `?action=insert_schedule&id=${Date.now()}&year=${currentYear}&month=${currentMonth}&startDay=${rangeStart.day}&endDay=${rangeEnd.day}&name=${encodeURIComponent(nick)}&durationText=${encodeURIComponent(diff === 0 ? "무박" : `${diff}박`)}&type=${encodeURIComponent(type)}&timestamp=${encodeURIComponent(timestamp)}&isHost=false`;
+                    await fetch(CLEAN_URL + query, { mode: 'no-cors' });
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                } catch(e) {
+                    console.error(e);
+                    alert("🚨 구글 서버와 통신 중 장애가 발생했습니다.");
+                } finally {
+                    isSubmitting = false;
+                    toggleGlobalLoadingOverlay(false);
+                }
+            } else {
+                db.push({ id: Date.now(), year: currentYear, month: currentMonth, startDay: rangeStart.day, endDay: rangeEnd.day, name: nick, durationText: diff === 0 ? "무박" : `${diff}박`, type: type, timestamp: timestamp, isHost: false });
+                localStorage.setItem('azit_db', JSON.stringify(db));
+                isSubmitting = false;
+                toggleGlobalLoadingOverlay(false);
+            }
+            
+            // ⚡ [알림 문구 변경 이식]: 현실적이고 깔끔하게 한글 맞춤법 포맷 스페이스까지 맞춤 변경했습니다.
+            alert(`🎉 전송 완료 : [${nick}] 일정 등록이 완료 되었습니다. 즐거운 하루되세요.`);
+            document.getElementById('crewName').value = ''; clearSelection(); await fetchCloudData(); refreshUI();
+        }
+
+        function closeAllInlinePickers() { const popups = document.querySelectorAll('.custom-datepicker'); popups.forEach(p => p.remove()); }
+        function setMemberSort(criteria) { memberSortCriteria = criteria; updateAdminDashboard(); }
+
+        function changeAdminPassword() {
+            const newPw = prompt('새롭게 적용할 관리자 마스터 비밀번호:', adminPassword);
+            if (newPw && newPw.trim() !== "") { adminPassword = newPw.trim(); localStorage.setItem('azit_pw', adminPassword); alert('🔑 관리자 비밀번호가 즉시 변경되었습니다.'); }
+        }
+
+        function openCoverRegisterModal() { const m = document.getElementById('coverRegisterModal'); if(m) { m.classList.remove('hidden'); setTimeout(() => m.classList.remove('opacity-0'), 50); } }
+        function closeCoverRegisterModal() { const m = document.getElementById('coverRegisterModal'); if(m) { m.classList.add('opacity-0'); setTimeout(() => m.classList.add('hidden'), 300); } }
+        
+        async function submitCoverRegister() {
+            if (isSubmitting) return;
+            const nick = document.getElementById('regNickname').value.trim(); const name = document.getElementById('regRealName').value.trim(); const gender = document.getElementById('regGender').value; const birth = document.getElementById('regBirthYear').value.trim(); const phone = document.getElementById('regPhone').value.trim();
+            if(!nick) { alert('⚠️ 닉네임 기입은 필수입니다.'); return; }
+            if(staticCrewMembers.some(m => m.nickname === nick)) { alert('⚠️ 이미 존재하는 닉네임입니다.'); return; }
+            
+            isSubmitting = true;
+            toggleGlobalLoadingOverlay(true, `[${nick}] 신규 크루 명부를<br>구글 데이터베이스에 생성 중...`);
+            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+
+            if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
+                try {
+                    const query = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData(name))}&gender=${encodeURIComponent(gender)}&birthYear=${encodeURIComponent(birth || '-')}&phone=${encodeURIComponent(encryptData(phone))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(new Date().toISOString().split('T')[0])}&cancelCount=${encodeURIComponent('0')}`;
+                    await fetch(CLEAN_URL + query, { mode: 'no-cors' });
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                } catch(e) {
+                    console.error(e);
+                } finally {
+                    isSubmitting = false;
+                    toggleGlobalLoadingOverlay(false);
+                }
+            } else {
+                staticCrewMembers.push({ nickname: nick, name: encryptData(name), gender: gender, birthYear: birth || '-', grade: '준회원', joinDate: new Date().toISOString().split('T')[0], cancelCount: '0', phone: encryptData(phone) });
+                localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
+                isSubmitting = false;
+                toggleGlobalLoadingOverlay(false);
+            }
+            alert(`✨ 성공: [${nick}] 크루원이 명부에 등록되었습니다!`); 
+            document.getElementById('regNickname').value = ''; document.getElementById('regRealName').value = ''; document.getElementById('regGender').value = '-'; document.getElementById('regBirthYear').value = ''; document.getElementById('regPhone').value = '';
+            closeCoverRegisterModal(); await fetchCloudData(); refreshUI();
+        }
+
+        function setHostRankFilter(type) {
+            currentHostFilter = type; const filters = ['all', 'h1', 'h2', 'q1', 'q2', 'q3', 'q4'];
+            filters.forEach(f => { const b = document.getElementById(`btnHost_${f}`); if(b) { if(f === type) b.className = 'px-2.5 py-1 rounded bg-amber-500 text-black font-black transition shrink-0'; else b.className = 'px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0'; } });
+            renderHostRankTable();
+        }
+
+        function renderHostRankTable() {
+            const hostBody = document.getElementById('hostRankTableBody'); if (!hostBody) return; hostBody.innerHTML = '';
+            const hostFreq = {}; staticCrewMembers.forEach(m => hostFreq[m.nickname] = 0);
+            let filteredDb = db.filter(item => item.year === currentYear && item.isHost); const f = currentHostFilter;
+            if (f === 'h1') filteredDb = filteredDb.filter(item => item.month >= 1 && item.month <= 6); else if (f === 'h2') filteredDb = filteredDb.filter(item => item.month >= 7 && item.month <= 12); else if (f === 'q1') filteredDb = filteredDb.filter(item => item.month >= 1 && item.month <= 3); else if (f === 'q2') filteredDb = filteredDb.filter(item => item.month >= 4 && item.month <= 6); else if (f === 'q3') filteredDb = filteredDb.filter(item => item.month >= 7 && item.month <= 9); else if (f === 'q4') filteredDb = filteredDb.filter(item => item.month >= 10 && item.month <= 12);
+            filteredDb.forEach(item => { hostFreq[item.name] = (hostFreq[item.name] || 0) + 1; });
+            const sortedHosts = Object.keys(hostFreq).map(name => ({ name, count: hostFreq[name] })).sort((a, b) => b.count - a.count);
+            if (sortedHosts.filter(h => h.count > 0).length === 0) { hostBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">개설 내역이 없습니다.</td></tr>`; } 
+            else { sortedHosts.forEach((h, i) => { if (h.count > 0) { hostBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-amber-400 font-mono font-bold">${h.count}회 개설</td></tr>`; } }); }
+        }
+
+        async function toggleHostStatus(recordId, isChecked) {
+            toggleGlobalLoadingOverlay(true, "방장 기여도 가중치 변경 사항<br>동기화 이관 중...");
+            const record = db.find(item => item.id === recordId);
+            if (record) { 
+                record.isHost = isChecked; 
+                const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+                if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
+                    try {
+                        await fetch(`${CLEAN_URL}?action=update_schedule_host&id=${recordId}&isHost=${isChecked}`, { mode: 'no-cors' }); 
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    } catch(e) { console.error(e); }
+                    await fetchCloudData(); refreshUI();
+                }
+                else localStorage.setItem('azit_db', JSON.stringify(db));
+                renderHostRankTable(); 
+            }
+            toggleGlobalLoadingOverlay(false);
+        }
+
+        function startInlineEdit(cellElement, nickname, objectFieldKey) {
+            if (cellElement.querySelector('input') || document.querySelector('.custom-datepicker')) return; 
+            closeAllInlinePickers(); const currentMember = staticCrewMembers.find(m => m.nickname === nickname); if (!currentMember) return;
+            let rawValue = currentMember[objectFieldKey] || '-'; if(objectFieldKey === 'name' || objectFieldKey === 'phone') rawValue = decryptData(rawValue);
+            if (objectFieldKey === 'joinDate' && rawValue && rawValue.includes('T')) { rawValue = rawValue.split('T')[0]; }
+            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+
+            if (['grade', 'gender', 'birthYear', 'cancelCount'].includes(objectFieldKey)) {
+                const pickerContainer = document.createElement('div'); 
+                pickerContainer.className = 'custom-datepicker text-left text-white font-sans p-2.5 space-y-1 max-h-[220px] overflow-y-auto no-scrollbar pointer-events-auto';
+                const rect = cellElement.getBoundingClientRect(); 
+                pickerContainer.style.position = 'absolute';
+                if (rect.bottom + 220 > window.innerHeight && rect.top - 220 > 0) pickerContainer.style.top = (rect.top + window.pageYOffset - 226) + 'px'; else pickerContainer.style.top = (rect.bottom + window.pageYOffset + 6) + 'px';
+                pickerContainer.style.left = (rect.left + window.pageXOffset + rect.width / 2) + 'px'; pickerContainer.style.transform = 'translateX(-50%)'; document.body.appendChild(pickerContainer);
+
+                let options = [];
+                if (objectFieldKey === 'grade') options = ['준회원', '정회원', '아지트'];
+                else if (objectFieldKey === 'gender') options = ['미기입', '남성', '여성'];
+                else if (objectFieldKey === 'cancelCount') options = ['0', '1', '2', '3', '4'];
+                else if (objectFieldKey === 'birthYear') { options = ['-']; for (let y = 1978; y <= 2005; y++) { options.push(String(y).substring(2, 4)); } }
+
+                options.forEach(optVal => {
+                    const btn = document.createElement('button');
+                    btn.className = 'w-full text-left px-3 py-2.5 text-xs rounded-xl hover:bg-amber-500 hover:text-black font-bold transition flex justify-between items-center bg-[#151515] border border-gray-800/60 text-gray-300';
+                    
+                    let displayLabel = optVal;
+                    if (objectFieldKey === 'cancelCount') displayLabel = optVal + '회';
+                    else if (objectFieldKey === 'birthYear' && optVal !== '-') displayLabel = optVal + '년생';
+                    else if (objectFieldKey === 'birthYear' && optVal === '-') displayLabel = '미기입';
+                    
+                    btn.innerText = displayLabel;
+                    
+                    let isCurrent = (rawValue === optVal || (optVal === '-' && rawValue === '미기입'));
+                    if (objectFieldKey === 'cancelCount' && (rawValue === '-' || !rawValue) && optVal === '0') isCurrent = true;
+                    if (isCurrent) btn.className = btn.className.replace('bg-[#151515] text-gray-300', 'bg-amber-500 text-black font-black');
+
+                    btn.onclick = async (e) => {
+                        e.stopPropagation(); e.preventDefault();
+                        if (isSubmitting) return; isSubmitting = true;
+                        closeAllInlinePickers();
+                        
+                        toggleGlobalLoadingOverlay(true, `[${nickname}] 크루원의 옵션 항목<br>실시간 마스터 이관 동기화 중...`);
+                        
+                        let sheetHeaderField = objectFieldKey;
+                        if (objectFieldKey === 'grade') sheetHeaderField = '회원 등급';
+                        if (objectFieldKey === 'cancelCount') sheetHeaderField = '누적 취소횟수';
+
+                        if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
+                            try {
+                                await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(nickname)}&field=${encodeURIComponent(sheetHeaderField)}&value=${encodeURIComponent(optVal)}`, { mode: 'no-cors' }); 
+                                await new Promise(resolve => setTimeout(resolve, 1000));
+                            } catch(err) { console.error(err); }
+                        } else { currentMember[objectFieldKey] = optVal; localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); }
+                        isSubmitting = false; 
+                        await fetchCloudData(); 
+                        updateAdminDashboard(); 
+                        toggleGlobalLoadingOverlay(false);
+                    };
+                    pickerContainer.appendChild(btn);
+                });
+            } 
+            else if (objectFieldKey === 'joinDate') {
+                let initialDate = rawValue !== '-' ? rawValue : '2026-06-01';
+                let parts = initialDate.split('-'); let calYear = parseInt(parts[0]) || 2026; let calMonth = parseInt(parts[1]) || 6;
+                const pickerContainer = document.createElement('div'); pickerContainer.className = 'custom-datepicker text-left text-white font-sans pointer-events-auto';
+                const rect = cellElement.getBoundingClientRect(); const pickerHeight = 245; pickerContainer.style.position = 'absolute';
+                if (rect.bottom + pickerHeight > window.innerHeight && rect.top - pickerHeight > 0) pickerContainer.style.top = (rect.top + window.pageYOffset - pickerHeight - 6) + 'px'; else pickerContainer.style.top = (rect.bottom + window.pageYOffset + 6) + 'px';
+                pickerContainer.style.left = (rect.left + window.pageXOffset + rect.width / 2) + 'px'; pickerContainer.style.transform = 'translateX(-50%)'; document.body.appendChild(pickerContainer);
+                
+                function buildMiniMonthDOM(y, m) {
+                    pickerContainer.innerHTML = ''; const headBox = document.createElement('div'); headBox.className = 'flex justify-between items-center mb-2 px-1 border-b border-gray-800 pb-2'; headBox.innerHTML = `<button class="prev-m-btn text-gray-400 hover:text-amber-400 px-1"><i class="fa-solid fa-chevron-left text-[10px]"></i></button><span class="text-xs font-black text-amber-400 font-mono tracking-wider">${y}년 ${m}월</span><button class="next-m-btn text-gray-400 hover:text-amber-400 px-1"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>`; pickerContainer.appendChild(headBox);
+                    headBox.querySelector('.prev-m-btn').onclick = (e) => { e.stopPropagation(); e.preventDefault(); m--; if(m < 1) { m = 12; y--; } buildMiniMonthDOM(y, m); }; headBox.querySelector('.next-m-btn').onclick = (e) => { e.stopPropagation(); e.preventDefault(); m++; if(m > 12) { m = 1; y++; } buildMiniMonthDOM(y, m); };
+                    const dayLabels = document.createElement('div'); dayLabels.className = 'grid grid-cols-7 gap-1 text-[10px] text-center text-gray-500 font-bold mb-1'; dayLabels.innerHTML = '<div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>'; pickerContainer.appendChild(dayLabels);
+                    const gridBody = document.createElement('div'); gridBody.className = 'grid grid-cols-7 gap-1 text-center text-xs font-mono'; const totalDays = new Date(y, m, 0).getDate(); const startIdx = new Date(y, m - 1, 1).getDay(); for(let i = 0; i < startIdx; i++) { const emptyCell = document.createElement('div'); gridBody.appendChild(emptyCell); }
+                    for(let d = 1; d <= totalDays; d++) {
+                        const dayCell = document.createElement('div'); dayCell.innerText = d; dayCell.className = 'py-1 rounded cursor-pointer hover:bg-amber-500 hover:text-black font-bold transition text-gray-300'; const currentStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; if(currentStr === rawValue) dayCell.className = 'py-1 rounded bg-amber-500 text-black font-black';
+                        dayCell.onclick = async (e) => { 
+                            e.stopPropagation(); e.preventDefault();
+                            if (isSubmitting) return; isSubmitting = true;
+                            closeAllInlinePickers();
+                            
+                            toggleGlobalLoadingOverlay(true, `[${nickname}] 크루 단톡방 입장날짜<br>서버 싱크 업데이트 중...`);
+                            
+                            try {
+                                if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(nickname)}&field=joinDate&value=${encodeURIComponent(currentStr)}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { currentMember.joinDate = currentStr; localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); }
+                            } catch(err) { console.error(err); }
+                            isSubmitting = false; 
+                            await fetchCloudData(); 
+                            updateAdminDashboard();
+                            toggleGlobalLoadingOverlay(false);
+                        }; gridBody.appendChild(dayCell);
+                    }
+                    pickerContainer.appendChild(gridBody);
+                }
+                buildMiniMonthDOM(calYear, calMonth);
+            } 
+            else {
+                const inputComponent = document.createElement('input'); inputComponent.type = 'text'; inputComponent.value = rawValue; inputComponent.className = 'w-full bg-[#121212] border border-amber-500 rounded px-2 py-1 text-xs text-white focus:outline-none'; cellElement.innerHTML = ''; cellElement.appendChild(inputComponent); inputComponent.focus();
+                const saveChanges = async () => { 
+                    let updatedValue = inputComponent.value.trim(); if (!updatedValue) updatedValue = '-'; 
+                    let finalVal = (objectFieldKey=='name' || objectFieldKey=='phone') ? encryptData(updatedValue) : updatedValue; 
+                    
+                    toggleGlobalLoadingOverlay(true, `[${nickname}] 암호화 필드 이관 변경 중...`);
+                    
+                    try {
+                        if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(nickname)}&field=${encodeURIComponent(objectFieldKey)}&value=${encodeURIComponent(finalVal)}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { currentMember[objectFieldKey] = finalVal; localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); }
+                    } catch(err) { console.error(err); }
+                    await fetchCloudData(); 
+                    updateAdminDashboard(); 
+                    toggleGlobalLoadingOverlay(false);
+                };
+                inputComponent.onkeydown = (e) => { if (e.key === 'Enter') saveChanges(); }; inputComponent.onblur = saveChanges;
+            }
+        }
+
+        async function deleteMemberRecord(nickname) { 
+            if(confirm(`⚠️ 정말로 [${nickname}] 크루원을 탈퇴/영구 삭제 조치하시겠습니까?`)) { 
+                toggleGlobalLoadingOverlay(true, `[${nickname}] 크루의 모든 권한과 명부를<br>구글 데이터베이스에서 영구 영멸 중...`);
+                const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
+                try {
+                    if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_crew&nickname=${encodeURIComponent(nickname)}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { staticCrewMembers = staticCrewMembers.filter(m => m.nickname !== nickname); localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); }
+                } catch(e) { console.error(e); }
+                await fetchCloudData(); refreshUI(); 
+                toggleGlobalLoadingOverlay(false);
+            } 
+        }
+        
+        async function deleteScheduleRecord(recordId) { 
+            if (confirm('⚠️ 해당 일정을 삭제하시겠습니까?')) { 
+                toggleGlobalLoadingOverlay(true, "요청하신 개별 크루 스케줄 블록<br>삭제 삭제 처리 중...");
+                const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
+                try {
+                    if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${recordId}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { db = db.filter(item => item.id !== recordId); localStorage.setItem('azit_db', JSON.stringify(db)); }
+                } catch(e) { console.error(e); }
+                await fetchCloudData(); refreshUI(); 
+                toggleGlobalLoadingOverlay(false);
+            } 
+        }
+        
+        async function clearTargetMonthDatabase() { 
+            if (confirm(`${currentMonth}월의 모든 데이터를 삭제하시겠습니까?`)) { 
+                toggleGlobalLoadingOverlay(true, `${currentMonth}월 스케줄 라인 전체 데이터<br>벌크 초기화 이관 작업 진행 중...`);
+                const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
+                try {
+                    if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { const targets = db.filter(item => item.year === currentYear && item.month === currentMonth); for(let t of targets) { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); } else { db = db.filter(item => !(item.year === currentYear && item.month === currentMonth)); localStorage.setItem('azit_db', JSON.stringify(db)); }
+                } catch(e) { console.error(e); }
+                await fetchCloudData(); refreshUI(); 
+                toggleGlobalLoadingOverlay(false);
+            } 
+        }
+        
+        async function clearDatabase() { 
+            if (confirm('🚨 전체 초기화하시겠습니까?')) { 
+                toggleGlobalLoadingOverlay(true, "데이터베이스 마스터 이력<br>풀 카운트 리셋 제거 중...");
+                const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
+                try {
+                    if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { for(let t of db) { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); } else { db = []; localStorage.removeItem('azit_db'); }
+                } catch(e) { console.error(e); }
+                await fetchCloudData(); refreshUI(); 
+                toggleGlobalLoadingOverlay(false);
+            } 
+        }
+
+        function switchPage(p) {
+            const pages = ['pageCover', 'pageCalendar', 'pageAdmin', 'pageMemberManage'];
+            pages.forEach(id => { const el = document.getElementById(id); if (el && !el.classList.contains('hidden')) el.classList.add('opacity-0', 'scale-95'); });
+            setTimeout(() => { pages.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); }); const target = document.getElementById(p); if(target) { target.classList.remove('hidden'); setTimeout(() => { target.classList.remove('opacity-0', 'scale-95'); }, 50); } }, 300);
+        }
+
+        function verifyAdminAccess() { if (prompt('관리자 암호:') === adminPassword) { refreshUI(); switchPage('pageAdmin'); } else { alert('암호 오류'); } }
+        function setHalfYearRankFilter(h) { currentHalfRankFilter = h; document.getElementById('btnHalfFirst').className = h === 1 ? 'px-3 py-1 rounded bg-sky-500 text-white font-bold' : 'px-3 py-1 rounded text-gray-400'; document.getElementById('btnHalfSecond').className = h === 2 ? 'px-3 py-1 rounded bg-sky-500 text-white font-bold' : 'px-3 py-1 rounded text-gray-400'; renderHalfYearRankTable(); }
+
+        function renderHalfYearRankTable() {
+            const tbody = document.getElementById('halfRankTableBody'); if(!tbody) return; tbody.innerHTML = '';
+            const startMonth = currentHalfRankFilter === 1 ? 1 : 7, endMonth = currentHalfRankFilter === 1 ? 6 : 12;
+            const halfRecords = db.filter(item => item.year === currentYear && item.month >= startMonth && item.month <= endMonth);
+            const freqMap = {}; halfRecords.forEach(r => { freqMap[r.name] = (freqMap[r.name] || 0) + 1; });
+            const sortedList = Object.keys(freqMap).map(k => ({name:k, count:freqMap[k]})).sort((a,b) => b.count - a.count);
+            if(sortedList.length === 0) { tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-600 text-sm">데이터 없음</td></tr>`; }
+            else { sortedList.forEach((crew, index) => { tbody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/20 transition"><td class="py-4 text-center font-bold text-gray-400">${index+1}위</td><td class="py-4 font-semibold text-gray-200">${crew.name}</td><td class="py-4 text-right pr-6 font-mono text-sky-400 font-bold">${crew.count}회</td></tr>`; }); }
+        }
+
+        function updateAdminDashboard() {
+            const targetRecords = db.filter(item => item.year === currentYear && item.month === currentMonth);
+            const rBody = document.getElementById('rankTableBody'); 
+            if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => freq[r.name] = (freq[r.name] || 0) + 1); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}위</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
+            
+            const aBody = document.getElementById('monthAttendeeListBody'); 
+            if(aBody) { aBody.innerHTML = ''; if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; } else { targetRecords.sort((a,b) => a.startDay - b.startDay).forEach(r => { aBody.innerHTML += `<tr class="border-b border-gray-800/20 hover:bg-gray-800/10 transition"><td class="py-3 pl-1 font-bold text-gray-200 flex items-center gap-1.5 min-w-[100px]"><input type="checkbox" ${r.isHost ? 'checked' : ''} onchange="toggleHostStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-red-500 rounded bg-[#121212] border-gray-700 cursor-pointer shrink-0"><span class="truncate max-w-[70px]">👤 ${r.name}</span></td><td class="py-3 text-gray-400 text-[11px] font-mono">${r.startDay}일~${r.endDay}일</td><td class="py-3 text-right pr-1 flex items-center justify-end gap-2"><span class="text-orange-400 font-bold text-[11px] shrink-0">${r.type}</span><button onclick="deleteScheduleRecord(${r.id})" class="bg-red-950/40 border border-red-900/60 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0">삭제</button></td></tr>`; }); } }
+            renderHostRankTable(); renderHalfYearRankTable();
+            
+            let displayedMembers = [...staticCrewMembers];
+            if (memberSortCriteria === 'gender') displayedMembers.sort((a, b) => (a.gender || '').localeCompare(b.gender || ''));
+            else if (memberSortCriteria === 'birthYear') displayedMembers.sort((a, b) => (a.birthYear || '99').localeCompare(b.birthYear || '99'));
+
+            const mBody = document.getElementById('masterCrewTableBody'); 
+            if(mBody) { 
+                mBody.innerHTML = ''; 
+                displayedMembers.forEach(m => { 
+                    let decryptedName = decryptData(m.name); 
+                    let decryptedPhone = decryptData(m.phone); 
+                    let displayJoinDate = m.joinDate ? m.joinDate.split('T')[0] : '-';
+                    
+                    let displayGrade = m.grade && m.grade !== '-' ? m.grade : '준회원';
+                    let gradeColor = "text-gray-400";
+                    if(displayGrade === '정회원') gradeColor = "text-green-400 font-bold";
+                    else if(displayGrade === '아지트') gradeColor = "text-red-500 font-black tracking-wide";
+
+                    let displayCancelCount = m.cancelCount !== undefined && m.cancelCount !== '-' ? m.cancelCount : '0';
+                    
+                    mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
+                        <td class="py-4.5 px-4 font-bold text-white select-none">👤 ${m.nickname}</td>
+                        <td class="py-4.5 px-3.5 editable-cell font-medium" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decryptedName}</td>
+                        <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender}</td>
+                        <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'}</td>
+                        <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decryptedPhone}</td>
+                        <td class="py-4.5 px-3.5 editable-cell ${gradeColor}" onclick="startInlineEdit(this, '${m.nickname}', 'grade')">${displayGrade}</td>
+                        <td class="py-4.5 px-3.5 editable-cell text-gray-300 font-mono tracking-tight" onclick="startInlineEdit(this, '${m.nickname}', 'joinDate')">${displayJoinDate}</td>
+                        <td class="py-4.5 px-3.5 editable-cell text-orange-400 font-mono font-bold" onclick="startInlineEdit(this, '${m.nickname}', 'cancelCount')">${displayCancelCount}회</td>
+                        <td class="py-4.5 px-4 text-center"><button class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl font-black text-xs transition active:scale-95" onclick="deleteMemberRecord('${m.nickname}')">삭제</button></td>
+                    </tr>`; 
+                }); 
+            }
+            
+            const timelineContainer = document.getElementById('groupedCrewTimeline');
+            if(timelineContainer) { timelineContainer.innerHTML = ''; if (db.length === 0) { timelineContainer.innerHTML = `<div class="text-center py-12 text-gray-600 text-xs">기록 없음</div>`; return; }
+                const groupMap = {}; db.forEach(item => { if (!groupMap[item.name]) groupMap[item.name] = []; groupMap[item.name].push(item); });
+                for (let crewNickname in groupMap) {
+                    let innerListHTML = `<div class="bg-[#1c1c1c] rounded-xl p-4 border border-gray-800/60"><div class="text-sm font-black text-gray-200 border-b border-gray-800 pb-2 mb-2 flex justify-between items-center"><span>👤 크루: <span class="text-red-400">${crewNickname}</span></span><span class="text-[11px] bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-0.5 rounded-full font-bold">누적 ${groupMap[crewNickname].length}건</span></div><div class="space-y-2">`;
+                    groupMap[crewNickname].sort((a,b) => b.id - a.id).forEach(s => { innerListHTML += `<div class="flex justify-between items-center bg-[#121212] p-3 rounded-lg border border-gray-800/40"><div class="flex items-center gap-2"><span>⛺</span><div><span class="block text-xs font-bold text-gray-300">${s.year}년 ${s.month}월 ${s.startDay}일 ~ ${s.endDay}일</span></div></div><span class="text-[10px] font-bold px-2 py-1 rounded border text-orange-400 bg-orange-500/5 border-orange-500/20">${s.durationText} · ${s.type}</span></div>`; });
+                    innerListHTML += `</div></div>`; timelineContainer.innerHTML += innerListHTML;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
