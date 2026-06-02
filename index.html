@@ -354,7 +354,8 @@
                 }
                 dayCell.appendChild(badgeContainer);
                 if (rangeStart && rangeStart.year === currentYear && rangeStart.month === currentMonth && rangeStart.day === day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]'); }
-                else if (rangeEnd && rangeEnd.year === currentYear && rangeEnd.month === currentMonth && day === day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]'); }
+                <!-- ⚡ [정밀 디버깅 이식]: day === day 결함을 rangeEnd.day === day 로 무결하게 패치 완료 -->
+                else if (rangeEnd && rangeEnd.year === currentYear && rangeEnd.month === currentMonth && rangeEnd.day === day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]'); }
                 else if (rangeStart && rangeEnd && rangeStart.year === currentYear && rangeStart.month === currentMonth && day > rangeStart.day && day < rangeEnd.day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500/20 border-dashed border-red-500/40 text-red-400'); }
                 dayCell.onclick = () => handleDateClick(day); container.appendChild(dayCell);
             }
@@ -433,7 +434,6 @@
                 toggleGlobalLoadingOverlay(false);
             }
             
-            // ⚡ [알림 문구 변경 이식]: 현실적이고 깔끔하게 한글 맞춤법 포맷 스페이스까지 맞춤 변경했습니다.
             alert(`🎉 전송 완료 : [${nick}] 일정 등록이 완료 되었습니다. 즐거운 하루되세요.`);
             document.getElementById('crewName').value = ''; clearSelection(); await fetchCloudData(); refreshUI();
         }
