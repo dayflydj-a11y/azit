@@ -190,9 +190,12 @@
                 </div>
             </div>
 
-            <div class="bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col max-h-[640px]">
-                <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center gap-2 border-b border-gray-800 pb-3 shrink-0"><i class="fa-solid fa-folder-open text-green-400"></i> 전체 누적 타임라인</h3>
-                <div id="groupedCrewTimeline" class="space-y-4 overflow-y-auto pr-1 no-scrollbar flex-1"></div>
+            <!-- ⚡ [그리드 레이아웃 리사이징]: 전체 누적 타임라인 창의 크기를 상단 왼쪽 박스와 1대1 라인 정렬 처리 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col max-h-[640px]">
+                    <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center gap-2 border-b border-gray-800 pb-3 shrink-0"><i class="fa-solid fa-folder-open text-green-400"></i> 전체 누적 타임라인</h3>
+                    <div id="groupedCrewTimeline" class="space-y-4 overflow-y-auto pr-1 no-scrollbar flex-1"></div>
+                </div>
             </div>
         </main>
     </div>
@@ -354,7 +357,6 @@
                 }
                 dayCell.appendChild(badgeContainer);
                 if (rangeStart && rangeStart.year === currentYear && rangeStart.month === currentMonth && rangeStart.day === day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]'); }
-                <!-- ⚡ [정밀 디버깅 이식]: day === day 결함을 rangeEnd.day === day 로 무결하게 패치 완료 -->
                 else if (rangeEnd && rangeEnd.year === currentYear && rangeEnd.month === currentMonth && rangeEnd.day === day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]'); }
                 else if (rangeStart && rangeEnd && rangeStart.year === currentYear && rangeStart.month === currentMonth && day > rangeStart.day && day < rangeEnd.day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500/20 border-dashed border-red-500/40 text-red-400'); }
                 dayCell.onclick = () => handleDateClick(day); container.appendChild(dayCell);
@@ -746,7 +748,26 @@
                 const groupMap = {}; db.forEach(item => { if (!groupMap[item.name]) groupMap[item.name] = []; groupMap[item.name].push(item); });
                 for (let crewNickname in groupMap) {
                     let innerListHTML = `<div class="bg-[#1c1c1c] rounded-xl p-4 border border-gray-800/60"><div class="text-sm font-black text-gray-200 border-b border-gray-800 pb-2 mb-2 flex justify-between items-center"><span>👤 크루: <span class="text-red-400">${crewNickname}</span></span><span class="text-[11px] bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-0.5 rounded-full font-bold">누적 ${groupMap[crewNickname].length}건</span></div><div class="space-y-2">`;
-                    groupMap[crewNickname].sort((a,b) => b.id - a.id).forEach(s => { innerListHTML += `<div class="flex justify-between items-center bg-[#121212] p-3 rounded-lg border border-gray-800/40"><div class="flex items-center gap-2"><span>⛺</span><div><span class="block text-xs font-bold text-gray-300">${s.year}년 ${s.month}월 ${s.startDay}일 ~ ${s.endDay}일</span></div></div><span class="text-[10px] font-bold px-2 py-1 rounded border text-orange-400 bg-orange-500/5 border-orange-500/20">${s.durationText} · ${s.type}</span></div>`; });
+                    groupMap[crewNickname].sort((a,b) => b.id - a.id).forEach(s => { 
+                        <!-- ⚡ [카테고리 맞춤형 이모티콘 분기 분리 기술 이식] -->
+                        let typeIcon = '⛺';
+                        if (s.type === '등산') typeIcon = '🥾';
+                        else if (s.type === '번개') typeIcon = '⚡';
+                        else if (s.type === '캠핑' || s.type === '게스트캠핑') typeIcon = '⛺';
+                        else if (s.type === '백패킹') typeIcon = '🎒';
+
+                        <!-- ⚡ [개설자 여부 판독 기반 왕관 마크 가중치 부여] -->
+                        let crownMarkup = s.isHost ? '<span class="text-amber-500 font-bold ml-1">👑</span>' : '';
+
+                        <!-- ⚡ [콘텐츠 좌측 밀착화 리팩토링]: justify-between 제거 후 justify-start gap-3 스페이싱 구조로 날짜와 데이터 배너 결합 -->
+                        innerListHTML += `<div class="flex justify-start items-center gap-3 bg-[#121212] p-3 rounded-lg border border-gray-800/40">
+                            <span class="text-base shrink-0 select-none">${typeIcon}</span>
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 w-full">
+                                <span class="text-xs font-bold text-gray-300">${s.year}년 ${s.month}월 ${s.startDay}일 ~ ${s.endDay}일</span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded border text-orange-400 bg-orange-500/5 border-orange-500/20 flex items-center gap-0.5">${s.durationText} · ${s.type}${crownMarkup}</span>
+                            </div>
+                        </div>`; 
+                    });
                     innerListHTML += `</div></div>`; timelineContainer.innerHTML += innerListHTML;
                 }
             }
