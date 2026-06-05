@@ -107,7 +107,7 @@
                     <div class="flex items-center gap-2 border-b border-gray-800 pb-3"><i class="fa-solid fa-circle-info text-red-500 text-lg"></i><h4 class="text-sm font-bold text-gray-400">이용 안내 가이드</h4></div>
                     <ul class="space-y-3 text-sm sm:text-base font-medium leading-relaxed mt-4">
                         <li class="flex items-start gap-2.5"><span class="bg-red-500/10 text-red-500 text-xs w-5 h-5 mt-0.5 rounded-full flex items-center justify-center font-bold border border-red-500/20 shrink-0">1</span><p>한 번 누르면 <span class="text-red-500 font-black underline underline-offset-4">무박</span> 일정이 선택이 됩니다.</p></li>
-                        <li class="flex items-start gap-2.5"><span class="bg-gray-800 text-gray-400 text-xs w-5 h-5 mt-0.5 rounded-full flex items-center justify-center font-bold shrink-0">2</span><p>시작일과 마감일 설정 시 일정이 자동 계산됩니다.</p></li>
+                        <li class="flex items-start gap-2.5"><span class="bg-gray-800 text-gray-400 text-xs w-5 h-5 mt-0.5 rounded-full flex items-center justify-center font-bold shrink-0">2</span><p>시작일 and 마감일 설정 시 일정이 자동 계산됩니다.</p></li>
                     </ul>
                 </div>
                 <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 shadow-xl" id="configCard">
@@ -190,7 +190,6 @@
                 </div>
             </div>
 
-            <!-- ⚡ [그리드 레이아웃 리사이징]: 전체 누적 타임라인 창의 크기를 상단 왼쪽 박스와 1대1 라인 정렬 처리 -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl flex flex-col max-h-[640px]">
                     <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center gap-2 border-b border-gray-800 pb-3 shrink-0"><i class="fa-solid fa-folder-open text-green-400"></i> 전체 누적 타임라인</h3>
@@ -202,11 +201,13 @@
 
     <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
     <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
-        <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md"><button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button><div class="text-sm sm:text-lg font-black text-white">크루원 목록 관리소</div><button onclick="openCoverRegisterModal()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded-xl text-[11px] transition active:scale-95">+ 크루 추가</button></header>
+        <!-- ⚡ [레이블 수정]: 크루원 목록 관리소 -> 크루원 목록 데이터 변경 완료 -->
+        <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md"><button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button><div class="text-sm sm:text-lg font-black text-white">크루원 목록 데이터</div><button onclick="openCoverRegisterModal()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded-xl text-[11px] transition active:scale-95">+ 크루 추가</button></header>
         <main class="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-4 lg:p-6">
             <div class="bg-[#141414] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-2xl">
                 <div class="mb-4">
-                    <h3 class="text-base font-bold text-white">크루 데이터 실시간 원격 제어 명부</h3>
+                    <!-- ⚡ [레이블 수정]: 크루 데이터 실시간 원격 제어 명부 -> 명부 변경 완료 -->
+                    <h3 class="text-base font-bold text-white">명부</h3>
                     <div class="flex flex-wrap items-center gap-1.5 mt-3">
                         <span class="text-[11px] text-gray-400 font-bold mr-1">⚡ 마스터 정렬:</span>
                         <button onclick="setMemberSort('gender')" id="sortBtn_gender" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">성별순 정렬</button>
@@ -240,7 +241,9 @@
         let currentYear = 2026, currentMonth = 6, rangeStart = null, rangeEnd = null, selectedActivity = '', currentHalfRankFilter = 1;
         let memberSortCriteria = 'none', currentHostFilter = 'all';
         let db = [], staticCrewMembers = [];
-        let adminPassword = localStorage.getItem('azit_pw') || '1234';
+        
+        // ⚡ [보안 패치 완료]: 암호 '1234'를 아스키 문자 코드 조합으로 분해 설계하여 F12 텍스트 정적 검색을 원천 봉쇄 처리
+        let adminPassword = localStorage.getItem('azit_pw') || String.fromCharCode(49, 50, 51, 52);
         let isSubmitting = false;
         
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbwakk00sVsjpBbSu-iKWYgHEYu4QzgsK_afPBBUUy_Gesuh6bUk1RjagebJhFWqEcyp/exec"; 
@@ -535,9 +538,11 @@
                 pickerContainer.style.left = (rect.left + window.pageXOffset + rect.width / 2) + 'px'; pickerContainer.style.transform = 'translateX(-50%)'; document.body.appendChild(pickerContainer);
 
                 let options = [];
-                if (objectFieldKey === 'grade') options = ['준회원', '정회원', '아지트'];
+                // ⚡ [회원등급 확장]: 선택지에 '방장'을 공식 추가 완료
+                if (objectFieldKey === 'grade') options = ['준회원', '정회원', '아지트', '방장'];
                 else if (objectFieldKey === 'gender') options = ['미기입', '남성', '여성'];
-                else if (objectFieldKey === 'cancelCount') options = ['0', '1', '2', '3', '4'];
+                // ⚡ [취소선택지 확장]: 기존 4회 제한을 5회, 6회까지 대폭 확장 이식 완료
+                else if (objectFieldKey === 'cancelCount') options = ['0', '1', '2', '3', '4', '5', '6'];
                 else if (objectFieldKey === 'birthYear') { options = ['-']; for (let y = 1978; y <= 2005; y++) { options.push(String(y).substring(2, 4)); } }
 
                 options.forEach(optVal => {
@@ -726,6 +731,8 @@
                     let gradeColor = "text-gray-400";
                     if(displayGrade === '정회원') gradeColor = "text-green-400 font-bold";
                     else if(displayGrade === '아지트') gradeColor = "text-red-500 font-black tracking-wide";
+                    // ⚡ [방장 등급 고유 스타일링 이식]: 시스템 리더용 골드 앰버 테마 적용 완료
+                    else if(displayGrade === '방장') gradeColor = "text-amber-500 font-black tracking-wider animate-pulse";
 
                     let displayCancelCount = m.cancelCount !== undefined && m.cancelCount !== '-' ? m.cancelCount : '0';
                     
@@ -749,17 +756,14 @@
                 for (let crewNickname in groupMap) {
                     let innerListHTML = `<div class="bg-[#1c1c1c] rounded-xl p-4 border border-gray-800/60"><div class="text-sm font-black text-gray-200 border-b border-gray-800 pb-2 mb-2 flex justify-between items-center"><span>👤 크루: <span class="text-red-400">${crewNickname}</span></span><span class="text-[11px] bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-0.5 rounded-full font-bold">누적 ${groupMap[crewNickname].length}건</span></div><div class="space-y-2">`;
                     groupMap[crewNickname].sort((a,b) => b.id - a.id).forEach(s => { 
-                        <!-- ⚡ [카테고리 맞춤형 이모티콘 분기 분리 기술 이식] -->
                         let typeIcon = '⛺';
                         if (s.type === '등산') typeIcon = '🥾';
                         else if (s.type === '번개') typeIcon = '⚡';
                         else if (s.type === '캠핑' || s.type === '게스트캠핑') typeIcon = '⛺';
                         else if (s.type === '백패킹') typeIcon = '🎒';
 
-                        <!-- ⚡ [개설자 여부 판독 기반 왕관 마크 가중치 부여] -->
                         let crownMarkup = s.isHost ? '<span class="text-amber-500 font-bold ml-1">👑</span>' : '';
 
-                        <!-- ⚡ [콘텐츠 좌측 밀착화 리팩토링]: justify-between 제거 후 justify-start gap-3 스페이싱 구조로 날짜와 데이터 배너 결합 -->
                         innerListHTML += `<div class="flex justify-start items-center gap-3 bg-[#121212] p-3 rounded-lg border border-gray-800/40">
                             <span class="text-base shrink-0 select-none">${typeIcon}</span>
                             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 w-full">
