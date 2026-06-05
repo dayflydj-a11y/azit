@@ -186,7 +186,7 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 flex flex-col max-h-[640px] shadow-xl">
+                <div class="lg:col-span-6 bg-[#151515] border border-gray-800 p-4 sm:p-5 rounded-2xl flex flex-col max-h-[640px] shadow-xl">
                     <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center gap-2 border-b border-gray-800 pb-3 shrink-0"><i class="fa-solid fa-folder-open text-green-400"></i> 전체 누적 타임라인</h3>
                     <div id="groupedCrewTimeline" class="space-y-4 overflow-y-auto pr-1 no-scrollbar flex-1"></div>
                 </div>
@@ -356,7 +356,12 @@
                 const badgeContainer = document.createElement('div'); 
                 badgeContainer.className = 'absolute bottom-1 left-0 right-0 flex flex-row flex-nowrap justify-center items-center gap-0.5 w-full overflow-hidden select-none pointer-events-none text-[10px]';
                 
-                const matches = db.filter(item => Number(item.year) === currentYear && Number(item.month) === currentMonth && day >= Number(item.startDay) && day <= Number(item.endDay));
+                // ⚡ [결함 수정 핵심 1]: 정규식을 통해 '6월' 등의 문자열 포맷까지 완벽 정제하여 대조함으로써 다른 월에 표출되는 현상 완전 해결
+                const matches = db.filter(item => {
+                    let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
+                    let cleanMonth = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0;
+                    return cleanYear === currentYear && cleanMonth === currentMonth && day >= Number(item.startDay) && day <= Number(item.endDay);
+                });
                 if(matches.length > 0) {
                     [...new Set(matches.map(r => r.type))].forEach(t => {
                         const icon = document.createElement('span'); icon.className = 'inline-block shrink-0';
@@ -409,14 +414,15 @@
 
             const diff = rangeEnd.day - rangeStart.day; let type = selectedActivity; if(diff === 0 && type === '캠핑') type = '게스트캠핑';
             
-            // ⚡ [요구사항 2 반영 - 중복 선택 하드 블로킹]: 동일 크루원이 동일 날짜 범위에 두 가지 일정을 동시에 겹쳐 등록할 수 없도록 강제 차단 및 알림창 표출
             const isDateOverlapping = (s1, e1, s2, e2) => Math.max(s1, s2) <= Math.min(e1, e2);
-            const overlappingSchedule = db.find(item => 
-                item.name === nick && 
-                Number(item.year) === currentYear && 
-                Number(item.month) === currentMonth && 
-                isDateOverlapping(Number(item.startDay), Number(item.endDay), rangeStart.day, rangeEnd.day)
-            );
+            const overlappingSchedule = db.find(item => {
+                let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
+                let cleanMonth = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0;
+                return item.name === nick && 
+                       cleanYear === currentYear && 
+                       cleanMonth === currentMonth && 
+                       isDateOverlapping(Number(item.startDay), Number(item.endDay), rangeStart.day, rangeEnd.day);
+            });
             
             if (overlappingSchedule) {
                 alert(`⚠️ 중복 선택 제한 알림:\n[${nick}] 크루님은 지정하신 기간에 이미 [${overlappingSchedule.type}] 일정(${overlappingSchedule.startDay}일~${overlappingSchedule.endDay}일)이 등록되어 있습니다.\n동일한 날짜에 두 가지 일정을 동시에 선택하거나 중복 등록할 수 없습니다.`);
@@ -512,8 +518,20 @@
         function renderHostRankTable() {
             const hostBody = document.getElementById('hostRankTableBody'); if (!hostBody) return; hostBody.innerHTML = '';
             const hostFreq = {}; staticCrewMembers.forEach(m => hostFreq[m.nickname] = 0);
-            let filteredDb = db.filter(item => Number(item.isHost) === 1 || item.isHost === true || String(item.isHost).toLowerCase() === 'true'); const f = currentHostFilter;
-            if (f === 'h1') filteredDb = filteredDb.filter(item => Number(item.month) >= 1 && Number(item.month) <= 6); else if (f === 'h2') filteredDb = filteredDb.filter(item => Number(item.month) >= 7 && Number(item.month) <= 12); else if (f === 'q1') filteredDb = filteredDb.filter(item => Number(item.month) >= 1 && Number(item.month) <= 3); else if (f === 'q2') filteredDb = filteredDb.filter(item => Number(item.month) >= 4 && Number(item.month) <= 6); else if (f === 'q3') filteredDb = filteredDb.filter(item => Number(item.month) >= 7 && Number(item.month) <= 9); else if (f === 'q4') filteredDb = filteredDb.filter(item => Number(item.month) >= 10 && Number(item.month) <= 12);
+            
+            let filteredDb = db.filter(item => {
+                let isHostTrue = Number(item.isHost) === 1 || item.isHost === true || String(item.isHost).toLowerCase() === 'true';
+                let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
+                return cleanYear === currentYear && isHostTrue;
+            });
+            const f = currentHostFilter;
+            if (f === 'h1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 6; }); 
+            else if (f === 'h2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 12; }); 
+            else if (f === 'q1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 3; }); 
+            else if (f === 'q2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 4 && m <= 6; }); 
+            else if (f === 'q3') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 9); }); 
+            else if (f === 'q4') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 10 && m <= 12; });
+            
             filteredDb.forEach(item => { hostFreq[item.name] = (hostFreq[item.name] || 0) + 1; });
             const sortedHosts = Object.keys(hostFreq).map(name => ({ name, count: hostFreq[name] })).sort((a, b) => b.count - a.count);
             if (sortedHosts.filter(h => h.count > 0).length === 0) { hostBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">개설 내역이 없습니다.</td></tr>`; } 
@@ -696,7 +714,22 @@
                 toggleGlobalLoadingOverlay(true, `${currentMonth}월 스케줄 벌크 삭제 진행 중...`);
                 const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
                 try {
-                    if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { const targets = db.filter(item => Number(item.year) === currentYear && Number(item.month) === currentMonth); for(let t of targets) { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); } else { db = db.filter(item => !(Number(item.year) === currentYear && Number(item.month) === currentMonth)); localStorage.setItem('azit_db', JSON.stringify(db)); }
+                    if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
+                        const targets = db.filter(item => {
+                            let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
+                            let cleanMonth = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0;
+                            return cleanYear === currentYear && cleanMonth === currentMonth;
+                        }); 
+                        for(let t of targets) { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } 
+                        await new Promise(resolve => setTimeout(resolve, 1500)); 
+                    } else { 
+                        db = db.filter(item => {
+                            let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
+                            let cleanMonth = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0;
+                            return !(cleanYear === currentYear && cleanMonth === currentMonth);
+                        }); 
+                        localStorage.setItem('azit_db', JSON.stringify(db)); 
+                    }
                 } catch(e) { console.error(e); }
                 await fetchCloudData(); refreshUI(); 
                 toggleGlobalLoadingOverlay(false);
@@ -792,7 +825,13 @@
         function renderHalfYearRankTable() {
             const tbody = document.getElementById('halfRankTableBody'); if(!tbody) return; tbody.innerHTML = '';
             const startMonth = currentHalfRankFilter === 1 ? 1 : 7, endMonth = currentHalfRankFilter === 1 ? 6 : 12;
-            const halfRecords = db.filter(item => Number(item.year) === currentYear && Number(item.month) >= startMonth && Number(item.month) <= endMonth);
+            
+            // ⚡ [결함 수정 핵심 2]: 반기별 통계 검증 조건 내의 데이터 정제
+            const halfRecords = db.filter(item => {
+                let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
+                let cleanMonth = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0;
+                return cleanYear === currentYear && cleanMonth >= startMonth && cleanMonth <= endMonth;
+            });
             const freqMap = {}; halfRecords.forEach(r => { freqMap[r.name] = (freqMap[r.name] || 0) + 1; });
             const sortedList = Object.keys(freqMap).map(k => ({name:k, count:freqMap[k]})).sort((a,b) => b.count - a.count);
             if(sortedList.length === 0) { tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-600 text-sm">데이터 없음</td></tr>`; }
@@ -800,7 +839,13 @@
         }
 
         function updateAdminDashboard() {
-            const targetRecords = db.filter(item => Number(item.year) === currentYear && Number(item.month) === currentMonth);
+            // ⚡ [결함 수정 핵심 3]: 대시보드 당월 활성 크루 계측 필터링 데이터 정제
+            const targetRecords = db.filter(item => {
+                let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
+                let cleanMonth = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0;
+                return cleanYear === currentYear && cleanMonth === currentMonth;
+            });
+            
             const rBody = document.getElementById('rankTableBody'); 
             if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => freq[r.name] = (freq[r.name] || 0) + 1); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}위</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
             
@@ -899,9 +944,11 @@
                         else if (s.type === '백패킹') typeIcon = '🎒';
 
                         let crownMarkup = s.isHost ? '<span class="text-amber-500 font-bold ml-1">👑</span>' : '';
-                        let displayMonth = (s.month && !isNaN(s.month)) ? parseInt(s.month) : currentMonth;
+                        
+                        // ⚡ [결함 수정 핵심 4]: 타임라인 렌더링 시에도 텍스트가 섞인 월 데이터를 완전 정제하여 처리
+                        let parsedMonth = s.month ? parseInt(String(s.month).replace(/\D/g, '')) : 0;
+                        let displayMonth = isNaN(parsedMonth) || parsedMonth === 0 ? currentMonth : parsedMonth;
 
-                        // ⚡ [요구사항 1 반영]: 전체 누적 타임라인 내에 개별 레코드를 강제로 영구 삭제 처리할 수 있는 제어 단추 신설
                         innerListHTML += `<div class="flex justify-between items-center gap-3 bg-[#121212] p-3 rounded-lg border border-gray-800/40 w-full">
                             <div class="flex items-center gap-3">
                                 <span class="text-base shrink-0 select-none">${typeIcon}</span>
