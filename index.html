@@ -32,6 +32,7 @@
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
 
+    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이 레이어 -->
     <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
             <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
@@ -39,6 +40,7 @@
         </div>
     </div>
 
+    <!-- [PAGE 1] 아지트 인트로 커버 화면 -->
     <div id="pageCover" class="fixed inset-0 z-50 flex flex-col justify-between p-6 transition-all duration-700 ease-in-out transform bg-cover bg-center" 
          style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=1920&q=80');">
         <div class="text-center mt-6 lg:mt-10 animate-fade-in">
@@ -56,6 +58,7 @@
         </div>
     </div>
 
+    <!-- 신규회원 등록 모달 -->
     <div id="coverRegisterModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl transform scale-95 transition-all" id="coverRegBox">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
@@ -68,11 +71,14 @@
                 <div><label class="block text-gray-400 font-bold mb-1">성별</label><select id="regGender" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"><option value="-">미기입</option><option value="남성">남성</option><option value="여성">여성</option></select></div>
                 <div><label class="block text-gray-400 font-bold mb-1">출생 연도</label><input type="text" id="regBirthYear" placeholder="예시: 82" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
                 <div><label class="block text-gray-400 font-bold mb-1">연락처 (전화번호)</label><input type="text" id="regPhone" placeholder="예시: 000-0000-0000" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
+                <!-- ⚡ [요구사항 반영]: 연락처 밑에 단톡방 입장날짜 선택 칸 디자인 요소 강제 주입 -->
+                <div><label class="block text-gray-400 font-bold mb-1">단톡방 입장 날짜</label><input type="date" id="regJoinDate" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition text-gray-300"></div>
             </div>
             <button id="btnSubmitCrew" onclick="submitCoverRegister()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl text-xs mt-5 shadow-lg flex items-center justify-center transition active:scale-95">크루 가입 명부 저장하기 <i class="fa-solid fa-check ml-1"></i></button>
         </div>
     </div>
 
+    <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
     <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
         <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-3 sm:py-4 flex flex-col justify-between items-center gap-2">
             <div class="w-full flex justify-between items-center px-2">
@@ -124,6 +130,7 @@
         </main>
     </div>
 
+    <!-- [PAGE 3] 관리자 대시보드 메인 관제 화면 -->
     <div id="pageAdmin" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0e0e0e]">
         <header class="border-b border-gray-800 bg-[#151515] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-lg">
             <button onclick="switchPage('pageCalendar')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 일정 화면으로</button>
@@ -194,6 +201,7 @@
         </main>
     </div>
 
+    <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
     <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
         <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md"><button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button><div class="text-sm sm:text-lg font-black text-white">크루원 목록 데이터</div><button onclick="openCoverRegisterModal()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded-xl text-[11px] transition active:scale-95">+ 크루 추가</button></header>
         <main class="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-4 lg:p-6">
@@ -356,7 +364,6 @@
                 const badgeContainer = document.createElement('div'); 
                 badgeContainer.className = 'absolute bottom-1 left-0 right-0 flex flex-row flex-nowrap justify-center items-center gap-0.5 w-full overflow-hidden select-none pointer-events-none text-[10px]';
                 
-                // ⚡ [결함 수정 핵심 1]: 정규식을 통해 '6월' 등의 문자열 포맷까지 완벽 정제하여 대조함으로써 다른 월에 표출되는 현상 완전 해결
                 const matches = db.filter(item => {
                     let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
                     let cleanMonth = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0;
@@ -395,9 +402,14 @@
         }
 
         function setActivity(type) { if(rangeStart && rangeEnd && (rangeEnd.day - rangeStart.day === 0) && type === '백패킹') return; selectedActivity = type; updateActivityButtonStyles(); }
+        
         function updateActivityButtonStyles() {
             const btns = [document.getElementById('actClimb'), document.getElementById('actFlash'), document.getElementById('actCamp'), document.getElementById('actBack')];
-            btns.forEach(b => { if(!b) return; b.className = b.className.replace(/bg-orange-500\/10|border-orange-500|text-orange-400|bg-green-500\/10|border-green-500|text-green-400|bg-yellow-500\/10|border-yellow-500|text-yellow-400|bg-sky-500\/10|border-sky-500|text-sky-400/, ''); b.classList.add('bg-[#121212]', 'border-gray-800', 'text-white'); });
+            btns.forEach(b => { 
+                if(!b) return; 
+                b.className = b.className.replace(/bg-orange-500\/10|border-orange-500|text-orange-400|bg-green-500\/10|border-green-500|text-green-400|bg-yellow-500\/10|border-yellow-500|text-yellow-400|bg-sky-500\/10|border-sky-500|text-sky-400/g, ''); 
+                b.classList.add('bg-[#121212]', 'border-gray-800', 'text-white'); 
+            });
             const s = selectedActivity;
             if (s === '등산') document.getElementById('actClimb').classList.add('bg-green-500/10', 'border-green-500', 'text-green-400');
             else if (s === '번개') document.getElementById('actFlash').classList.add('bg-yellow-500/10', 'border-yellow-500', 'text-yellow-400');
@@ -474,12 +486,30 @@
         function closeAllInlinePickers() { const popups = document.querySelectorAll('.custom-datepicker'); popups.forEach(p => p.remove()); }
         function setMemberSort(criteria) { memberSortCriteria = criteria; updateAdminDashboard(); }
 
-        function openCoverRegisterModal() { const m = document.getElementById('coverRegisterModal'); if(m) { m.classList.remove('hidden'); setTimeout(() => m.classList.remove('opacity-0'), 50); } }
+        function openCoverRegisterModal() { 
+            const m = document.getElementById('coverRegisterModal'); 
+            if(m) { 
+                m.classList.remove('hidden'); 
+                // 모달 오픈 시 입장 날짜 입력창에 오늘 날짜(2026-06-05)를 기본 디폴트 인입
+                const todayStr = new Date().toISOString().split('T')[0];
+                const dateInput = document.getElementById('regJoinDate');
+                if (dateInput && !dateInput.value) dateInput.value = todayStr;
+                setTimeout(() => m.classList.remove('opacity-0'), 50); 
+            } 
+        }
         function closeCoverRegisterModal() { const m = document.getElementById('coverRegisterModal'); if(m) { m.classList.add('opacity-0'); setTimeout(() => m.classList.add('hidden'), 300); } }
         
         async function submitCoverRegister() {
             if (isSubmitting) return;
-            const nick = document.getElementById('regNickname').value.trim(); const name = document.getElementById('regRealName').value.trim(); const gender = document.getElementById('regGender').value; const birth = document.getElementById('regBirthYear').value.trim(); const phone = document.getElementById('regPhone').value.trim();
+            const nick = document.getElementById('regNickname').value.trim(); 
+            const name = document.getElementById('regRealName').value.trim(); 
+            const gender = document.getElementById('regGender').value; 
+            const birth = document.getElementById('regBirthYear').value.trim(); 
+            const phone = document.getElementById('regPhone').value.trim();
+            // ⚡ [요구사항 반영]: 사용자가 모달에서 선택한 입장날짜 데이터 파싱 및 가변 바인딩
+            let joinDate = document.getElementById('regJoinDate').value;
+            if (!joinDate) joinDate = new Date().toISOString().split('T')[0];
+            
             if(!nick) { alert('⚠️ 닉네임 기입은 필수입니다.'); return; }
             if(staticCrewMembers.some(m => m.nickname === nick)) { alert('⚠️ 이미 존재하는 닉네임입니다.'); return; }
             
@@ -489,7 +519,8 @@
 
             if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
                 try {
-                    const query = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData(name))}&gender=${encodeURIComponent(gender)}&birthYear=${encodeURIComponent(birth || '-')}&phone=${encodeURIComponent(encryptData(phone))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(new Date().toISOString().split('T')[0])}&cancelCount=${encodeURIComponent('0')}`;
+                    // 수립된 joinDate 변수를 GAS 마스터 컨트롤 쿼리 세션에 온전히 매핑
+                    const query = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData(name))}&gender=${encodeURIComponent(gender)}&birthYear=${encodeURIComponent(birth || '-')}&phone=${encodeURIComponent(encryptData(phone))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(joinDate)}&cancelCount=${encodeURIComponent('0')}`;
                     await fetch(CLEAN_URL + query, { mode: 'no-cors' });
                     await new Promise(resolve => setTimeout(resolve, 1500));
                 } catch(e) {
@@ -499,13 +530,13 @@
                     toggleGlobalLoadingOverlay(false);
                 }
             } else {
-                staticCrewMembers.push({ nickname: nick, name: encryptData(name), gender: gender, birthYear: birth || '-', grade: '준회원', joinDate: new Date().toISOString().split('T')[0], cancelCount: '0', phone: encryptData(phone) });
+                staticCrewMembers.push({ nickname: nick, name: encryptData(name), gender: gender, birthYear: birth || '-', grade: '준회원', joinDate: joinDate, cancelCount: '0', phone: encryptData(phone) });
                 localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
                 isSubmitting = false;
                 toggleGlobalLoadingOverlay(false);
             }
             alert(`✨ 성공: [${nick}] 크루원이 명부에 등록되었습니다!`); 
-            document.getElementById('regNickname').value = ''; document.getElementById('regRealName').value = ''; document.getElementById('regGender').value = '-'; document.getElementById('regBirthYear').value = ''; document.getElementById('regPhone').value = '';
+            document.getElementById('regNickname').value = ''; document.getElementById('regRealName').value = ''; document.getElementById('regGender').value = '-'; document.getElementById('regBirthYear').value = ''; document.getElementById('regPhone').value = ''; document.getElementById('regJoinDate').value = '';
             closeCoverRegisterModal(); await fetchCloudData(); refreshUI();
         }
 
@@ -529,7 +560,7 @@
             else if (f === 'h2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 12; }); 
             else if (f === 'q1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 3; }); 
             else if (f === 'q2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 4 && m <= 6; }); 
-            else if (f === 'q3') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 9); }); 
+            else if (f === 'q3') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 9; }); 
             else if (f === 'q4') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 10 && m <= 12; });
             
             filteredDb.forEach(item => { hostFreq[item.name] = (hostFreq[item.name] || 0) + 1; });
@@ -611,7 +642,7 @@
                         if (objectFieldKey === 'grade') sheetHeaderField = '회원 등급';
                         if (objectFieldKey === 'cancelCount') sheetHeaderField = '누적 취소횟수';
 
-                        if(CLEAN_URL && CLEAN_URL !== "A지트크루여기로") { 
+                        if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
                             try {
                                 await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(nickname)}&field=${encodeURIComponent(sheetHeaderField)}&value=${encodeURIComponent(optVal)}`, { mode: 'no-cors' }); 
                                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -826,7 +857,6 @@
             const tbody = document.getElementById('halfRankTableBody'); if(!tbody) return; tbody.innerHTML = '';
             const startMonth = currentHalfRankFilter === 1 ? 1 : 7, endMonth = currentHalfRankFilter === 1 ? 6 : 12;
             
-            // ⚡ [결함 수정 핵심 2]: 반기별 통계 검증 조건 내의 데이터 정제
             const halfRecords = db.filter(item => {
                 let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
                 let cleanMonth = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0;
@@ -839,7 +869,6 @@
         }
 
         function updateAdminDashboard() {
-            // ⚡ [결함 수정 핵심 3]: 대시보드 당월 활성 크루 계측 필터링 데이터 정제
             const targetRecords = db.filter(item => {
                 let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
                 let cleanMonth = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0;
@@ -945,7 +974,6 @@
 
                         let crownMarkup = s.isHost ? '<span class="text-amber-500 font-bold ml-1">👑</span>' : '';
                         
-                        // ⚡ [결함 수정 핵심 4]: 타임라인 렌더링 시에도 텍스트가 섞인 월 데이터를 완전 정제하여 처리
                         let parsedMonth = s.month ? parseInt(String(s.month).replace(/\D/g, '')) : 0;
                         let displayMonth = isNaN(parsedMonth) || parsedMonth === 0 ? currentMonth : parsedMonth;
 
