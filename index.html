@@ -156,7 +156,7 @@
                 </div>
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-800 pb-2 mb-4 gap-2"><h3 class="text-base font-bold text-gray-200 flex items-center gap-2"><i class="fa-solid fa-chart-line text-sky-400"></i> 반기별 누적 참여 크루원 순위</h3><div class="flex bg-[#121212] p-1 rounded-lg border border-gray-800 text-[11px] font-bold self-start sm:self-auto">
-                        <button onclick="setHalfYearRankFilter(1)" id="btnHalfFirst" class="px-3 py-1 rounded bg-sky-500 text-white font-bold transition">전반기</button><button onclick="setHalfYearRankFilter(2)" id="btnHalfSecond" class="px-3 py-1 rounded text-gray-400 hover:text-white transition">하반기</button>
+                        <button onclick="setHalfYearRankFilter(1)" id="btnHalfFirst" class="px-3 py-1 rounded bg-sky-500 text-white font-bold transition">전반기</button><button onclick="setHalfYearRankFilter(2)" id="btnHalfSecond" class="px-3 py-1 rounded bg-sky-500 text-white font-bold transition">하반기</button>
                     </div></div>
                     <div class="overflow-x-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="halfRankTableBody" class="divide-y divide-gray-800/40"></tbody></table></div>
                 </div>
@@ -186,7 +186,7 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <div class="lg:col-span-6 bg-[#151515] border border-gray-800 p-4 sm:p-5 rounded-2xl flex flex-col max-h-[640px] shadow-xl">
+                <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 flex flex-col max-h-[640px] shadow-xl">
                     <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center gap-2 border-b border-gray-800 pb-3 shrink-0"><i class="fa-solid fa-folder-open text-green-400"></i> 전체 누적 타임라인</h3>
                     <div id="groupedCrewTimeline" class="space-y-4 overflow-y-auto pr-1 no-scrollbar flex-1"></div>
                 </div>
@@ -237,7 +237,6 @@
         let db = [], staticCrewMembers = [];
         let isSubmitting = false;
         
-        // ⚡ [주소 동기화 완료]: 현찬님이 새로 발급받아 제공해 주신 최종 6월 실시간 GAS 엔드포인트 URL 반영
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbw1wbZaaE-PYfswF1jVlmc8i9lsPirstS5P7CIhaqNTkiBZD7LFlDAA6-80bDi7ZuYK/exec"; 
         
         function toggleGlobalLoadingOverlay(show, messageText) {
@@ -357,7 +356,7 @@
                 const badgeContainer = document.createElement('div'); 
                 badgeContainer.className = 'absolute bottom-1 left-0 right-0 flex flex-row flex-nowrap justify-center items-center gap-0.5 w-full overflow-hidden select-none pointer-events-none text-[10px]';
                 
-                const matches = db.filter(item => item.year === currentYear && item.month === currentMonth && day >= item.startDay && day <= item.endDay);
+                const matches = db.filter(item => Number(item.year) === currentYear && Number(item.month) === currentMonth && day >= Number(item.startDay) && day <= Number(item.endDay));
                 if(matches.length > 0) {
                     [...new Set(matches.map(r => r.type))].forEach(t => {
                         const icon = document.createElement('span'); icon.className = 'inline-block shrink-0';
@@ -410,23 +409,20 @@
 
             const diff = rangeEnd.day - rangeStart.day; let type = selectedActivity; if(diff === 0 && type === '캠핑') type = '게스트캠핑';
             
-            const isNewSleepType = ['캠핑', '게스트캠핑', '백패킹'].includes(type);
-            if (isNewSleepType) {
-                const isDateOverlapping = (s1, e1, s2, e2) => Math.max(s1, s2) <= Math.min(e1, e2);
-                const overlappingSchedule = db.find(item => 
-                    item.name === nick && 
-                    item.year === currentYear && 
-                    item.month === currentMonth && 
-                    isDateOverlapping(item.startDay, item.endDay, rangeStart.day, rangeEnd.day) &&
-                    ['캠핑', '게스트캠핑', '백패킹'].includes(item.type)
-                );
-                
-                if (overlappingSchedule) {
-                    alert(`⚠️ 중복 등록 제한:\n[${nick}] 크루님은 선택하신 기간에 이미 숙박형 모임인 [${overlappingSchedule.type}] 일정(${overlappingSchedule.startDay}일~${overlappingSchedule.endDay}일)이 등록되어 있어 '캠핑/백패킹'을 중복으로 등록할 수 없습니다.\n(단, 번개 및 등산 일정은 언제든 추가로 중복 등록 가능합니다.)`);
-                    isSubmitting = false;
-                    toggleGlobalLoadingOverlay(false);
-                    return;
-                }
+            // ⚡ [요구사항 2 반영 - 중복 선택 하드 블로킹]: 동일 크루원이 동일 날짜 범위에 두 가지 일정을 동시에 겹쳐 등록할 수 없도록 강제 차단 및 알림창 표출
+            const isDateOverlapping = (s1, e1, s2, e2) => Math.max(s1, s2) <= Math.min(e1, e2);
+            const overlappingSchedule = db.find(item => 
+                item.name === nick && 
+                Number(item.year) === currentYear && 
+                Number(item.month) === currentMonth && 
+                isDateOverlapping(Number(item.startDay), Number(item.endDay), rangeStart.day, rangeEnd.day)
+            );
+            
+            if (overlappingSchedule) {
+                alert(`⚠️ 중복 선택 제한 알림:\n[${nick}] 크루님은 지정하신 기간에 이미 [${overlappingSchedule.type}] 일정(${overlappingSchedule.startDay}일~${overlappingSchedule.endDay}일)이 등록되어 있습니다.\n동일한 날짜에 두 가지 일정을 동시에 선택하거나 중복 등록할 수 없습니다.`);
+                isSubmitting = false;
+                toggleGlobalLoadingOverlay(false);
+                return;
             }
 
             const timestamp = new Date().toLocaleDateString();
@@ -516,8 +512,8 @@
         function renderHostRankTable() {
             const hostBody = document.getElementById('hostRankTableBody'); if (!hostBody) return; hostBody.innerHTML = '';
             const hostFreq = {}; staticCrewMembers.forEach(m => hostFreq[m.nickname] = 0);
-            let filteredDb = db.filter(item => item.year === currentYear && item.isHost); const f = currentHostFilter;
-            if (f === 'h1') filteredDb = filteredDb.filter(item => item.month >= 1 && item.month <= 6); else if (f === 'h2') filteredDb = filteredDb.filter(item => item.month >= 7 && item.month <= 12); else if (f === 'q1') filteredDb = filteredDb.filter(item => item.month >= 1 && item.month <= 3); else if (f === 'q2') filteredDb = filteredDb.filter(item => item.month >= 4 && item.month <= 6); else if (f === 'q3') filteredDb = filteredDb.filter(item => item.month >= 7 && item.month <= 9); else if (f === 'q4') filteredDb = filteredDb.filter(item => item.month >= 10 && item.month <= 12);
+            let filteredDb = db.filter(item => Number(item.isHost) === 1 || item.isHost === true || String(item.isHost).toLowerCase() === 'true'); const f = currentHostFilter;
+            if (f === 'h1') filteredDb = filteredDb.filter(item => Number(item.month) >= 1 && Number(item.month) <= 6); else if (f === 'h2') filteredDb = filteredDb.filter(item => Number(item.month) >= 7 && Number(item.month) <= 12); else if (f === 'q1') filteredDb = filteredDb.filter(item => Number(item.month) >= 1 && Number(item.month) <= 3); else if (f === 'q2') filteredDb = filteredDb.filter(item => Number(item.month) >= 4 && Number(item.month) <= 6); else if (f === 'q3') filteredDb = filteredDb.filter(item => Number(item.month) >= 7 && Number(item.month) <= 9); else if (f === 'q4') filteredDb = filteredDb.filter(item => Number(item.month) >= 10 && Number(item.month) <= 12);
             filteredDb.forEach(item => { hostFreq[item.name] = (hostFreq[item.name] || 0) + 1; });
             const sortedHosts = Object.keys(hostFreq).map(name => ({ name, count: hostFreq[name] })).sort((a, b) => b.count - a.count);
             if (sortedHosts.filter(h => h.count > 0).length === 0) { hostBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">개설 내역이 없습니다.</td></tr>`; } 
@@ -597,7 +593,7 @@
                         if (objectFieldKey === 'grade') sheetHeaderField = '회원 등급';
                         if (objectFieldKey === 'cancelCount') sheetHeaderField = '누적 취소횟수';
 
-                        if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
+                        if(CLEAN_URL && CLEAN_URL !== "A지트크루여기로") { 
                             try {
                                 await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(nickname)}&field=${encodeURIComponent(sheetHeaderField)}&value=${encodeURIComponent(optVal)}`, { mode: 'no-cors' }); 
                                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -684,7 +680,7 @@
         }
         
         async function deleteScheduleRecord(recordId) { 
-            if (confirm('⚠️ 해당 일정을 삭제하시겠습니까?')) { 
+            if (confirm('⚠️ 해당 일정을 영구 삭제하시겠습니까?')) { 
                 toggleGlobalLoadingOverlay(true, "요청하신 개별 크루 스케줄 블록 삭제 중...");
                 const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
                 try {
@@ -700,7 +696,7 @@
                 toggleGlobalLoadingOverlay(true, `${currentMonth}월 스케줄 벌크 삭제 진행 중...`);
                 const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
                 try {
-                    if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { const targets = db.filter(item => item.year === currentYear && item.month === currentMonth); for(let t of targets) { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); } else { db = db.filter(item => !(item.year === currentYear && item.month === currentMonth)); localStorage.setItem('azit_db', JSON.stringify(db)); }
+                    if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { const targets = db.filter(item => Number(item.year) === currentYear && Number(item.month) === currentMonth); for(let t of targets) { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); } else { db = db.filter(item => !(Number(item.year) === currentYear && Number(item.month) === currentMonth)); localStorage.setItem('azit_db', JSON.stringify(db)); }
                 } catch(e) { console.error(e); }
                 await fetchCloudData(); refreshUI(); 
                 toggleGlobalLoadingOverlay(false);
@@ -796,7 +792,7 @@
         function renderHalfYearRankTable() {
             const tbody = document.getElementById('halfRankTableBody'); if(!tbody) return; tbody.innerHTML = '';
             const startMonth = currentHalfRankFilter === 1 ? 1 : 7, endMonth = currentHalfRankFilter === 1 ? 6 : 12;
-            const halfRecords = db.filter(item => item.year === currentYear && item.month >= startMonth && item.month <= endMonth);
+            const halfRecords = db.filter(item => Number(item.year) === currentYear && Number(item.month) >= startMonth && Number(item.month) <= endMonth);
             const freqMap = {}; halfRecords.forEach(r => { freqMap[r.name] = (freqMap[r.name] || 0) + 1; });
             const sortedList = Object.keys(freqMap).map(k => ({name:k, count:freqMap[k]})).sort((a,b) => b.count - a.count);
             if(sortedList.length === 0) { tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-600 text-sm">데이터 없음</td></tr>`; }
@@ -804,12 +800,12 @@
         }
 
         function updateAdminDashboard() {
-            const targetRecords = db.filter(item => item.year === currentYear && item.month === currentMonth);
+            const targetRecords = db.filter(item => Number(item.year) === currentYear && Number(item.month) === currentMonth);
             const rBody = document.getElementById('rankTableBody'); 
             if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => freq[r.name] = (freq[r.name] || 0) + 1); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}위</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
             
             const aBody = document.getElementById('monthAttendeeListBody'); 
-            if(aBody) { aBody.innerHTML = ''; if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; } else { targetRecords.sort((a,b) => a.startDay - b.startDay).forEach(r => { aBody.innerHTML += `<tr class="border-b border-gray-800/20 hover:bg-gray-800/10 transition"><td class="py-3 pl-1 font-bold text-gray-200 flex items-center gap-1.5 min-w-[100px]"><input type="checkbox" ${r.isHost ? 'checked' : ''} onchange="toggleHostStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-red-500 rounded bg-[#121212] border-gray-700 cursor-pointer shrink-0"><span class="truncate max-w-[70px]">👤 ${r.name}</span></td><td class="py-3 text-gray-400 text-[11px] font-mono">${r.startDay}일~${r.endDay}일</td><td class="py-3 text-right pr-1 flex items-center justify-end gap-2"><span class="text-orange-400 font-bold text-[11px] shrink-0">${r.type}</span><button onclick="deleteScheduleRecord(${r.id})" class="bg-red-500/10 border border-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0">삭제</button></td></tr>`; }); } }
+            if(aBody) { aBody.innerHTML = ''; if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; } else { targetRecords.sort((a,b) => Number(a.startDay) - Number(b.startDay)).forEach(r => { aBody.innerHTML += `<tr class="border-b border-gray-800/20 hover:bg-gray-800/10 transition"><td class="py-3 pl-1 font-bold text-gray-200 flex items-center gap-1.5 min-w-[100px]"><input type="checkbox" ${r.isHost ? 'checked' : ''} onchange="toggleHostStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-red-500 rounded bg-[#121212] border-gray-700 cursor-pointer shrink-0"><span class="truncate max-w-[70px]">👤 ${r.name}</span></td><td class="py-3 text-gray-400 text-[11px] font-mono">${r.startDay}일~${r.endDay}일</td><td class="py-3 text-right pr-1 flex items-center justify-end gap-2"><span class="text-orange-400 font-bold text-[11px] shrink-0">${r.type}</span><button onclick="deleteScheduleRecord(${r.id})" class="bg-red-500/10 border border-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0">삭제</button></td></tr>`; }); } }
             renderHostRankTable(); renderHalfYearRankTable();
             
             let displayedMembers = [...staticCrewMembers];
@@ -881,11 +877,21 @@
             }
             
             const timelineContainer = document.getElementById('groupedCrewTimeline');
-            if(timelineContainer) { timelineContainer.innerHTML = ''; if (db.length === 0) { timelineContainer.innerHTML = `<div class="text-center py-12 text-gray-600 text-xs">기록 없음</div>`; return; }
-                const groupMap = {}; db.forEach(item => { if (!groupMap[item.name]) groupMap[item.name] = []; groupMap[item.name].push(item); });
+            if(timelineContainer) { 
+                timelineContainer.innerHTML = ''; 
+                if (db.length === 0) { 
+                    timelineContainer.innerHTML = `<div class="text-center py-12 text-gray-600 text-xs">기록 없음</div>`; 
+                    return; 
+                }
+                const groupMap = {}; 
+                db.forEach(item => { 
+                    if (!groupMap[item.name]) groupMap[item.name] = []; 
+                    groupMap[item.name].push(item); 
+                });
                 for (let crewNickname in groupMap) {
                     let innerListHTML = `<div class="bg-[#1c1c1c] rounded-xl p-4 border border-gray-800/60"><div class="text-sm font-black text-gray-200 border-b border-gray-800 pb-2 mb-2 flex justify-between items-center"><span>👤 크루: <span class="text-red-400">${crewNickname}</span></span><span class="text-[11px] bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-0.5 rounded-full font-bold">누적 ${groupMap[crewNickname].length}건</span></div><div class="space-y-2">`;
-                    groupMap[crewNickname].sort((a,b) => b.id - a.id).forEach(s => { 
+                    
+                    groupMap[crewNickname].sort((a,b) => Number(b.id) - Number(a.id)).forEach(s => { 
                         let typeIcon = '⛺';
                         if (s.type === '등산') typeIcon = '🥾';
                         else if (s.type === '번개') typeIcon = '⚡';
@@ -893,18 +899,22 @@
                         else if (s.type === '백패킹') typeIcon = '🎒';
 
                         let crownMarkup = s.isHost ? '<span class="text-amber-500 font-bold ml-1">👑</span>' : '';
-
                         let displayMonth = (s.month && !isNaN(s.month)) ? parseInt(s.month) : currentMonth;
 
-                        innerListHTML += `<div class="flex justify-start items-center gap-3 bg-[#121212] p-3 rounded-lg border border-gray-800/40">
-                            <span class="text-base shrink-0 select-none">${typeIcon}</span>
-                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 w-full">
-                                <span class="text-xs font-bold text-gray-300">${s.year}년 ${displayMonth}월 ${s.startDay}일 ~ ${s.endDay}일</span>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded border text-orange-400 bg-orange-500/5 border-orange-500/20 flex items-center gap-0.5">${s.durationText} · ${s.type}${crownMarkup}</span>
+                        // ⚡ [요구사항 1 반영]: 전체 누적 타임라인 내에 개별 레코드를 강제로 영구 삭제 처리할 수 있는 제어 단추 신설
+                        innerListHTML += `<div class="flex justify-between items-center gap-3 bg-[#121212] p-3 rounded-lg border border-gray-800/40 w-full">
+                            <div class="flex items-center gap-3">
+                                <span class="text-base shrink-0 select-none">${typeIcon}</span>
+                                <div class="flex flex-col">
+                                    <span class="text-xs font-bold text-gray-300">${s.year}년 ${displayMonth}월 ${s.startDay}일 ~ ${s.endDay}일</span>
+                                    <span class="text-[10px] font-bold text-orange-400 mt-0.5">${s.durationText} · ${s.type}${crownMarkup}</span>
+                                </div>
                             </div>
+                            <button onclick="deleteScheduleRecord(${s.id})" class="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0 active:scale-95">강제 삭제</button>
                         </div>`; 
                     });
-                    innerListHTML += `</div></div>`; timelineContainer.innerHTML += innerListHTML;
+                    innerListHTML += `</div></div>`; 
+                    timelineContainer.innerHTML += innerListHTML;
                 }
             }
         }
