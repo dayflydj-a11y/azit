@@ -207,9 +207,12 @@
                     <h3 class="text-base font-bold text-white">명부</h3>
                     <div class="flex flex-wrap items-center gap-1.5 mt-3">
                         <span class="text-[11px] text-gray-400 font-bold mr-1">⚡ 마스터 정렬:</span>
+                        <!-- ⚡ [다차원 정렬 시스템 이식]: 취소횟수순 정렬 및 등급순 정렬 필터 컴포넌트 추가 배치 완료 -->
                         <button onclick="setMemberSort('gender')" id="sortBtn_gender" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">성별순 정렬</button>
                         <button onclick="setMemberSort('birthYear')" id="sortBtn_birthYear" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">나이순 정렬</button>
-                        <button onclick="setMemberSort('none')" id="sortBtn_none" class="bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">정렬 초기화</button>
+                        <button onclick="setMemberSort('cancelCount')" id="sortBtn_cancelCount" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">취소횟수순 정렬</button>
+                        <button onclick="setMemberSort('grade')" id="sortBtn_grade" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">등급순 정렬</button>
+                        <button onclick="setMemberSort('none')" id="sortBtn_none" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">정렬 초기화</button>
                     </div>
                 </div>
                 <div class="overflow-x-auto no-scrollbar border border-gray-800 rounded-xl bg-[#111]">
@@ -240,7 +243,6 @@
         let db = [], staticCrewMembers = [];
         let isSubmitting = false;
         
-        // ⚡ [주소 최신화 완료]: 현찬님이 새로 제공해주신 2026년 최신 구글 앱스 스크립트 마스터 웹앱 경로 이식 완료
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbzpaJlFyVvcd3qcDTKXJYlgel7MzwourvAvXTW9jGHe5hS9kj-i07gAKmuynLpLgP7R/exec"; 
         
         function toggleGlobalLoadingOverlay(show, messageText) {
@@ -271,6 +273,21 @@
                 for(let i=0; i<decoded.length; i++) { result += String.fromCharCode(decoded.charCodeAt(i) - 3); }
                 return result;
             } catch(e) { return cipher; } 
+        }
+
+        // ⚡ [한국식 표준 표기법 엔진]: 영문 날짜 규격을 대한민국 표준 가독성 형식인 'YYYY. MM. DD.' 으로 리포맷팅하는 유틸 가동
+        function formatKoreanDate(dateStr) {
+            if (!dateStr || dateStr === '-' || dateStr === '미등록') return '-';
+            try {
+                let d = new Date(dateStr);
+                if (isNaN(d.getTime())) return dateStr;
+                let y = d.getFullYear();
+                let m = String(d.getMonth() + 1).padStart(2, '0');
+                let day = String(d.getDate()).padStart(2, '0');
+                return `${y}. ${m}. ${day}.`;
+            } catch (e) {
+                return dateStr;
+            }
         }
 
         window.onload = async function() { 
@@ -417,7 +434,8 @@
             
             if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
                 try {
-                    const query = `?action=insert_schedule&id=${Date.now()}&year=${currentYear}&month=${currentMonth}/&startDay=${rangeStart.day}&endDay=${rangeEnd.day}&name=${encodeURIComponent(nick)}&durationText=${encodeURIComponent(diff === 0 ? "무박" : `${diff}박`)}&type=${encodeURIComponent(type)}&timestamp=${encodeURIComponent(timestamp)}&isHost=false`;
+                    // ⚡ [결함 복구]: month 파라미터 뒤쪽에 오작동을 유발하던 슬래시 기호('/') 공정 제거 완료
+                    const query = `?action=insert_schedule&id=${Date.now()}&year=${currentYear}&month=${currentMonth}&startDay=${rangeStart.day}&endDay=${rangeEnd.day}&name=${encodeURIComponent(nick)}&durationText=${encodeURIComponent(diff === 0 ? "무박" : `${diff}박`)}&type=${encodeURIComponent(type)}&timestamp=${encodeURIComponent(timestamp)}&isHost=false`;
                     await fetch(CLEAN_URL + query, { mode: 'no-cors' });
                     await new Promise(resolve => setTimeout(resolve, 1500));
                 } catch(e) {
@@ -516,7 +534,15 @@
             if (cellElement.querySelector('input') || document.querySelector('.custom-datepicker')) return; 
             closeAllInlinePickers(); const currentMember = staticCrewMembers.find(m => m.nickname === nickname); if (!currentMember) return;
             let rawValue = currentMember[objectFieldKey] || '-'; if(objectFieldKey === 'name' || objectFieldKey === 'phone') rawValue = decryptData(rawValue);
-            if (objectFieldKey === 'joinDate' && rawValue && rawValue.includes('T')) { rawValue = rawValue.split('T')[0]; }
+            
+            // 인라인 편집창 기동 시 영문 전체 포맷 예외 처리 필터링
+            if (objectFieldKey === 'joinDate' && rawValue !== '-') {
+                try {
+                    let d = new Date(rawValue);
+                    if (!isNaN(d.getTime())) rawValue = d.toISOString().split('T')[0];
+                } catch(e){}
+            }
+
             const CLEAN_URL = GOOGLE_SHEET_URL.trim();
 
             if (['grade', 'gender', 'birthYear', 'cancelCount'].includes(objectFieldKey)) {
@@ -528,7 +554,6 @@
                 pickerContainer.style.left = (rect.left + window.pageXOffset + rect.width / 2) + 'px'; pickerContainer.style.transform = 'translateX(-50%)'; document.body.appendChild(pickerContainer);
 
                 let options = [];
-                // ⚡ [옵션 확장 및 치환]: '아지트'를 '아지트人'으로 변경하고 '부방장' 선택지 전격 추가 완료
                 if (objectFieldKey === 'grade') options = ['준회원', '정회원', '아지트人', '방장', '부방장'];
                 else if (objectFieldKey === 'gender') options = ['미기입', '남성', '여성'];
                 else if (objectFieldKey === 'cancelCount') options = ['0', '1', '2', '3', '4', '5', '6'];
@@ -545,7 +570,6 @@
                     
                     btn.innerText = displayLabel;
                     
-                    // 하위 호환 매핑 마이그레이션 케어
                     let isCurrent = (rawValue === optVal || (optVal === '-' && rawValue === '미기입') || (optVal === '아지트人' && rawValue === '아지트'));
                     if (objectFieldKey === 'cancelCount' && (rawValue === '-' || !rawValue) && optVal === '0') isCurrent = true;
                     if (isCurrent) btn.className = btn.className.replace('bg-[#151515] text-gray-300', 'bg-amber-500 text-black font-black');
@@ -576,7 +600,13 @@
                 });
             } 
             else if (objectFieldKey === 'joinDate') {
-                let initialDate = rawValue !== '-' ? rawValue : '2026-06-01';
+                let initialDate = '2026-06-01';
+                if (rawValue !== '-') {
+                    try {
+                        let d = new Date(rawValue);
+                        if (!isNaN(d.getTime())) initialDate = d.toISOString().split('T')[0];
+                    } catch(e){}
+                }
                 let parts = initialDate.split('-'); let calYear = parseInt(parts[0]) || 2026; let calMonth = parseInt(parts[1]) || 6;
                 const pickerContainer = document.createElement('div'); pickerContainer.className = 'custom-datepicker text-left text-white font-sans pointer-events-auto';
                 const rect = cellElement.getBoundingClientRect(); const pickerHeight = 245; pickerContainer.style.position = 'absolute';
@@ -738,9 +768,33 @@
             if(aBody) { aBody.innerHTML = ''; if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; } else { targetRecords.sort((a,b) => a.startDay - b.startDay).forEach(r => { aBody.innerHTML += `<tr class="border-b border-gray-800/20 hover:bg-gray-800/10 transition"><td class="py-3 pl-1 font-bold text-gray-200 flex items-center gap-1.5 min-w-[100px]"><input type="checkbox" ${r.isHost ? 'checked' : ''} onchange="toggleHostStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-red-500 rounded bg-[#121212] border-gray-700 cursor-pointer shrink-0"><span class="truncate max-w-[70px]">👤 ${r.name}</span></td><td class="py-3 text-gray-400 text-[11px] font-mono">${r.startDay}일~${r.endDay}일</td><td class="py-3 text-right pr-1 flex items-center justify-end gap-2"><span class="text-orange-400 font-bold text-[11px] shrink-0">${r.type}</span><button onclick="deleteScheduleRecord(${r.id})" class="bg-red-500/10 border border-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0">삭제</button></td></tr>`; }); } }
             renderHostRankTable(); renderHalfYearRankTable();
             
+            // ⚡ [다차원 정렬 핵심 파이프라인 설계]: 마스터 정렬 바 연동 로직
             let displayedMembers = [...staticCrewMembers];
-            if (memberSortCriteria === 'gender') displayedMembers.sort((a, b) => (a.gender || '').localeCompare(b.gender || ''));
-            else if (memberSortCriteria === 'birthYear') displayedMembers.sort((a, b) => (a.birthYear || '99').localeCompare(b.birthYear || '99'));
+            if (memberSortCriteria === 'gender') {
+                displayedMembers.sort((a, b) => (a.gender || '').localeCompare(b.gender || ''));
+            } else if (memberSortCriteria === 'birthYear') {
+                displayedMembers.sort((a, b) => (a.birthYear || '99').localeCompare(b.birthYear || '99'));
+            } else if (memberSortCriteria === 'cancelCount') {
+                // 누적 취소횟수 내림차순 정렬 (높은 사람 순서로 탑다운 배치)
+                displayedMembers.sort((a, b) => (parseInt(b.cancelCount) || 0) - (parseInt(a.cancelCount) || 0));
+            } else if (memberSortCriteria === 'grade') {
+                // 회원 등급별 명확한 위상 정렬 배치 (방장 > 부방장 > 아지트人 > 정회원 > 준회원)
+                const gradeOrder = { '방장': 1, '부방장': 2, '아지트人': 3, '아지트': 3, '정회원': 4, '준회원': 5 };
+                displayedMembers.sort((a, b) => (gradeOrder[a.grade] || 6) - (gradeOrder[b.grade] || 6));
+            }
+
+            // ⚡ [정렬 상태 하이라이트 인터랙션 UI 이식]
+            const sortCriteriaList = ['gender', 'birthYear', 'cancelCount', 'grade', 'none'];
+            sortCriteriaList.forEach(crit => {
+                const btn = document.getElementById('sortBtn_' + crit);
+                if (btn) {
+                    if (memberSortCriteria === crit) {
+                        btn.className = "bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition";
+                    } else {
+                        btn.className = "bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition";
+                    }
+                }
+            });
 
             const mBody = document.getElementById('masterCrewTableBody'); 
             if(mBody) { 
@@ -748,13 +802,14 @@
                 displayedMembers.forEach(m => { 
                     let decryptedName = decryptData(m.name); 
                     let decryptedPhone = decryptData(m.phone); 
-                    let displayJoinDate = m.joinDate ? m.joinDate.split('T')[0] : '-';
+                    
+                    // ⚡ 입장 날짜 한국 표준식 리포맷 엔진 통과
+                    let displayJoinDate = m.joinDate ? formatKoreanDate(m.joinDate) : '-';
                     
                     let displayGrade = m.grade && m.grade !== '-' ? m.grade : '준회원';
                     let gradeColor = "text-gray-400";
                     let renderedGrade = displayGrade;
                     
-                    // ⚡ [하위 호환 마이그레이션]: 기존에 '아지트'로 수집된 로우 데이터도 '아지트人'으로 완벽 자동 변환
                     if (displayGrade === '아지트') displayGrade = '아지트人';
 
                     if(displayGrade === '정회원') gradeColor = "text-green-400 font-bold";
@@ -762,12 +817,10 @@
                         renderedGrade = '아지트人';
                         gradeColor = "text-red-500 font-black tracking-wide";
                     }
-                    // ⚡ [방장 폰트 폭 커스텀 및 컬러 고도화 이식]: 아지트人(4글자)과 폭 정렬 일치화 완료 및 초고명도 레몬 골드 폰트 적용
                     else if(displayGrade === '방장') {
                         renderedGrade = '방&nbsp;&nbsp;장';
                         gradeColor = "text-[#FFEA00] font-black tracking-wider animate-pulse";
                     }
-                    // ⚡ [부방장 스타일 매핑 신설]
                     else if(displayGrade === '부방장') {
                         renderedGrade = '부방장';
                         gradeColor = "text-sky-400 font-bold tracking-wide";
@@ -803,10 +856,13 @@
 
                         let crownMarkup = s.isHost ? '<span class="text-amber-500 font-bold ml-1">👑</span>' : '';
 
+                        // ⚡ [오류 수정 강제 필터링 엔진]: s.month 값이 NaN 혹은 비정상 null 문자열일 때 현재 시스템 월로 안전하게 우회 변환 처리 완료
+                        let displayMonth = (s.month && !isNaN(s.month)) ? s.month : currentMonth;
+
                         innerListHTML += `<div class="flex justify-start items-center gap-3 bg-[#121212] p-3 rounded-lg border border-gray-800/40">
                             <span class="text-base shrink-0 select-none">${typeIcon}</span>
                             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 w-full">
-                                <span class="text-xs font-bold text-gray-300">${s.year}년 ${s.month}월 ${s.startDay}일 ~ ${s.endDay}일</span>
+                                <span class="text-xs font-bold text-gray-300">${s.year}년 ${displayMonth}월 ${s.startDay}일 ~ ${s.endDay}일</span>
                                 <span class="text-[10px] font-bold px-2 py-0.5 rounded border text-orange-400 bg-orange-500/5 border-orange-500/20 flex items-center gap-0.5">${s.durationText} · ${s.type}${crownMarkup}</span>
                             </div>
                         </div>`; 
