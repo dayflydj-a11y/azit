@@ -32,7 +32,6 @@
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
 
-    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이 레이어 -->
     <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
             <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
@@ -40,7 +39,6 @@
         </div>
     </div>
 
-    <!-- [PAGE 1] 아지트 인트로 커버 화면 -->
     <div id="pageCover" class="fixed inset-0 z-50 flex flex-col justify-between p-6 transition-all duration-700 ease-in-out transform bg-cover bg-center" 
          style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=1920&q=80');">
         <div class="text-center mt-6 lg:mt-10 animate-fade-in">
@@ -58,7 +56,6 @@
         </div>
     </div>
 
-    <!-- 신규회원 등록 모달 -->
     <div id="coverRegisterModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl transform scale-95 transition-all" id="coverRegBox">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
@@ -71,14 +68,12 @@
                 <div><label class="block text-gray-400 font-bold mb-1">성별</label><select id="regGender" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"><option value="-">미기입</option><option value="남성">남성</option><option value="여성">여성</option></select></div>
                 <div><label class="block text-gray-400 font-bold mb-1">출생 연도</label><input type="text" id="regBirthYear" placeholder="예시: 82" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
                 <div><label class="block text-gray-400 font-bold mb-1">연락처 (전화번호)</label><input type="text" id="regPhone" placeholder="예시: 000-0000-0000" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
-                <!-- ⚡ [요구사항 반영]: 연락처 밑에 단톡방 입장날짜 선택 칸 디자인 요소 강제 주입 -->
                 <div><label class="block text-gray-400 font-bold mb-1">단톡방 입장 날짜</label><input type="date" id="regJoinDate" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition text-gray-300"></div>
             </div>
             <button id="btnSubmitCrew" onclick="submitCoverRegister()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl text-xs mt-5 shadow-lg flex items-center justify-center transition active:scale-95">크루 가입 명부 저장하기 <i class="fa-solid fa-check ml-1"></i></button>
         </div>
     </div>
 
-    <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
     <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
         <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-3 sm:py-4 flex flex-col justify-between items-center gap-2">
             <div class="w-full flex justify-between items-center px-2">
@@ -130,7 +125,6 @@
         </main>
     </div>
 
-    <!-- [PAGE 3] 관리자 대시보드 메인 관제 화면 -->
     <div id="pageAdmin" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0e0e0e]">
         <header class="border-b border-gray-800 bg-[#151515] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-lg">
             <button onclick="switchPage('pageCalendar')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 일정 화면으로</button>
@@ -201,9 +195,15 @@
         </main>
     </div>
 
-    <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
     <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
-        <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md"><button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button><div class="text-sm sm:text-lg font-black text-white">크루원 목록 데이터</div><button onclick="openCoverRegisterModal()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded-xl text-[11px] transition active:scale-95">+ 크루 추가</button></header>
+        <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md">
+            <button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button>
+            <div class="text-sm sm:text-lg font-black text-white">크루원 목록 데이터</div>
+            <div class="flex items-center gap-2">
+                <button id="btnSaveAllCrewEdits" onclick="submitAllCrewEdits()" class="bg-amber-500 hover:bg-amber-600 text-black font-black px-4 py-2.5 rounded-xl text-[11px] transition active:scale-95 hidden animate-pulse">⚡ 변경사항 서버 반영</button>
+                <button onclick="openCoverRegisterModal()" class="bg-blue-600 text-white font-bold px-3 py-2 rounded-xl text-[11px] transition active:scale-95">+ 크루 추가</button>
+            </div>
+        </header>
         <main class="flex-1 max-w-7xl w-full mx-auto p-2 sm:p-4 lg:p-6">
             <div class="bg-[#141414] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-2xl">
                 <div class="mb-4">
@@ -244,6 +244,9 @@
         let memberSortCriteria = 'none', currentHostFilter = 'all';
         let db = [], staticCrewMembers = [];
         let isSubmitting = false;
+        
+        // ⚡ [메모리 버퍼 객체]: 변경된 모든 필드를 일시 저장하는 버퍼 캐시
+        window.pendingCrewUpdates = {};
         
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbw1wbZaaE-PYfswF1jVlmc8i9lsPirstS5P7CIhaqNTkiBZD7LFlDAA6-80bDi7ZuYK/exec"; 
         
@@ -490,7 +493,6 @@
             const m = document.getElementById('coverRegisterModal'); 
             if(m) { 
                 m.classList.remove('hidden'); 
-                // 모달 오픈 시 입장 날짜 입력창에 오늘 날짜(2026-06-05)를 기본 디폴트 인입
                 const todayStr = new Date().toISOString().split('T')[0];
                 const dateInput = document.getElementById('regJoinDate');
                 if (dateInput && !dateInput.value) dateInput.value = todayStr;
@@ -506,7 +508,6 @@
             const gender = document.getElementById('regGender').value; 
             const birth = document.getElementById('regBirthYear').value.trim(); 
             const phone = document.getElementById('regPhone').value.trim();
-            // ⚡ [요구사항 반영]: 사용자가 모달에서 선택한 입장날짜 데이터 파싱 및 가변 바인딩
             let joinDate = document.getElementById('regJoinDate').value;
             if (!joinDate) joinDate = new Date().toISOString().split('T')[0];
             
@@ -519,7 +520,6 @@
 
             if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
                 try {
-                    // 수립된 joinDate 변수를 GAS 마스터 컨트롤 쿼리 세션에 온전히 매핑
                     const query = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData(name))}&gender=${encodeURIComponent(gender)}&birthYear=${encodeURIComponent(birth || '-')}&phone=${encodeURIComponent(encryptData(phone))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(joinDate)}&cancelCount=${encodeURIComponent('0')}`;
                     await fetch(CLEAN_URL + query, { mode: 'no-cors' });
                     await new Promise(resolve => setTimeout(resolve, 1500));
@@ -600,8 +600,7 @@
                 } catch(e){}
             }
 
-            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
-
+            // ⚡ [요구사항 반영 1]: 인라인 항목 수정 시, 원격 fetch 처리를 중단하고 로컬 버퍼 수집 구조로 완전 스위칭
             if (['grade', 'gender', 'birthYear', 'cancelCount'].includes(objectFieldKey)) {
                 const pickerContainer = document.createElement('div'); 
                 pickerContainer.className = 'custom-datepicker text-left text-white font-sans p-2.5 space-y-1 max-h-[220px] overflow-y-auto no-scrollbar pointer-events-auto';
@@ -631,27 +630,22 @@
                     if (objectFieldKey === 'cancelCount' && (rawValue === '-' || !rawValue) && optVal === '0') isCurrent = true;
                     if (isCurrent) btn.className = btn.className.replace('bg-[#151515] text-gray-300', 'bg-amber-500 text-black font-black');
 
-                    btn.onclick = async (e) => {
+                    btn.onclick = (e) => {
                         e.stopPropagation(); e.preventDefault();
-                        if (isSubmitting) return; isSubmitting = true;
                         closeAllInlinePickers();
                         
-                        toggleGlobalLoadingOverlay(true, `[${nickname}] 크루원의 옵션 변경사항 클라우드 연동 중...`);
+                        // 전역 버퍼 객체에 기록 적재
+                        if (!window.pendingCrewUpdates[nickname]) window.pendingCrewUpdates[nickname] = {};
+                        window.pendingCrewUpdates[nickname][objectFieldKey] = optVal;
                         
-                        let sheetHeaderField = objectFieldKey;
-                        if (objectFieldKey === 'grade') sheetHeaderField = '회원 등급';
-                        if (objectFieldKey === 'cancelCount') sheetHeaderField = '누적 취소횟수';
-
-                        if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
-                            try {
-                                await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(nickname)}&field=${encodeURIComponent(sheetHeaderField)}&value=${encodeURIComponent(optVal)}`, { mode: 'no-cors' }); 
-                                await new Promise(resolve => setTimeout(resolve, 1000));
-                            } catch(err) { console.error(err); }
-                        } else { currentMember[objectFieldKey] = optVal; localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); }
-                        isSubmitting = false; 
-                        await fetchCloudData(); 
+                        // 가시적인 속도감을 위해 화면 뷰 객체 선 반영
+                        currentMember[objectFieldKey] = optVal;
+                        
+                        // 마스터 반영 버튼 상향 노출
+                        const saveBtn = document.getElementById('btnSaveAllCrewEdits');
+                        if (saveBtn) saveBtn.classList.remove('hidden');
+                        
                         updateAdminDashboard(); 
-                        toggleGlobalLoadingOverlay(false);
                     };
                     pickerContainer.appendChild(btn);
                 });
@@ -677,20 +671,19 @@
                     const gridBody = document.createElement('div'); gridBody.className = 'grid grid-cols-7 gap-1 text-center text-xs font-mono'; const totalDays = new Date(y, m, 0).getDate(); const startIdx = new Date(y, m - 1, 1).getDay(); for(let i = 0; i < startIdx; i++) { const emptyCell = document.createElement('div'); gridBody.appendChild(emptyCell); }
                     for(let d = 1; d <= totalDays; d++) {
                         const dayCell = document.createElement('div'); dayCell.innerText = d; dayCell.className = 'py-1 rounded cursor-pointer hover:bg-amber-500 hover:text-black font-bold transition text-gray-300'; const currentStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; if(currentStr === rawValue) dayCell.className = 'py-1 rounded bg-amber-500 text-black font-black';
-                        dayCell.onclick = async (e) => { 
+                        dayCell.onclick = (e) => { 
                             e.stopPropagation(); e.preventDefault();
-                            if (isSubmitting) return; isSubmitting = true;
                             closeAllInlinePickers();
                             
-                            toggleGlobalLoadingOverlay(true, `[${nickname}] 크루 단톡방 입장날짜 서버 싱크 업데이트 중...`);
+                            if (!window.pendingCrewUpdates[nickname]) window.pendingCrewUpdates[nickname] = {};
+                            window.pendingCrewUpdates[nickname]['joinDate'] = currentStr;
                             
-                            try {
-                                if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(nickname)}&field=joinDate&value=${encodeURIComponent(currentStr)}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { currentMember.joinDate = currentStr; localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); }
-                            } catch(err) { console.error(err); }
-                            isSubmitting = false; 
-                            await fetchCloudData(); 
+                            currentMember.joinDate = currentStr;
+                            
+                            const saveBtn = document.getElementById('btnSaveAllCrewEdits');
+                            if (saveBtn) saveBtn.classList.remove('hidden');
+                            
                             updateAdminDashboard();
-                            toggleGlobalLoadingOverlay(false);
                         }; gridBody.appendChild(dayCell);
                     }
                     pickerContainer.appendChild(gridBody);
@@ -699,20 +692,80 @@
             } 
             else {
                 const inputComponent = document.createElement('input'); inputComponent.type = 'text'; inputComponent.value = rawValue; inputComponent.className = 'w-full bg-[#121212] border border-amber-500 rounded px-2 py-1 text-xs text-white focus:outline-none'; cellElement.innerHTML = ''; cellElement.appendChild(inputComponent); inputComponent.focus();
-                const saveChanges = async () => { 
+                const saveChanges = () => { 
                     let updatedValue = inputComponent.value.trim(); if (!updatedValue) updatedValue = '-'; 
                     let finalVal = (objectFieldKey=='name' || objectFieldKey=='phone') ? encryptData(updatedValue) : updatedValue; 
                     
-                    toggleGlobalLoadingOverlay(true, `[${nickname}] 정보 갱신 처리 중...`);
+                    if (!window.pendingCrewUpdates[nickname]) window.pendingCrewUpdates[nickname] = {};
+                    window.pendingCrewUpdates[nickname][objectFieldKey] = finalVal;
                     
-                    try {
-                        if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(nickname)}&field=${encodeURIComponent(objectFieldKey)}&value=${encodeURIComponent(finalVal)}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { currentMember[objectFieldKey] = finalVal; localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); }
-                    } catch(err) { console.error(err); }
-                    await fetchCloudData(); 
-                    updateAdminDashboard(); 
-                    toggleGlobalLoadingOverlay(false);
+                    currentMember[objectFieldKey] = finalVal;
+                    
+                    const saveBtn = document.getElementById('btnSaveAllCrewEdits');
+                    if (saveBtn) saveBtn.classList.remove('hidden');
+                    
+                    updateAdminDashboard();
                 };
                 inputComponent.onkeydown = (e) => { if (e.key === 'Enter') saveChanges(); }; inputComponent.onblur = saveChanges;
+            }
+        }
+
+        // ⚡ [요구사항 반영 2]: 대기 중인 로컬 변경 큐를 일괄 순차 트랜잭션 처리하는 마스터 함수
+        async function submitAllCrewEdits() {
+            if (!window.pendingCrewUpdates || Object.keys(window.pendingCrewUpdates).length === 0) {
+                alert('반영할 변경사항이 존재하지 않습니다.');
+                return;
+            }
+            
+            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+            if (!CLEAN_URL || CLEAN_URL === "아지트크루여기로") {
+                localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
+                window.pendingCrewUpdates = {};
+                const saveBtn = document.getElementById('btnSaveAllCrewEdits');
+                if (saveBtn) saveBtn.classList.add('hidden');
+                alert('✨ [로컬 오프라인 모드] 로컬 캐시에 모든 데이터가 완벽히 저장되었습니다.');
+                updateAdminDashboard();
+                return;
+            }
+            
+            toggleGlobalLoadingOverlay(true, "📋 대기 중인 모든 크루 변경사항을<br>구글 데이터 서버에 일괄 동기화 이관 중...");
+            
+            try {
+                // 트랜잭션 큐 배열 추출
+                let tasks = [];
+                for (let nickname in window.pendingCrewUpdates) {
+                    for (let field in window.pendingCrewUpdates[nickname]) {
+                        let sheetHeaderField = field;
+                        if (field === 'grade') sheetHeaderField = '회원 등급';
+                        if (field === 'cancelCount') sheetHeaderField = '누적 취소횟수';
+                        
+                        let val = window.pendingCrewUpdates[nickname][field];
+                        tasks.push({ nickname, field: sheetHeaderField, value: val });
+                    }
+                }
+                
+                // GAS 트래픽 과부하 방지를 위한 순차(Sequential) 비동기 처리
+                for (let i = 0; i < tasks.length; i++) {
+                    let task = tasks[i];
+                    toggleGlobalLoadingOverlay(true, `🔄 일괄 반영 처리 중... (${i + 1}/${tasks.length} 건)<br>[${task.nickname}]의 ${task.field} 데이터 압축 이송 중...`);
+                    await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(task.nickname)}&field=${encodeURIComponent(task.field)}&value=${encodeURIComponent(task.value)}`, { mode: 'no-cors' });
+                    // 가벼운 지연을 주어 트랜잭션 안정성 보장
+                    await new Promise(resolve => setTimeout(resolve, 350));
+                }
+                
+                // 버퍼 클리어 및 버튼 숨김
+                window.pendingCrewUpdates = {};
+                const saveBtn = document.getElementById('btnSaveAllCrewEdits');
+                if (saveBtn) saveBtn.classList.add('hidden');
+                
+                alert(`🎉 총 ${tasks.length}건의 모든 크루 데이터 변경사항이 구글 클라우드에 일괄 완벽 갱신되었습니다.`);
+                await fetchCloudData();
+                updateAdminDashboard();
+            } catch (e) {
+                console.error(e);
+                alert('🔴 대량 데이터 패킷 이송 중 오류가 계측되었습니다. 네트워크 연결 확인 후 다시 시도해 주십시오.');
+            } finally {
+                toggleGlobalLoadingOverlay(false);
             }
         }
 
@@ -909,6 +962,9 @@
             const mBody = document.getElementById('masterCrewTableBody'); 
             if(mBody) { 
                 mBody.innerHTML = ''; 
+                // ⚡ [요구사항 반영 3]: 버퍼 객체에 변경 사항이 적재되어 반영을 대기 중인 셀을 실시간 추적 및 황색 하이라이팅 지시 함수
+                let isPending = (nk, fd) => (window.pendingCrewUpdates && window.pendingCrewUpdates[nk] && window.pendingCrewUpdates[nk][fd] !== undefined);
+                
                 displayedMembers.forEach(m => { 
                     let decryptedName = decryptData(m.name); 
                     let decryptedPhone = decryptData(m.phone); 
@@ -938,13 +994,13 @@
                     
                     mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
                         <td class="py-4.5 px-4 font-bold text-white select-none">👤 ${m.nickname}</td>
-                        <td class="py-4.5 px-3.5 editable-cell font-medium" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decryptedName}</td>
-                        <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender}</td>
-                        <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'}</td>
-                        <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decryptedPhone}</td>
-                        <td class="py-4.5 px-3.5 editable-cell ${gradeColor}" onclick="startInlineEdit(this, '${m.nickname}', 'grade')">${renderedGrade}</td>
-                        <td class="py-4.5 px-3.5 editable-cell text-gray-300 font-mono tracking-tight" onclick="startInlineEdit(this, '${m.nickname}', 'joinDate')">${displayJoinDate}</td>
-                        <td class="py-4.5 px-3.5 editable-cell text-orange-400 font-mono font-bold" onclick="startInlineEdit(this, '${m.nickname}', 'cancelCount')">${displayCancelCount}회</td>
+                        <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decryptedName} ${isPending(m.nickname, 'name') ? '⚡' : ''}</td>
+                        <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold ${isPending(m.nickname, 'gender') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender} ${isPending(m.nickname, 'gender') ? '⚡' : ''}</td>
+                        <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold ${isPending(m.nickname, 'birthYear') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'} ${isPending(m.nickname, 'birthYear') ? '⚡' : ''}</td>
+                        <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400 ${isPending(m.nickname, 'phone') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decryptedPhone} ${isPending(m.nickname, 'phone') ? '⚡' : ''}</td>
+                        <td class="py-4.5 px-3.5 editable-cell ${isPending(m.nickname, 'grade') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : gradeColor}" onclick="startInlineEdit(this, '${m.nickname}', 'grade')">${renderedGrade} ${isPending(m.nickname, 'grade') ? '⚡' : ''}</td>
+                        <td class="py-4.5 px-3.5 editable-cell text-gray-300 font-mono tracking-tight ${isPending(m.nickname, 'joinDate') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'joinDate')">${displayJoinDate} ${isPending(m.nickname, 'joinDate') ? '⚡' : ''}</td>
+                        <td class="py-4.5 px-3.5 editable-cell text-orange-400 font-mono font-bold ${isPending(m.nickname, 'cancelCount') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'cancelCount')">${displayCancelCount}회 ${isPending(m.nickname, 'cancelCount') ? '⚡' : ''}</td>
                         <td class="py-4.5 px-4 text-center"><button class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl font-black text-xs transition active:scale-95" onclick="deleteMemberRecord('${m.nickname}')">삭제</button></td>
                     </tr>`; 
                 }); 
