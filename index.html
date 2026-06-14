@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AZIT - 같이의 가치</title>
+    
+    <!-- ⚡ [PWA 핵심 이식]: 모바일 단독 앱 구동 매니페스트 및 iOS 사파리 전용 웹앱 메타 패킷 탑재 -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AZIT">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/846/846355.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link class="html-embed" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -32,6 +40,7 @@
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
 
+    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이 레이어 -->
     <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
             <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
@@ -39,6 +48,7 @@
         </div>
     </div>
 
+    <!-- [PAGE 1] 아지트 인트로 커버 화면 -->
     <div id="pageCover" class="fixed inset-0 z-50 flex flex-col justify-between p-6 transition-all duration-700 ease-in-out transform bg-cover bg-center" 
          style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=1920&q=80');">
         <div class="text-center mt-6 lg:mt-10 animate-fade-in">
@@ -56,6 +66,7 @@
         </div>
     </div>
 
+    <!-- 신규회원 등록 모달 -->
     <div id="coverRegisterModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl transform scale-95 transition-all" id="coverRegBox">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
@@ -67,13 +78,14 @@
                 <div><label class="block text-gray-400 font-bold mb-1">본명 (실명)</label><input type="text" id="regRealName" placeholder="예시: 홍길동" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
                 <div><label class="block text-gray-400 font-bold mb-1">성별</label><select id="regGender" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"><option value="-">미기입</option><option value="남성">남성</option><option value="여성">여성</option></select></div>
                 <div><label class="block text-gray-400 font-bold mb-1">출생 연도</label><input type="text" id="regBirthYear" placeholder="예시: 82" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
-                <div><label class="block text-gray-400 font-bold mb-1">연락처 (전화번호)</label><input type="text" id="regPhone" placeholder="예시: 000-0000-0000" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
+                <div><label class="block text-gray-400 font-bold mb-1">連絡處 (전화번호)</label><input type="text" id="regPhone" placeholder="예시: 000-0000-0000" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
                 <div><label class="block text-gray-400 font-bold mb-1">단톡방 입장 날짜</label><input type="date" id="regJoinDate" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition text-gray-300"></div>
             </div>
             <button id="btnSubmitCrew" onclick="submitCoverRegister()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl text-xs mt-5 shadow-lg flex items-center justify-center transition active:scale-95">크루 가입 명부 저장하기 <i class="fa-solid fa-check ml-1"></i></button>
         </div>
     </div>
 
+    <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
     <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
         <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-3 sm:py-4 flex flex-col justify-between items-center gap-2">
             <div class="w-full flex justify-between items-center px-2">
@@ -125,6 +137,7 @@
         </main>
     </div>
 
+    <!-- [PAGE 3] 관리자 대시보드 메인 관제 화면 -->
     <div id="pageAdmin" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0e0e0e]">
         <header class="border-b border-gray-800 bg-[#151515] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-lg">
             <button onclick="switchPage('pageCalendar')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 일정 화면으로</button>
@@ -165,7 +178,7 @@
             
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
-                    <h3 class="text-base font-bold text-gray-200 mb-3 flex items-center gap-2 border-b border-gray-800 pb-3"><i class="fa-solid fa-users text-blue-400"></i> <span id="summaryMonthAttendeesLabel">6월</span> 일정 참여 명단</h3>
+                    <h3 class="text-base font-bold text-gray-200 mb-3 flex items-center gap-2 border-b border-gray-800 pb-3"><i class="fa-solid fa-users text-blue-400"></i> <span id="summaryMonthAttendeesLabel">6월</span> 일정 참여 명단 (방장/찬조 체크)</h3>
                     <div class="max-h-[300px] overflow-y-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="monthAttendeeListBody" class="divide-y divide-gray-800/30"></tbody></table></div>
                 </div>
                 
@@ -187,6 +200,22 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+                    <div class="flex flex-col xl:flex-row xl:items-center justify-between border-b border-gray-800 pb-2 mb-4 gap-2">
+                        <h3 class="text-base font-bold text-gray-200 flex items-center gap-2"><i class="fa-solid fa-hand-holding-heart text-emerald-400"></i> 찬조자 순위</h3>
+                        <div class="overflow-x-auto no-scrollbar flex whitespace-nowrap gap-1 bg-[#121212] p-1 rounded-lg border border-gray-800 text-[10px] font-bold max-w-full">
+                            <button onclick="setSponsorRankFilter('all')" id="btnSponsor_all" class="px-2.5 py-1 rounded bg-emerald-500 text-black font-black transition shrink-0">전체</button>
+                            <button onclick="setSponsorRankFilter('h1')" id="btnSponsor_h1" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">전반기</button>
+                            <button onclick="setSponsorRankFilter('h2')" id="btnSponsor_h2" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">하반기</button>
+                            <button onclick="setSponsorRankFilter('q1')" id="btnSponsor_q1" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">1Q</button>
+                            <button onclick="setSponsorRankFilter('q2')" id="btnSponsor_q2" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">2Q</button>
+                            <button onclick="setSponsorRankFilter('q3')" id="btnSponsor_q3" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">3Q</button>
+                            <button onclick="setSponsorRankFilter('q4')" id="btnSponsor_q4" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">4Q</button>
+                        </div>
+                    </div>
+                    <div class="max-h-[300px] overflow-y-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="sponsorRankTableBody" class="divide-y divide-gray-800/40"></tbody></table></div>
+                </div>
+
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 p-4 sm:p-5 rounded-2xl flex flex-col max-h-[640px] shadow-xl">
                     <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center gap-2 border-b border-gray-800 pb-3 shrink-0"><i class="fa-solid fa-folder-open text-green-400"></i> 전체 누적 타임라인</h3>
                     <div id="groupedCrewTimeline" class="space-y-4 overflow-y-auto pr-1 no-scrollbar flex-1"></div>
@@ -195,6 +224,7 @@
         </main>
     </div>
 
+    <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
     <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
         <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md">
             <button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button>
@@ -212,23 +242,21 @@
                         <span class="text-[11px] text-gray-400 font-bold mr-1">⚡ 마스터 정렬:</span>
                         <button onclick="setMemberSort('gender')" id="sortBtn_gender" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">성별순 정렬</button>
                         <button onclick="setMemberSort('birthYear')" id="sortBtn_birthYear" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">나이순 정렬</button>
-                        <button onclick="setMemberSort('cancelCount')" id="sortBtn_cancelCount" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">취소횟수순 정렬</button>
                         <button onclick="setMemberSort('grade')" id="sortBtn_grade" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">등급순 정렬</button>
                         <button onclick="setMemberSort('none')" id="sortBtn_none" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">정렬 초기화</button>
                     </div>
                 </div>
                 <div class="overflow-x-auto no-scrollbar border border-gray-800 rounded-xl bg-[#111]">
-                    <table class="w-full text-left text-xs min-w-[880px]">
+                    <table class="w-full text-left text-xs min-w-[760px]">
                         <thead>
                             <tr class="border-b border-gray-800 text-gray-400 bg-[#1c1c1c] font-semibold">
-                                <th class="py-3.5 px-4 w-[11%]">크루 닉네임</th>
-                                <th class="py-3.5 px-3 w-[11%]">실명 (암호화)</th>
-                                <th class="py-3.5 px-3 text-red-400 w-[9%]">성별</th>
-                                <th class="py-3.5 px-3 text-amber-400 w-[9%]">출생 연도</th>
-                                <th class="py-3.5 px-3 w-[14%]">연락처 (암호화)</th>
-                                <th class="py-3.5 px-3 text-green-400 w-[11%]">회원 등급</th>
+                                <th class="py-3.5 px-4 w-[13%]">크루 닉네임</th>
+                                <th class="py-3.5 px-3 w-[13%]">실명 (암호화)</th>
+                                <th class="py-3.5 px-3 text-red-400 w-[10%]">성별</th>
+                                <th class="py-3.5 px-3 text-amber-400 w-[11%]">출생 연도</th>
+                                <th class="py-3.5 px-3 w-[16%]">연락처 (암호화)</th>
+                                <th class="py-3.5 px-3 text-green-400 w-[13%]">회원 등급</th>
                                 <th class="py-3.5 px-3 w-[14%]">단톡방 입장 날짜</th>
-                                <th class="py-3.5 px-3 text-orange-400 w-[11%]">누적 취소횟수</th>
                                 <th class="py-3.5 px-4 text-center w-[10%]">제어</th>
                             </tr>
                         </thead>
@@ -241,11 +269,10 @@
 
     <script>
         let currentYear = 2026, currentMonth = 6, rangeStart = null, rangeEnd = null, selectedActivity = '', currentHalfRankFilter = 1;
-        let memberSortCriteria = 'none', currentHostFilter = 'all';
+        let memberSortCriteria = 'none', currentHostFilter = 'all', currentSponsorFilter = 'all';
         let db = [], staticCrewMembers = [];
         let isSubmitting = false;
         
-        // ⚡ [메모리 버퍼 객체]: 변경된 모든 필드를 일시 저장하는 버퍼 캐시
         window.pendingCrewUpdates = {};
         
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbw1wbZaaE-PYfswF1jVlmc8i9lsPirstS5P7CIhaqNTkiBZD7LFlDAA6-80bDi7ZuYK/exec"; 
@@ -301,7 +328,14 @@
                 if(!e.target.closest('.editable-cell') && !e.target.closest('.custom-datepicker')) { 
                     closeAllInlinePickers(); 
                 } 
-            }); 
+            });
+            
+            // ⚡ [PWA 서비스 워커 마스터 엔진 가동 비동기 루틴 주입]
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(() => console.log('AZIT PWA 엔진 백엔드 백그라운드 기동 완료'))
+                    .catch((err) => console.error('PWA 백엔드 엔진 컴파일 실패', err));
+            }
         };
         
         function refreshUI() { renderCalendar(); updateLabels(); updateAdminDashboard(); }
@@ -380,15 +414,32 @@
                 }
                 dayCell.appendChild(badgeContainer);
                 if (rangeStart && rangeStart.year === currentYear && rangeStart.month === currentMonth && rangeStart.day === day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]'); }
-                else if (rangeEnd && rangeEnd.year === currentYear && rangeEnd.month === currentMonth && rangeEnd.day === day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]'); }
+                else if (rangeEnd && rangeEnd.year === currentYear && rangeEnd.month === currentMonth && day === rangeEnd.day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]'); }
                 else if (rangeStart && rangeEnd && rangeStart.year === currentYear && rangeStart.month === currentMonth && day > rangeStart.day && day < rangeEnd.day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500/20 border-dashed border-red-500/40 text-red-400'); }
                 dayCell.onclick = () => handleDateClick(day); container.appendChild(dayCell);
             }
         }
 
         function handleDateClick(day) {
-            if (!rangeStart || (rangeStart && rangeEnd && rangeStart.day !== rangeEnd.day)) { rangeStart = { year: currentYear, month: currentMonth, day: day }; rangeEnd = { year: currentYear, month: currentMonth, day: day }; selectedActivity = ''; }
-            else if (rangeStart && rangeEnd && rangeStart.day === rangeEnd.day) { if (day > rangeStart.day) { rangeEnd = { year: currentYear, month: currentMonth, day: day }; selectedActivity = ''; } else { rangeStart = { year: currentYear, month: currentMonth, day: day }; rangeEnd = { year: currentYear, month: currentMonth, day: day }; selectedActivity = ''; } }
+            if (!rangeStart || (rangeStart && rangeEnd && rangeStart.day !== rangeEnd.day)) { 
+                rangeStart = { year: currentYear, month: currentMonth, day: day }; 
+                rangeEnd = { year: currentYear, month: currentMonth, day: day }; 
+                selectedActivity = ''; 
+            }
+            else if (rangeStart && rangeEnd && rangeStart.day === rangeEnd.day) { 
+                if (Math.abs(day - rangeStart.day) <= 2) {
+                    if (day >= rangeStart.day) { 
+                        rangeEnd = { year: currentYear, month: currentMonth, day: day }; 
+                    } else { 
+                        rangeEnd = rangeStart;
+                        rangeStart = { year: currentYear, month: currentMonth, day: day }; 
+                    } 
+                    selectedActivity = ''; 
+                } else {
+                    alert('⚠️ 아지트 일정 규칙 알림:\n선택하신 시작 날짜 기준 앞뒤 2일 간격(최대 2박 3일 일정) 이내의 범위만 지정 및 조율이 가능합니다.');
+                    return;
+                }
+            }
             syncConfigCardUI(); renderCalendar();
         }
 
@@ -455,7 +506,7 @@
                 if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
                     try {
                         const crewQuery = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData('-'))}&gender=${encodeURIComponent('-')}&birthYear=${encodeURIComponent('-')}&phone=${encodeURIComponent(encryptData('-'))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(todayStr)}&cancelCount=${encodeURIComponent('0')}`;
-                        await fetch(CLEAN_URL + crewQuery, { mode: 'no-cors' });
+                        await fetch(crewQuery, { mode: 'no-cors' });
                     } catch(e) { console.error("Auto Background Register Error", e); }
                 } else {
                     staticCrewMembers.push({ nickname: nick, name: encryptData('-'), gender: '-', birthYear: '-', phone: encryptData('-'), grade: '준회원', joinDate: todayStr, cancelCount: '0' });
@@ -465,7 +516,7 @@
             
             if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
                 try {
-                    const query = `?action=insert_schedule&id=${Date.now()}&year=${currentYear}&month=${currentMonth}&startDay=${rangeStart.day}&endDay=${rangeEnd.day}&name=${encodeURIComponent(nick)}&durationText=${encodeURIComponent(diff === 0 ? "무박" : `${diff}박`)}&type=${encodeURIComponent(type)}&timestamp=${encodeURIComponent(timestamp)}&isHost=false`;
+                    const query = `?action=insert_schedule&id=${Date.now()}&year=${currentYear}&month=${currentMonth}&startDay=${rangeStart.day}&endDay=${rangeEnd.day}&name=${encodeURIComponent(nick)}&durationText=${encodeURIComponent(diff === 0 ? "무박" : `${diff}박`)}&type=${encodeURIComponent(type)}&timestamp=${encodeURIComponent(timestamp)}&isHost=false&isSponsor=false`;
                     await fetch(CLEAN_URL + query, { mode: 'no-cors' });
                     await new Promise(resolve => setTimeout(resolve, 1500));
                 } catch(e) {
@@ -476,7 +527,7 @@
                     toggleGlobalLoadingOverlay(false);
                 }
             } else {
-                db.push({ id: Date.now(), year: currentYear, month: currentMonth, startDay: rangeStart.day, endDay: rangeEnd.day, name: nick, durationText: diff === 0 ? "무박" : `${diff}박`, type: type, timestamp: timestamp, isHost: false });
+                db.push({ id: Date.now(), year: currentYear, month: currentMonth, startDay: rangeStart.day, endDay: rangeEnd.day, name: nick, durationText: diff === 0 ? "무박" : `${diff}박`, type: type, timestamp: timestamp, isHost: false, isSponsor: false });
                 localStorage.setItem('azit_db', JSON.stringify(db));
                 isSubmitting = false;
                 toggleGlobalLoadingOverlay(false);
@@ -569,6 +620,35 @@
             else { sortedHosts.forEach((h, i) => { if (h.count > 0) { hostBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-amber-400 font-mono font-bold">${h.count}회 개설</td></tr>`; } }); }
         }
 
+        function setSponsorRankFilter(type) {
+            currentSponsorFilter = type; const filters = ['all', 'h1', 'h2', 'q1', 'q2', 'q3', 'q4'];
+            filters.forEach(f => { const b = document.getElementById(`btnSponsor_${f}`); if(b) { if(f === type) b.className = 'px-2.5 py-1 rounded bg-emerald-500 text-black font-black transition shrink-0'; else b.className = 'px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0'; } });
+            renderSponsorRankTable();
+        }
+
+        function renderSponsorRankTable() {
+            const sponsorBody = document.getElementById('sponsorRankTableBody'); if (!sponsorBody) return; sponsorBody.innerHTML = '';
+            const sponsorFreq = {}; staticCrewMembers.forEach(m => sponsorFreq[m.nickname] = 0);
+            
+            let filteredDb = db.filter(item => {
+                let isSponsorTrue = Number(item.isSponsor) === 1 || item.isSponsor === true || String(item.isSponsor).toLowerCase() === 'true';
+                let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
+                return cleanYear === currentYear && isSponsorTrue;
+            });
+            const f = currentSponsorFilter;
+            if (f === 'h1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 6; }); 
+            else if (f === 'h2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 12; }); 
+            else if (f === 'q1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 3; }); 
+            else if (f === 'q2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 4 && m <= 6; }); 
+            else if (f === 'q3') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 9; }); 
+            else if (f === 'q4') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 10 && m <= 12; });
+            
+            filteredDb.forEach(item => { sponsorFreq[item.name] = (sponsorFreq[item.name] || 0) + 1; });
+            const sortedSponsors = Object.keys(sponsorFreq).map(name => ({ name, count: sponsorFreq[name] })).sort((a, b) => b.count - a.count);
+            if (sortedSponsors.filter(h => h.count > 0).length === 0) { sponsorBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">찬조 내역이 없습니다.</td></tr>`; } 
+            else { sortedSponsors.forEach((h, i) => { if (h.count > 0) { sponsorBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-emerald-400 font-mono font-bold">${h.count}회 찬조</td></tr>`; } }); }
+        }
+
         async function toggleHostStatus(recordId, isChecked) {
             toggleGlobalLoadingOverlay(true, "방장 기여도 가중치 변경 사항 동기화 중...");
             const record = db.find(item => item.id === recordId);
@@ -588,6 +668,25 @@
             toggleGlobalLoadingOverlay(false);
         }
 
+        async function toggleSponsorStatus(recordId, isChecked) {
+            toggleGlobalLoadingOverlay(true, "찬조자 기여도 변경 사항 동기화 중...");
+            const record = db.find(item => item.id === recordId);
+            if (record) { 
+                record.isSponsor = isChecked; 
+                const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+                if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
+                    try {
+                        await fetch(`${CLEAN_URL}?action=update_schedule_sponsor&id=${recordId}&isSponsor=${isChecked}`, { mode: 'no-cors' }); 
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    } catch(e) { console.error(e); }
+                    await fetchCloudData(); refreshUI();
+                }
+                else localStorage.setItem('azit_db', JSON.stringify(db));
+                renderSponsorRankTable(); 
+            }
+            toggleGlobalLoadingOverlay(false);
+        }
+
         function startInlineEdit(cellElement, nickname, objectFieldKey) {
             if (cellElement.querySelector('input') || document.querySelector('.custom-datepicker')) return; 
             closeAllInlinePickers(); const currentMember = staticCrewMembers.find(m => m.nickname === nickname); if (!currentMember) return;
@@ -600,8 +699,9 @@
                 } catch(e){}
             }
 
-            // ⚡ [요구사항 반영 1]: 인라인 항목 수정 시, 원격 fetch 처리를 중단하고 로컬 버퍼 수집 구조로 완전 스위칭
-            if (['grade', 'gender', 'birthYear', 'cancelCount'].includes(objectFieldKey)) {
+            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+
+            if (['grade', 'gender', 'birthYear'].includes(objectFieldKey)) {
                 const pickerContainer = document.createElement('div'); 
                 pickerContainer.className = 'custom-datepicker text-left text-white font-sans p-2.5 space-y-1 max-h-[220px] overflow-y-auto no-scrollbar pointer-events-auto';
                 const rect = cellElement.getBoundingClientRect(); 
@@ -612,7 +712,6 @@
                 let options = [];
                 if (objectFieldKey === 'grade') options = ['준회원', '정회원', '아지트人', '방장', '부방장'];
                 else if (objectFieldKey === 'gender') options = ['미기입', '남성', '여성'];
-                else if (objectFieldKey === 'cancelCount') options = ['0', '1', '2', '3', '4', '5', '6'];
                 else if (objectFieldKey === 'birthYear') { options = ['-']; for (let y = 1978; y <= 2005; y++) { options.push(String(y).substring(2, 4)); } }
 
                 options.forEach(optVal => {
@@ -620,28 +719,22 @@
                     btn.className = 'w-full text-left px-3 py-2.5 text-xs rounded-xl hover:bg-amber-500 hover:text-black font-bold transition flex justify-between items-center bg-[#151515] border border-gray-800/60 text-gray-300';
                     
                     let displayLabel = optVal;
-                    if (objectFieldKey === 'cancelCount') displayLabel = optVal + '회';
-                    else if (objectFieldKey === 'birthYear' && optVal !== '-') displayLabel = optVal + '년생';
+                    if (objectFieldKey === 'birthYear' && optVal !== '-') displayLabel = optVal + '년생';
                     else if (objectFieldKey === 'birthYear' && optVal === '-') displayLabel = '미기입';
                     
                     btn.innerText = displayLabel;
                     
                     let isCurrent = (rawValue === optVal || (optVal === '-' && rawValue === '미기입') || (optVal === '아지트人' && rawValue === '아지트'));
-                    if (objectFieldKey === 'cancelCount' && (rawValue === '-' || !rawValue) && optVal === '0') isCurrent = true;
                     if (isCurrent) btn.className = btn.className.replace('bg-[#151515] text-gray-300', 'bg-amber-500 text-black font-black');
 
                     btn.onclick = (e) => {
                         e.stopPropagation(); e.preventDefault();
                         closeAllInlinePickers();
                         
-                        // 전역 버퍼 객체에 기록 적재
                         if (!window.pendingCrewUpdates[nickname]) window.pendingCrewUpdates[nickname] = {};
                         window.pendingCrewUpdates[nickname][objectFieldKey] = optVal;
                         
-                        // 가시적인 속도감을 위해 화면 뷰 객체 선 반영
                         currentMember[objectFieldKey] = optVal;
-                        
-                        // 마스터 반영 버튼 상향 노출
                         const saveBtn = document.getElementById('btnSaveAllCrewEdits');
                         if (saveBtn) saveBtn.classList.remove('hidden');
                         
@@ -679,7 +772,6 @@
                             window.pendingCrewUpdates[nickname]['joinDate'] = currentStr;
                             
                             currentMember.joinDate = currentStr;
-                            
                             const saveBtn = document.getElementById('btnSaveAllCrewEdits');
                             if (saveBtn) saveBtn.classList.remove('hidden');
                             
@@ -700,72 +792,12 @@
                     window.pendingCrewUpdates[nickname][objectFieldKey] = finalVal;
                     
                     currentMember[objectFieldKey] = finalVal;
-                    
                     const saveBtn = document.getElementById('btnSaveAllCrewEdits');
                     if (saveBtn) saveBtn.classList.remove('hidden');
                     
                     updateAdminDashboard();
                 };
                 inputComponent.onkeydown = (e) => { if (e.key === 'Enter') saveChanges(); }; inputComponent.onblur = saveChanges;
-            }
-        }
-
-        // ⚡ [요구사항 반영 2]: 대기 중인 로컬 변경 큐를 일괄 순차 트랜잭션 처리하는 마스터 함수
-        async function submitAllCrewEdits() {
-            if (!window.pendingCrewUpdates || Object.keys(window.pendingCrewUpdates).length === 0) {
-                alert('반영할 변경사항이 존재하지 않습니다.');
-                return;
-            }
-            
-            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
-            if (!CLEAN_URL || CLEAN_URL === "아지트크루여기로") {
-                localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
-                window.pendingCrewUpdates = {};
-                const saveBtn = document.getElementById('btnSaveAllCrewEdits');
-                if (saveBtn) saveBtn.classList.add('hidden');
-                alert('✨ [로컬 오프라인 모드] 로컬 캐시에 모든 데이터가 완벽히 저장되었습니다.');
-                updateAdminDashboard();
-                return;
-            }
-            
-            toggleGlobalLoadingOverlay(true, "📋 대기 중인 모든 크루 변경사항을<br>구글 데이터 서버에 일괄 동기화 이관 중...");
-            
-            try {
-                // 트랜잭션 큐 배열 추출
-                let tasks = [];
-                for (let nickname in window.pendingCrewUpdates) {
-                    for (let field in window.pendingCrewUpdates[nickname]) {
-                        let sheetHeaderField = field;
-                        if (field === 'grade') sheetHeaderField = '회원 등급';
-                        if (field === 'cancelCount') sheetHeaderField = '누적 취소횟수';
-                        
-                        let val = window.pendingCrewUpdates[nickname][field];
-                        tasks.push({ nickname, field: sheetHeaderField, value: val });
-                    }
-                }
-                
-                // GAS 트래픽 과부하 방지를 위한 순차(Sequential) 비동기 처리
-                for (let i = 0; i < tasks.length; i++) {
-                    let task = tasks[i];
-                    toggleGlobalLoadingOverlay(true, `🔄 일괄 반영 처리 중... (${i + 1}/${tasks.length} 건)<br>[${task.nickname}]의 ${task.field} 데이터 압축 이송 중...`);
-                    await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(task.nickname)}&field=${encodeURIComponent(task.field)}&value=${encodeURIComponent(task.value)}`, { mode: 'no-cors' });
-                    // 가벼운 지연을 주어 트랜잭션 안정성 보장
-                    await new Promise(resolve => setTimeout(resolve, 350));
-                }
-                
-                // 버퍼 클리어 및 버튼 숨김
-                window.pendingCrewUpdates = {};
-                const saveBtn = document.getElementById('btnSaveAllCrewEdits');
-                if (saveBtn) saveBtn.classList.add('hidden');
-                
-                alert(`🎉 총 ${tasks.length}건의 모든 크루 데이터 변경사항이 구글 클라우드에 일괄 완벽 갱신되었습니다.`);
-                await fetchCloudData();
-                updateAdminDashboard();
-            } catch (e) {
-                console.error(e);
-                alert('🔴 대량 데이터 패킷 이송 중 오류가 계측되었습니다. 네트워크 연결 확인 후 다시 시도해 주십시오.');
-            } finally {
-                toggleGlobalLoadingOverlay(false);
             }
         }
 
@@ -904,7 +936,7 @@
             }
         }
 
-        function setHalfYearRankFilter(h) { currentHalfRankFilter = h; document.getElementById('btnHalfFirst').className = h === 1 ? 'px-3 py-1 rounded bg-sky-500 text-white font-bold' : 'px-3 py-1 rounded text-gray-400'; document.getElementById('btnHalfSecond').className = h === 2 ? 'px-3 py-1 rounded bg-sky-500 text-white font-bold' : 'px-3 py-1 rounded text-gray-400'; renderHalfYearRankTable(); }
+        function setHalfYearRankFilter(h) { currentHalfYearRankFilter = h; document.getElementById('btnHalfFirst').className = h === 1 ? 'px-3 py-1 rounded bg-sky-500 text-white font-bold' : 'px-3 py-1 rounded text-gray-400'; document.getElementById('btnHalfSecond').className = h === 2 ? 'px-3 py-1 rounded bg-sky-500 text-white font-bold' : 'px-3 py-1 rounded text-gray-400'; renderHalfYearRankTable(); }
 
         function renderHalfYearRankTable() {
             const tbody = document.getElementById('halfRankTableBody'); if(!tbody) return; tbody.innerHTML = '';
@@ -921,6 +953,59 @@
             else { sortedList.forEach((crew, index) => { tbody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/20 transition"><td class="py-4 text-center font-bold text-gray-400">${index+1}위</td><td class="py-4 font-semibold text-gray-200">${crew.name}</td><td class="py-4 text-right pr-6 font-mono text-sky-400 font-bold">${crew.count}회</td></tr>`; }); }
         }
 
+        async function submitAllCrewEdits() {
+            if (!window.pendingCrewUpdates || Object.keys(window.pendingCrewUpdates).length === 0) {
+                alert('반영할 변경사항이 존재하지 않습니다.');
+                return;
+            }
+            
+            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+            if (!CLEAN_URL || CLEAN_URL === "아지트크루여기로") {
+                localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
+                window.pendingCrewUpdates = {};
+                const saveBtn = document.getElementById('btnSaveAllCrewEdits');
+                if (saveBtn) saveBtn.classList.add('hidden');
+                alert('✨ [로컬 오프라인 모드] 로컬 캐시에 모든 데이터가 완벽히 저장되었습니다.');
+                updateAdminDashboard();
+                return;
+            }
+            
+            toggleGlobalLoadingOverlay(true, "📋 대기 중인 모든 크루 변경사항을<br>구글 데이터 서버에 일괄 동기화 이관 중...");
+            
+            try {
+                let tasks = [];
+                for (let nickname in window.pendingCrewUpdates) {
+                    for (let field in window.pendingCrewUpdates[nickname]) {
+                        let sheetHeaderField = field;
+                        if (field === 'grade') sheetHeaderField = '회원 등급';
+                        
+                        let val = window.pendingCrewUpdates[nickname][field];
+                        tasks.push({ nickname, field: sheetHeaderField, value: val });
+                    }
+                }
+                
+                for (let i = 0; i < tasks.length; i++) {
+                    let task = tasks[i];
+                    toggleGlobalLoadingOverlay(true, `🔄 일괄 반영 처리 중... (${i + 1}/${tasks.length} 건)<br>[${task.nickname}]의 ${task.field} 데이터 압축 이송 중...`);
+                    await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(task.nickname)}&field=${encodeURIComponent(task.field)}&value=${encodeURIComponent(task.value)}`, { mode: 'no-cors' });
+                    await new Promise(resolve => setTimeout(resolve, 350));
+                }
+                
+                window.pendingCrewUpdates = {};
+                const saveBtn = document.getElementById('btnSaveAllCrewEdits');
+                if (saveBtn) saveBtn.classList.add('hidden');
+                
+                alert(`🎉 총 ${tasks.length}건의 모든 크루 데이터 변경사항이 구글 클라우드에 일괄 완벽 갱신되었습니다.`);
+                await fetchCloudData();
+                updateAdminDashboard();
+            } catch (e) {
+                console.error(e);
+                alert('🔴 대량 데이터 패킷 이송 중 오류가 계측되었습니다. 네트워크 연결 확인 후 다시 시도해 주십시오.');
+            } finally {
+                toggleGlobalLoadingOverlay(false);
+            }
+        }
+
         function updateAdminDashboard() {
             const targetRecords = db.filter(item => {
                 let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
@@ -932,22 +1017,43 @@
             if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => freq[r.name] = (freq[r.name] || 0) + 1); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}위</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
             
             const aBody = document.getElementById('monthAttendeeListBody'); 
-            if(aBody) { aBody.innerHTML = ''; if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; } else { targetRecords.sort((a,b) => Number(a.startDay) - Number(b.startDay)).forEach(r => { aBody.innerHTML += `<tr class="border-b border-gray-800/20 hover:bg-gray-800/10 transition"><td class="py-3 pl-1 font-bold text-gray-200 flex items-center gap-1.5 min-w-[100px]"><input type="checkbox" ${r.isHost ? 'checked' : ''} onchange="toggleHostStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-red-500 rounded bg-[#121212] border-gray-700 cursor-pointer shrink-0"><span class="truncate max-w-[70px]">👤 ${r.name}</span></td><td class="py-3 text-gray-400 text-[11px] font-mono">${r.startDay}일~${r.endDay}일</td><td class="py-3 text-right pr-1 flex items-center justify-end gap-2"><span class="text-orange-400 font-bold text-[11px] shrink-0">${r.type}</span><button onclick="deleteScheduleRecord(${r.id})" class="bg-red-500/10 border border-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0">삭제</button></td></tr>`; }); } }
-            renderHostRankTable(); renderHalfYearRankTable();
+            if(aBody) { 
+                aBody.innerHTML = ''; 
+                if(targetRecords.length === 0) { 
+                    aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; 
+                } else { 
+                    targetRecords.sort((a,b) => Number(a.startDay) - Number(b.startDay)).forEach(r => { 
+                        aBody.innerHTML += `<tr class="border-b border-gray-800/20 hover:bg-gray-800/10 transition">
+                            <td class="py-3 pl-1 font-bold text-gray-200 flex items-center gap-2 min-w-[145px]">
+                                <div class="flex items-center gap-1.5 shrink-0 select-none">
+                                    <span class="text-[9px] text-gray-500 font-black">방</span>
+                                    <input type="checkbox" ${r.isHost ? 'checked' : ''} onchange="toggleHostStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-red-500 rounded bg-[#121212] border-gray-700 cursor-pointer">
+                                    <span class="text-[9px] text-gray-500 font-black ml-0.5">찬</span>
+                                    <input type="checkbox" ${r.isSponsor ? 'checked' : ''} onchange="toggleSponsorStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-emerald-500 rounded bg-[#121212] border-gray-700 cursor-pointer">
+                                </div>
+                                <span class="truncate max-w-[65px]">👤 ${r.name}</span>
+                            </td>
+                            <td class="py-3 text-gray-400 text-[11px] font-mono">${r.startDay}일~${r.endDay}일</td>
+                            <td class="py-3 text-right pr-1 flex items-center justify-end gap-2"><span class="text-orange-400 font-bold text-[11px] shrink-0">${r.type}</span><button onclick="deleteScheduleRecord(${r.id})" class="bg-red-500/10 border border-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0">삭제</button></td>
+                        </tr>`; 
+                    }); 
+                } 
+            }
+            renderHostRankTable(); 
+            renderSponsorRankTable(); 
+            renderHalfYearRankTable();
             
             let displayedMembers = [...staticCrewMembers];
             if (memberSortCriteria === 'gender') {
                 displayedMembers.sort((a, b) => (a.gender || '').localeCompare(b.gender || ''));
             } else if (memberSortCriteria === 'birthYear') {
                 displayedMembers.sort((a, b) => (a.birthYear || '99').localeCompare(b.birthYear || '99'));
-            } else if (memberSortCriteria === 'cancelCount') {
-                displayedMembers.sort((a, b) => (parseInt(b.cancelCount) || 0) - (parseInt(a.cancelCount) || 0));
             } else if (memberSortCriteria === 'grade') {
                 const gradeOrder = { '방장': 1, '부방장': 2, '아지트人': 3, '아지트': 3, '정회원': 4, '준회원': 5 };
                 displayedMembers.sort((a, b) => (gradeOrder[a.grade] || 6) - (gradeOrder[b.grade] || 6));
             }
 
-            const sortCriteriaList = ['gender', 'birthYear', 'cancelCount', 'grade', 'none'];
+            const sortCriteriaList = ['gender', 'birthYear', 'grade', 'none'];
             sortCriteriaList.forEach(crit => {
                 const btn = document.getElementById('sortBtn_' + crit);
                 if (btn) {
@@ -962,7 +1068,6 @@
             const mBody = document.getElementById('masterCrewTableBody'); 
             if(mBody) { 
                 mBody.innerHTML = ''; 
-                // ⚡ [요구사항 반영 3]: 버퍼 객체에 변경 사항이 적재되어 반영을 대기 중인 셀을 실시간 추적 및 황색 하이라이팅 지시 함수
                 let isPending = (nk, fd) => (window.pendingCrewUpdates && window.pendingCrewUpdates[nk] && window.pendingCrewUpdates[nk][fd] !== undefined);
                 
                 displayedMembers.forEach(m => { 
@@ -989,8 +1094,6 @@
                         renderedGrade = '부방장';
                         gradeColor = "text-sky-400 font-bold tracking-wide";
                     }
-
-                    let displayCancelCount = m.cancelCount !== undefined && m.cancelCount !== '-' ? m.cancelCount : '0';
                     
                     mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
                         <td class="py-4.5 px-4 font-bold text-white select-none">👤 ${m.nickname}</td>
@@ -1000,7 +1103,6 @@
                         <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400 ${isPending(m.nickname, 'phone') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decryptedPhone} ${isPending(m.nickname, 'phone') ? '⚡' : ''}</td>
                         <td class="py-4.5 px-3.5 editable-cell ${isPending(m.nickname, 'grade') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : gradeColor}" onclick="startInlineEdit(this, '${m.nickname}', 'grade')">${renderedGrade} ${isPending(m.nickname, 'grade') ? '⚡' : ''}</td>
                         <td class="py-4.5 px-3.5 editable-cell text-gray-300 font-mono tracking-tight ${isPending(m.nickname, 'joinDate') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'joinDate')">${displayJoinDate} ${isPending(m.nickname, 'joinDate') ? '⚡' : ''}</td>
-                        <td class="py-4.5 px-3.5 editable-cell text-orange-400 font-mono font-bold ${isPending(m.nickname, 'cancelCount') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'cancelCount')">${displayCancelCount}회 ${isPending(m.nickname, 'cancelCount') ? '⚡' : ''}</td>
                         <td class="py-4.5 px-4 text-center"><button class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl font-black text-xs transition active:scale-95" onclick="deleteMemberRecord('${m.nickname}')">삭제</button></td>
                     </tr>`; 
                 }); 
@@ -1029,6 +1131,7 @@
                         else if (s.type === '백패킹') typeIcon = '🎒';
 
                         let crownMarkup = s.isHost ? '<span class="text-amber-500 font-bold ml-1">👑</span>' : '';
+                        let sponsorMarkup = s.isSponsor ? '<span class="text-emerald-400 font-bold ml-1">💚</span>' : '';
                         
                         let parsedMonth = s.month ? parseInt(String(s.month).replace(/\D/g, '')) : 0;
                         let displayMonth = isNaN(parsedMonth) || parsedMonth === 0 ? currentMonth : parsedMonth;
@@ -1038,7 +1141,7 @@
                                 <span class="text-base shrink-0 select-none">${typeIcon}</span>
                                 <div class="flex flex-col">
                                     <span class="text-xs font-bold text-gray-300">${s.year}년 ${displayMonth}월 ${s.startDay}일 ~ ${s.endDay}일</span>
-                                    <span class="text-[10px] font-bold text-orange-400 mt-0.5">${s.durationText} · ${s.type}${crownMarkup}</span>
+                                    <span class="text-[10px] font-bold text-orange-400 mt-0.5">${s.durationText} · ${s.type}${crownMarkup}${sponsorMarkup}</span>
                                 </div>
                             </div>
                             <button onclick="deleteScheduleRecord(${s.id})" class="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0 active:scale-95">강제 삭제</button>
