@@ -7,10 +7,10 @@
     
     <!-- ⚡ [PWA 핵심 이식]: 모바일 단독 앱 구동 매니페스트 및 iOS 사파리 전용 웹앱 메타 패킷 탑재 -->
     <link rel="manifest" href="./manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="AZIT">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/846/846355.png">
+    <meta class="html-embed" name="apple-mobile-web-app-capable" content="yes">
+    <meta class="html-embed" name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta class="html-embed" name="apple-mobile-web-app-title" content="AZIT">
+    <link class="html-embed" rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/846/846355.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link class="html-embed" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -78,7 +78,7 @@
                 <div><label class="block text-gray-400 font-bold mb-1">본명 (실명)</label><input type="text" id="regRealName" placeholder="예시: 홍길동" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
                 <div><label class="block text-gray-400 font-bold mb-1">성별</label><select id="regGender" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"><option value="-">미기입</option><option value="남성">남성</option><option value="여성">여성</option></select></div>
                 <div><label class="block text-gray-400 font-bold mb-1">출생 연도</label><input type="text" id="regBirthYear" placeholder="예시: 82" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
-                <div><label class="block text-gray-400 font-bold mb-1">連絡處 (전화번호)</label><input type="text" id="regPhone" placeholder="예시: 000-0000-0000" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
+                <div><label class="block text-gray-400 font-bold mb-1">연락처 (전화번호)</label><input type="text" id="regPhone" placeholder="예시: 000-0000-0000" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
                 <div><label class="block text-gray-400 font-bold mb-1">단톡방 입장 날짜</label><input type="date" id="regJoinDate" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition text-gray-300"></div>
             </div>
             <button id="btnSubmitCrew" onclick="submitCoverRegister()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl text-xs mt-5 shadow-lg flex items-center justify-center transition active:scale-95">크루 가입 명부 저장하기 <i class="fa-solid fa-check ml-1"></i></button>
@@ -330,7 +330,6 @@
                 } 
             });
             
-            // ⚡ [PWA 서비스 워커 마스터 엔진 가동 비동기 루틴 주입]
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('./sw.js')
                     .then(() => console.log('AZIT PWA 엔진 백엔드 백그라운드 기동 완료'))
@@ -420,6 +419,7 @@
             }
         }
 
+        // ⚡ [정정 피드백 반영]: 달력 선택 시 박수 제한을 해제하고 자유로운 범위 클릭 패스로 롤백
         function handleDateClick(day) {
             if (!rangeStart || (rangeStart && rangeEnd && rangeStart.day !== rangeEnd.day)) { 
                 rangeStart = { year: currentYear, month: currentMonth, day: day }; 
@@ -427,18 +427,13 @@
                 selectedActivity = ''; 
             }
             else if (rangeStart && rangeEnd && rangeStart.day === rangeEnd.day) { 
-                if (Math.abs(day - rangeStart.day) <= 2) {
-                    if (day >= rangeStart.day) { 
-                        rangeEnd = { year: currentYear, month: currentMonth, day: day }; 
-                    } else { 
-                        rangeEnd = rangeStart;
-                        rangeStart = { year: currentYear, month: currentMonth, day: day }; 
-                    } 
-                    selectedActivity = ''; 
-                } else {
-                    alert('⚠️ 아지트 일정 규칙 알림:\n선택하신 시작 날짜 기준 앞뒤 2일 간격(최대 2박 3일 일정) 이내의 범위만 지정 및 조율이 가능합니다.');
-                    return;
-                }
+                if (day >= rangeStart.day) { 
+                    rangeEnd = { year: currentYear, month: currentMonth, day: day }; 
+                } else { 
+                    rangeEnd = rangeStart;
+                    rangeStart = { year: currentYear, month: currentMonth, day: day }; 
+                } 
+                selectedActivity = ''; 
             }
             syncConfigCardUI(); renderCalendar();
         }
@@ -477,6 +472,29 @@
             
             isSubmitting = true;
             toggleGlobalLoadingOverlay(true, `[${nick}] 크루원의 일정을 검증 및 반영 중...`);
+
+            // ⚡ [요구사항 반영 - 롤링 타임 윈도우 검증 엔진]: 오늘 날짜가 [시작일 - 2일] ~ [마감일 + 2일] 내부인지 정밀 판정
+            const now = new Date();
+            const todayClean = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // 시분초 제로 플랫화
+            
+            const targetStart = new Date(currentYear, currentMonth - 1, rangeStart.day);
+            const targetEnd = new Date(currentYear, currentMonth - 1, rangeEnd.day);
+            
+            const minRegistrationDate = new Date(targetStart);
+            minRegistrationDate.setDate(minRegistrationDate.getDate() - 2); // 시작일 이틀 전
+            
+            const maxRegistrationDate = new Date(targetEnd);
+            maxRegistrationDate.setDate(maxRegistrationDate.getDate() + 2); // 마감일 이틀 뒤
+            
+            if (todayClean < minRegistrationDate || todayClean > maxRegistrationDate) {
+                const minStr = `${minRegistrationDate.getMonth() + 1}월 ${minRegistrationDate.getDate()}일`;
+                const maxStr = `${maxRegistrationDate.getMonth() + 1}월 ${maxRegistrationDate.getDate()}일`;
+                
+                alert(`⚠️ [관제 윈도우 거부] 해당 일정 블록은 현재 날짜 기점으로 등록이 불가능합니다.\n\n아지트 운영 지침에 따라 선택하신 일정은 시작 이틀 전(${minStr})부터 마감 이틀 후(${maxStr}) 사이의 활성 기한 내에서만 시스템 등록이 허용됩니다.`);
+                isSubmitting = false;
+                toggleGlobalLoadingOverlay(false);
+                return;
+            }
 
             const diff = rangeEnd.day - rangeStart.day; let type = selectedActivity; if(diff === 0 && type === '캠핑') type = '게스트캠핑';
             
@@ -940,7 +958,7 @@
 
         function renderHalfYearRankTable() {
             const tbody = document.getElementById('halfRankTableBody'); if(!tbody) return; tbody.innerHTML = '';
-            const startMonth = currentHalfRankFilter === 1 ? 1 : 7, endMonth = currentHalfRankFilter === 1 ? 6 : 12;
+            const startMonth = currentHalfYearRankFilter === 1 ? 1 : 7, endMonth = currentHalfYearRankFilter === 1 ? 6 : 12;
             
             const halfRecords = db.filter(item => {
                 let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0;
