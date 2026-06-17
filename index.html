@@ -370,7 +370,17 @@
             }
         };
         
-        function refreshUI() { renderCalendar(); updateLabels(); updateAdminDashboard(); renderNoticeDOM(); }
+        /* 🛠️ [Fail-Safe UI 패치]: 데이터 파손 시 하위 컴포넌트 렌더링 예외 전면 격리 통제 서킷 */
+        function refreshUI() { 
+            if (!Array.isArray(db)) db = [];
+            if (!Array.isArray(staticCrewMembers)) staticCrewMembers = [];
+            
+            try { renderCalendar(); } catch(e) { console.error("Calendar Engine Blocked:", e); }
+            try { updateLabels(); } catch(e) { console.error("Label Syncer Mismatch:", e); }
+            try { updateAdminDashboard(); } catch(e) { console.error("Dashboard Renderer Crashed:", e); }
+            try { renderNoticeDOM(); } catch(e) { console.error("Notice DOM Drop:", e); }
+        }
+        
         function moveMonth(dir) { currentMonth += dir; if(currentMonth > 12) { currentMonth = 1; currentYear++; } else if(currentMonth < 1) { currentMonth = 12; currentYear--; } clearSelection(); refreshUI(); }
         function moveAdminMonth(dir) { currentMonth += dir; if(currentMonth > 12) { currentMonth = 1; currentYear++; } else if(currentMonth < 1) { currentMonth = 12; currentYear--; } clearSelection(); refreshUI(); }
         function clearSelection() { rangeStart = null; rangeEnd = null; selectedActivity = ''; syncConfigCardUI(); }
@@ -958,12 +968,13 @@
             setTimeout(() => { pages.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); }); const target = document.getElementById(p); if(target) { target.classList.remove('hidden'); setTimeout(() => { target.classList.remove('opacity-0', 'scale-95'); }, 50); } }, 300);
         }
 
+        /* 🔒 [보안 통제 서킷 결함 정정]: 하위 통계 함수 에러 발생 여부와 상관없이 pageAdmin 화면 전환권을 강제 보장 */
         async function verifyAdminAccess() {
             const input = prompt('관리자 마스터 암호를 입력하십시오:');
             if (!input) return;
             
             if (input === "1234") {
-                refreshUI();
+                try { refreshUI(); } catch(err) { console.error("Refresh UI Block Ignored:", err); }
                 switchPage('pageAdmin');
                 return;
             }
@@ -980,7 +991,7 @@
                     try { data = JSON.parse(text); } catch(err) { throw new Error("Response Payload Format Mismatch"); }
                     
                     if (data && data.success) {
-                        refreshUI();
+                        try { refreshUI(); } catch(err) { console.error(err); }
                         switchPage('pageAdmin');
                     } else {
                         alert('❌ 인증 실패 : 마스터 관리자 비밀번호가 일치하지 않습니다.');
@@ -991,7 +1002,7 @@
                     
                     const fallbackInput = prompt('⚠️ 구글 클라우드 보안 게이트웨이 응답 지연이 감지되었습니다.\n\n긴급 수동 복구 모드로 진입하시려면 비상 암호(1234)를 입력하십시오:');
                     if (fallbackInput === "1234") {
-                        refreshUI();
+                        try { refreshUI(); } catch(err) { console.error("Fallback Refresh Suspended:", err); }
                         switchPage('pageAdmin');
                     } else if (fallbackInput) {
                         alert('❌ 인증 실패: 비상 복구 암호가 일치하지 않습니다.');
@@ -1001,7 +1012,7 @@
                 }
             } else {
                 if (input === "1234") {
-                    refreshUI();
+                    try { refreshUI(); } catch(err) { console.error(err); }
                     switchPage('pageAdmin');
                 } else {
                     alert('암호 오류');
@@ -1205,7 +1216,7 @@
                     
                     mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
                         <td class="py-4.5 px-4 font-bold text-white select-none">👤 ${m.nickname}</td>
-                        <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decryptedName} ${isPending(m.nickname, 'name') ? '⚡' : ''}</td>
+                        <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, Alb, 'name')">${decryptedName} ${isPending(m.nickname, 'name') ? '⚡' : ''}</td>
                         <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold ${isPending(m.nickname, 'gender') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender} ${isPending(m.nickname, 'gender') ? '⚡' : ''}</td>
                         <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold ${isPending(m.nickname, 'birthYear') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'} ${isPending(m.nickname, 'birthYear') ? '⚡' : ''}</td>
                         <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400 ${isPending(m.nickname, 'phone') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decryptedPhone} ${isPending(m.nickname, 'phone') ? '⚡' : ''}</td>
