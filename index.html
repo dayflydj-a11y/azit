@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AZIT - 같이의 가치</title>
     
-    <!-- ⚡ [PWA 핵심 이식]: 모바일 단독 앱 구동 매니페스트 및 iOS 사파리 전용 웹앱 메타 패킷 탑재 -->
     <link rel="manifest" href="./manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AZIT">
     <link class="html-embed" rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/846/846355.png">
 
-    <!-- ⚡ Tailwind CSS CDN 인프라 구동 엔진 안정화 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link class="html-embed" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -49,7 +47,6 @@
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
 
-    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이 레이어 -->
     <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
             <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
@@ -57,7 +54,6 @@
         </div>
     </div>
 
-    <!-- [PAGE 1] 아지트 인트로 커버 화면 -->
     <div id="pageCover" class="fixed inset-0 z-50 flex flex-col justify-between p-6 transition-all duration-700 ease-in-out transform bg-cover bg-center" 
          style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=1920&q=80');">
         <div class="text-center mt-6 lg:mt-10 animate-fade-in">
@@ -75,7 +71,6 @@
         </div>
     </div>
 
-    <!-- 신규회원 등록 모달 -->
     <div id="coverRegisterModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl transform scale-95 transition-all" id="coverRegBox">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
@@ -94,7 +89,6 @@
         </div>
     </div>
 
-    <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
     <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
         <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-2 sm:py-4 flex flex-col justify-between items-center gap-1 sm:gap-2">
             <div class="w-full flex justify-between items-center px-1">
@@ -106,7 +100,6 @@
         </header>
         <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <!-- 📢 공지게시판 메트릭스 -->
             <div class="lg:col-span-12 bg-[#1a1a1a] border border-red-500/30 rounded-2xl p-4 shadow-2xl prevent-select" 
                  oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 mb-3 border-b border-gray-800 pb-2">
@@ -160,7 +153,6 @@
         </main>
     </div>
 
-    <!-- [PAGE 3] 관리자 대시보드 메인 관제 화면 -->
     <div id="pageAdmin" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0e0e0e]">
         <header class="border-b border-gray-800 bg-[#151515] sticky top-0 z-40 px-4 py-3 sm:py-4 flex justify-between items-center shadow-lg">
             <button onclick="switchPage('pageCalendar')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 일정 화면으로</button>
@@ -187,7 +179,6 @@
                 </div>
             </div>
 
-            <!-- 공지사항 관리 센터 -->
             <div class="bg-[#151515] border border-gray-800 p-4 sm:p-5 rounded-2xl shadow-xl">
                 <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
                     <h3 class="text-base font-bold text-gray-200 flex items-center gap-2">
@@ -276,7 +267,6 @@
         </main>
     </div>
 
-    <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
     <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
         <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md">
             <button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button>
@@ -336,7 +326,8 @@
         window.pendingCrewUpdates = {};
         let openNoticeIdGlobal = null; 
         
-        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbw1wbZaaE-PYfswF1jVlmc8i9lsPirstS5P7CIhaqNTkiBZD7LFlDAA6-80bDi7ZuYK/exec"; 
+        // 🔒 [보안 검증 완료]: 현찬님이 제공해 주신 최종 구글 클라우드 배포 URL로 통신 채널을 변경 탑재했습니다.
+        const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbzumlYmbwCAIUmm6WzqPeG_eiRhSo9yYx4krsGcdBUCqMpjb_VgfJA6hDLBFUf9N13m/exec"; 
         
         function toggleGlobalLoadingOverlay(show, messageText) {
             const overlay = document.getElementById('globalLoadingOverlay');
@@ -752,7 +743,7 @@
                 filteredDb.forEach(item => { if(item && item.name) sponsorFreq[item.name] = (sponsorFreq[item.name] || 0) + 1; });
                 const sortedSponsors = Object.keys(sponsorFreq).map(name => ({ name, count: sponsorFreq[name] })).sort((a, b) => b.count - a.count);
                 if (sortedSponsors.filter(h => h.count > 0).length === 0) { sponsorBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">찬조 내역이 없습니다.</td></tr>`; } 
-                else { sortedSponsors.forEach((h, i) => { if (h.count > 0) { sponsorBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-emerald-400 font-mono font-bold">${h.count}회 찬조</td></tr>`; } }); }
+                else { sortedSponsors.forEach((h, i) => { if (h.count > 0) { sponsorBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${m.name}</td><td class="py-3 text-right pr-4 text-emerald-400 font-mono font-bold">${h.count}회 찬조</td></tr>`; } }); }
             } catch(e) { console.error(e); }
         }
 
