@@ -49,7 +49,7 @@
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
 
-    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이... -->
+    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이 레이어 -->
     <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
             <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
@@ -352,6 +352,11 @@
             }
         }
 
+        function closeAllInlinePickers() {
+            const pickers = document.querySelectorAll('.custom-datepicker');
+            pickers.forEach(p => p.remove());
+        }
+
         function encryptData(text) {
             if(!text || text === '-' || text === '미등록') return text;
             let result = '';
@@ -417,7 +422,6 @@
             });
         }
 
-        // 🔒 [캐시 버스터 가드 장착]: 구글 API 요청 시 'ts' 파라미터에 실시간 밀리초 타임스탬프를 부여해 모바일 브라우저의 본문 캐시를 완전 파괴합니다.
         async function fetchCloudData() {
             const CLEAN_URL = GOOGLE_SHEET_URL.trim();
             
@@ -608,7 +612,6 @@
             else if (s === '백패킹') document.getElementById('actBack').classList.add('bg-sky-500/10', 'border-sky-500', 'text-sky-400');
         }
 
-        // 🛡️ [자동 등 등재 시스템]: 크루원이 새 닉네임으로 일정을 등록하면 명부 유실을 막기 위해 'Crews' 시트에 자동 등재(준회원 배정) 프로세스를 트리거합니다.
         async function submitFinalForm() {
             if (isSubmitting) return;
             const CLEAN_URL = GOOGLE_SHEET_URL.trim();
@@ -637,7 +640,6 @@
             db.push(newScheduleObj);
             localStorage.setItem('azit_db', JSON.stringify(db));
 
-            // 명부 행렬 상 존재 유무 체크 및 즉시 프로비저닝 서킷 가동
             const existInRoster = staticCrewMembers.some(m => m && m.nickname === nick);
             if (!existInRoster) {
                 let autoCrew = { nickname: nick, name: encryptData('미등록'), gender: '-', birthYear: '-', grade: '준회원', joinDate: now.toISOString().split('T')[0], cancelCount: '0', phone: encryptData('미등록') };
@@ -659,7 +661,7 @@
                 document.getElementById('crewName').value = ''; clearSelection(); 
             } catch(e) { 
                 console.error(e); 
-            } final { isSubmitting = false; toggleGlobalLoadingOverlay(false); await fetchCloudData(); refreshUI(); }
+            } finally { isSubmitting = false; toggleGlobalLoadingOverlay(false); await fetchCloudData(); refreshUI(); }
         }
 
         function openCoverRegisterModal() { 
@@ -681,7 +683,6 @@
             
             let newCrewObj = { nickname: nick, name: encryptData(name), gender: gender, birthYear: birth || '-', grade: '준회원', joinDate: joinDate, cancelCount: '0', phone: encryptData(phone) };
             
-            // 중복 닉네임 덮어쓰기 방어
             staticCrewMembers = staticCrewMembers.filter(m => m && m.nickname !== nick);
             staticCrewMembers.push(newCrewObj);
             localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
@@ -966,7 +967,7 @@
                 const aBody = document.getElementById('monthAttendeeListBody'); 
                 if(aBody) { 
                     aBody.innerHTML = ''; 
-                    if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">名단 없음</td></tr>`; } 
+                    if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; } 
                     else { 
                         targetRecords.sort((a,b) => Number(a.startDay) - Number(b.startDay)).forEach(r => { 
                             if(!r) return;
