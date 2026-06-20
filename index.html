@@ -754,9 +754,9 @@
             else { sortedSponsors.forEach((h, i) => { if (h.count > 0) { sponsorBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-emerald-400 font-mono font-bold">${h.count}회 찬조</td></tr>`; } }); }
         }
 
-        /* ⚡ [낙관적 UI 가동 패치]: 레이스 컨디션을 완벽히 종식시키는 선반영 통제 모듈 */
+        /* ⚡ [낙관적 UI 가동 패치]: 느슨한 비교 연산자(==) 교정으로 ID 데이터 타입 충돌 완벽 방어 */
         async function toggleHostStatus(recordId, isChecked) {
-            const record = db.find(item => item.id === recordId);
+            const record = db.find(item => item.id == recordId);
             if (record) { 
                 record.isHost = isChecked; 
                 localStorage.setItem('azit_db', JSON.stringify(db));
@@ -771,9 +771,9 @@
             }
         }
 
-        /* ⚡ [낙관적 UI 가동 패치]: 화면 잠금(Overlay) 없이 클릭 즉시 체크박스 고정 및 랭킹 스코어 즉시 가산 */
+        /* ⚡ [낙관적 UI 가동 패치]: 느슨한 비교 연산자(==) 교정으로 클릭 즉시 체크 고정 및 실시간 스코어 즉각 가산 */
         async function toggleSponsorStatus(recordId, isChecked) {
-            const record = db.find(item => item.id === recordId);
+            const record = db.find(item => item.id == recordId);
             if (record) { 
                 record.isSponsor = isChecked; 
                 localStorage.setItem('azit_db', JSON.stringify(db));
@@ -919,7 +919,7 @@
                 toggleGlobalLoadingOverlay(true, "요청하신 개별 크루 스케줄 블록 삭제 중...");
                 const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
                 try {
-                    if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${recordId}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { db = db.filter(item => item.id !== recordId); localStorage.setItem('azit_db', JSON.stringify(db)); }
+                    if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${recordId}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { db = db.filter(item => item.id != recordId); localStorage.setItem('azit_db', JSON.stringify(db)); }
                 } catch(e) { console.error(e); }
                 await fetchCloudData(); refreshUI(); 
                 toggleGlobalLoadingOverlay(false);
@@ -1128,7 +1128,6 @@
             }
         }
 
-        /* 🛠️ [엄격한 타입 필터링 패치]: HTML 문자열 보간법 파손을 유발하는 원시 타입 평가 수리 및 오타 청산 완료 */
         function updateAdminDashboard() {
             const targetRecords = db.filter(item => {
                 if(!item.year || !item.month) return false;
@@ -1138,7 +1137,7 @@
             });
             
             const rBody = document.getElementById('rankTableBody'); 
-            if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => freq[r.name] = (freq[r.name] || 0) + 1); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}位</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
+            if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => freq[r.name] = (freq[r.name] || 0) + 1); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}위</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
             
             const aBody = document.getElementById('monthAttendeeListBody'); 
             if(aBody) { 
@@ -1147,7 +1146,6 @@
                     aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; 
                 } else { 
                     targetRecords.sort((a,b) => Number(a.startDay) - Number(b.startDay)).forEach(r => { 
-                        // 🔒 [보안 통제]: 구글 시트의 데이터 타입을 3중 필터링하여 Boolean 값으로 표준 전처리
                         let isHostChecked = Number(r.isHost) === 1 || r.isHost === true || String(r.isHost).toLowerCase() === 'true';
                         let isSponsorChecked = Number(r.isSponsor) === 1 || r.isSponsor === true || String(r.isSponsor).toLowerCase() === 'true';
                         
@@ -1223,7 +1221,6 @@
                         gradeColor = "text-sky-400 font-bold tracking-wide";
                     }
                     
-                    // 🛠️ [오타 수정 완료]: Alb 에러 구문을 명확하게 '${m.nickname}' 패킷 주소로 치환 이관 완료
                     mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
                         <td class="py-4.5 px-4 font-bold text-white select-none">👤 ${m.nickname}</td>
                         <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decryptedName} ${isPending(m.nickname, 'name') ? '⚡' : ''}</td>
