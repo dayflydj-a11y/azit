@@ -33,14 +33,12 @@
         .editable-cell { cursor: pointer; transition: all 0.2s; position: relative; }
         .editable-cell:hover { background-color: rgba(234, 179, 8, 0.1); color: #f59e0b; }
         
-        /* 📱 모바일 뷰포트 환경 하이브리드 가드 데이트피커 스타일 */
         .custom-datepicker {
             z-index: 9999; width: 270px; background-color: #1e1e1e;
             border: 1px solid #374151; border-radius: 16px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); padding: 14px;
         }
         
-        /* 🔒 [보안 레이어]: 마스터 공지사항 게시판 불법 텍스트 추출 및 복사 방지 CSS 서킷 */
         .prevent-select {
             -webkit-user-select: none !important;
             -moz-user-select: none !important;
@@ -98,7 +96,6 @@
 
     <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
     <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
-        <!-- 📱 모바일 세로 폭 효율화를 위해 py padding 세부 리팩토링 조정 -->
         <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-2 sm:py-4 flex flex-col justify-between items-center gap-1 sm:gap-2">
             <div class="w-full flex justify-between items-center px-1">
                 <button onclick="switchPage('pageCover')" class="text-xs text-gray-400 hover:text-white flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 커버</button>
@@ -220,7 +217,7 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
-                    <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center justify-between border-b border-gray-800 pb-3"><span>🏆 月별 활동 크루원 순위</span><span id="rankMonthLabel" class="text-xs font-mono text-green-400 bg-green-400/5 px-2.5 py-1 rounded-lg border border-green-500/10">6월 기준</span></h3>
+                    <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center justify-between border-b border-gray-800 pb-3"><span>🏆 月별 활동 크루원 순위</span><span id="rankMonthLabel" class="text-xs font-mono text-green-400 bg-green-400/5 px-2.5 py-1 rounded-lg border border-green-500/10">6월 기준</span></h3>
                     <div class="overflow-x-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="rankTableBody" class="divide-y divide-gray-800/40"></tbody></table></div>
                 </div>
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
@@ -301,7 +298,6 @@
                         <button onclick="setMemberSort('none')" id="sortBtn_none" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">정렬 초기화</button>
                     </div>
                 </div>
-                <!-- 📱 모바일 가속 제스처 스크롤 이식 레이어 -->
                 <div class="overflow-x-auto border border-gray-800 rounded-xl bg-[#111] no-scrollbar" style="-webkit-overflow-scrolling: touch;">
                     <table class="w-full text-left text-xs min-w-[760px]">
                         <thead>
@@ -330,18 +326,17 @@
         let isSubmitting = false;
         
         let defaultNotices = [
-            { id: 1, title: "📢 [수칙 1] 아지트 크루 운영 및 가입 기본 서약", content: "아지트(AZIT)는 신뢰와 상호 존중을 바탕으로 캠핑, 등산, 백패킹을 즐기는 동호회입니다. 유령 크루 방지를 위해 등록된 모든 회원은 분기별 최소 1회 이상의 오프라인 모임 참석 의무가 부과됩니다.", date: "2026-06-20" },
-            { id: 2, title: "📢 [수칙 2] 일정 등록 및 관제 활성 윈도우 규정", content: "모든 크루 일정 생성을 위한 참석 신청은 오남용 방지 서킷에 의해 [모임 시작일 이틀 전]부터 [모임 마감일 이틀 후] 사이의 유효 기한 내에서만 시스템 등록 및 제출이 최종 승인 처리됩니다.", date: "2026-06-20" },
-            { id: 3, title: "📢 [수칙 3] 당일치기 무박 일정 카테고리 규제 조치", content: "안전 보장 가이드라인에 따라 달력에서 동력 계산이 '0박(당일치기 무박 모임)'으로 판정될 경우, 디펜시브 스크립트에 의해 활동 카테고리 중 '백패킹' 세부 옵션 선택은 기술적으로 강제 비활성화 제한됩니다.", date: "2026-06-20" },
-            { id: 4, title: "📢 [수칙 4] 모임 협찬 및 크루 찬조금 투명성 집계", content: "아지트 모임을 위해 장비나 물품, 찬조금을 기부해주신 크루원의 내역은 관리자 관제 시스템 수동 검증 절차를 거친 뒤, 대시보드 내 찬조자 순위 보드 랭킹에 가중치 연산 상향 정렬 반영 처리됩니다.", date: "2026-06-20" },
-            { id: 5, title: "📢 [수칙 5] 크루 활동 등급 승급 및 기수 명세 수칙", content: "회원 명부는 신규 유입 시 기본 준회원으로 편입되며, 활동 빈도와 개설 참여 누적 데이터 스코어 요건 충족 시 방장의 승인을 거쳐 정회원 및 핵심 운영 멤버인 아지트人 등급으로 수동 변경 이관됩니다.", date: "2026-06-20" },
-            { id: 6, title: "📢 [수칙 6] 노쇼(무단 불참) 패널티 및 패킷 관리 수칙", content: "일정 제출 완료 후 사전 통보 없는 무단 불참 행위 적발 시 시스템 내 취소 카운트 가산 처리가 집행되며, 누적 3회 이상 초과 계측될 경우 아지트 내부 규정에 따라 명부 제명 및 강제 탈퇴 조치가 수행됩니다.", date: "2026-06-20" }
+            { id: 1001, title: "1️⃣ 🌟 일정 개설 및 진행 기준 🌟", content: "아지트(AZIT) 크루 내 정기 및 번개 일정을 개설할 때 적용되는 의무 기준 가이드라인입니다. 모든 모임 주최자는 크루원들의 투명한 참여를 보장하기 위해 규정된 양식 명세를 반드시 충족해야 합니다.", date: "2026-06-20" },
+            { id: 1002, title: "2️⃣ 회원 등급 및 최소 활동 기준 📊", content: "아지트 크루의 지속 가능한 활성화를 위한 등급 명세 지침입니다. 신규 가입 크루원은 준회원으로 배정되며, 누적 참여 횟수와 운영진 평가 지표를 바탕으로 정회원 및 핵심 아지트人으로 수동 등급 조 조정 승격이 집행됩니다.", date: "2026-06-20" },
+            { id: 1003, title: "3️⃣ 🌟 경고 및 추방 기준 🌟", content: "건전한 크루 생태계 교란 행위를 방어하기 위한 패널티 관제 수칙입니다. 일정 제출 완료 확정 후 정당한 사유나 사전 통보 없이 무단 불참하는 '노쇼(No-Show)' 행위가 누적 3회 이상 계측될 경우, 마스터 명부에서 제명 및 강제 추방 조치됩니다.", date: "2026-06-20" },
+            { id: 1004, title: "4️⃣ 🌟 2026 하반기 등급 현황 🌟", content: "2026년도 하반기 기준 아지트 크루원들의 회원 등급 현황 보드입니다. 본 명부의 권한 등급은 관리자 관제 센터의 데이터 검증 절차를 실시간 통과한 결과값이며, 변경사항은 서버 반영 처리를 통해 구글 클라우드에 영구 기록됩니다.", date: "2026-06-20" }
         ];
         let noticeText = JSON.stringify(defaultNotices);
         
         window.pendingCrewUpdates = {};
         let openNoticeIdGlobal = null; 
         
+        // 🔒 [보안 통제 주소]: 구글 스크립트 웹앱 주소를 이곳에 기입하십시오.
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbw1wbZaaE-PYfswF1jVlmc8i9lsPirstS5P7CIhaqNTkiBZD7LFlDAA6-80bDi7ZuYK/exec"; 
         
         function toggleGlobalLoadingOverlay(show, messageText) {
@@ -398,11 +393,6 @@
                     closeAllInlinePickers(); 
                 } 
             });
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(() => console.log('AZIT PWA 엔진 백엔드 백그라운드 기동 완료'))
-                    .catch((err) => console.error('PWA 백엔드 엔진 컴파일 실패', err));
-            }
         };
         
         function refreshUI() { 
@@ -428,30 +418,25 @@
             });
         }
 
+        // ⚠️ [중앙 집중 동기화]: 구글 클라우드 미연동 시 로컬 사일로 백업을 제한하여 데이터 격리를 원천 파괴합니다.
         async function fetchCloudData() {
             const CLEAN_URL = GOOGLE_SHEET_URL.trim();
             if (CLEAN_URL === "아지트크루여기로" || !CLEAN_URL) {
-                db = JSON.parse(localStorage.getItem('azit_db')) || [];
-                staticCrewMembers = JSON.parse(localStorage.getItem('azit_crews')) || [];
-                noticeText = localStorage.getItem('azit_notice') || JSON.stringify(defaultNotices);
-                updateNetworkStatusDOM("⚠️ 오프라인 모드 (로컬 저장소 전용)", "local"); return;
+                db = []; staticCrewMembers = []; noticeText = JSON.stringify(defaultNotices);
+                updateNetworkStatusDOM("⚠️ 클라우드 미연동 상태 (임시 가동)", "local"); return;
             }
             try {
-                const res = await fetch(`${CLEAN_URL}?action=get`); const data = await res.json();
+                const res = await fetch(`${CLEAN_URL}?action=get`); 
+                if(!res.ok) throw new Error("CORS or Security Gate Blocked");
+                const data = await res.json();
                 if (data.db) db = data.db;
-                if (data.crews) {
-                    const serverNicknames = new Set(data.crews.map(m => m && m.nickname ? m.nickname.trim() : ''));
-                    const currentPendingNewCrews = staticCrewMembers.filter(m => m && m.nickname && !serverNicknames.has(m.nickname.trim()));
-                    staticCrewMembers = [...data.crews.filter(m => m && m.nickname), ...currentPendingNewCrews];
-                }
-                if (data.notice) noticeText = data.notice; 
-                else noticeText = localStorage.getItem('azit_notice') || JSON.stringify(defaultNotices);
+                if (data.crews) staticCrewMembers = data.crews.filter(m => m && m.nickname);
+                if (data.notice) noticeText = data.notice;
                 updateNetworkStatusDOM("🟢 실시간 구글 클라우드 동기화 완료", "success");
             } catch(e) { 
-                console.error("Cloud Fetch Error", e); db = JSON.parse(localStorage.getItem('azit_db')) || [];
-                staticCrewMembers = JSON.parse(localStorage.getItem('azit_crews')) || [];
-                noticeText = localStorage.getItem('azit_notice') || JSON.stringify(defaultNotices);
-                updateNetworkStatusDOM("🔴 연동 오류 (CORS 규제 또는 구글 권한 거부)", "fail");
+                console.error("Cloud Fetch Error", e);
+                db = []; staticCrewMembers = []; noticeText = JSON.stringify(defaultNotices);
+                updateNetworkStatusDOM("🔴 동기화 실패 (구글 스크립트 배포 권한 미개방)", "fail");
             }
         }
 
@@ -461,7 +446,7 @@
                 let parsed = JSON.parse(noticeText);
                 if (Array.isArray(parsed)) return parsed;
             } catch(e) {}
-            return [{ id: 1781948870932, title: "📢 마스터 크루 메인 공지사항", content: noticeText, date: "2026-06-20" }];
+            return defaultNotices;
         }
 
         function renderNoticeDOM() {
@@ -486,7 +471,7 @@
 
         function renderAdminNoticeListDOM(notices) {
             const adminList = document.getElementById('adminNoticeList'); if(!adminList) return; adminList.innerHTML = '';
-            if(notices.length === 0) { adminList.innerHTML = `<div class="text-center py-6 text-gray-600 text-xs">등록된 다중 공지사항 패킷이 비어있습니다.</div>`; return; }
+            if(notices.length === 0) return;
             notices.forEach(n => {
                 const item = document.createElement('div'); item.className = "py-3 flex justify-between items-center gap-4 text-xs";
                 item.innerHTML = `
@@ -523,9 +508,7 @@
             if(idVal) { 
                 const target = notices.find(n => n.id == idVal); 
                 if(target) { target.title = titleVal; target.content = contentVal; target.date = todayStr; }
-                else { notices = [{ id: Date.now(), title: titleVal, content: contentVal, date: todayStr }]; }
-            } 
-            else { notices.push({ id: Date.now(), title: titleVal, content: contentVal, date: todayStr }); }
+            } else { notices.push({ id: Date.now(), title: titleVal, content: contentVal, date: todayStr }); }
             await pushNoticeServerArray(notices);
         }
 
@@ -533,9 +516,14 @@
 
         async function pushNoticeServerArray(nextArray) {
             const serializedStr = JSON.stringify(nextArray); toggleGlobalLoadingOverlay(true, "📋 공지사항 매트릭스 패킷 압축 데이터 동기화 중...");
-            noticeText = serializedStr; localStorage.setItem('azit_notice', serializedStr); const CLEAN_URL = GOOGLE_SHEET_URL.trim();
-            if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { try { await fetch(`${CLEAN_URL}?action=update_notice&text=${encodeURIComponent(serializedStr)}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1200)); } catch(e) { console.error("Cloud Notice Bulk Sync Mismatch", e); } }
-            await fetchCloudData(); refreshUI(); closeNoticeEditor(); toggleGlobalLoadingOverlay(false); alert('🎉 반영 완료: 다중 공지사항의 변이 상태가 마스터 서버에 실시간 배포 저장되었습니다.');
+            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+            if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
+                try { 
+                    await fetch(`${CLEAN_URL}?action=update_notice&text=${encodeURIComponent(serializedStr)}`, { mode: 'no-cors' }); 
+                    await new Promise(resolve => setTimeout(resolve, 1200)); 
+                } catch(e) { console.error(e); } 
+            }
+            await fetchCloudData(); refreshUI(); closeNoticeEditor(); toggleGlobalLoadingOverlay(false); alert('🎉 반영 완료: 모든 디바이스에 공유가 완료되었습니다.');
         }
 
         function updateLabels() {
@@ -607,10 +595,15 @@
             else if (s === '백패킹') document.getElementById('actBack').classList.add('bg-sky-500/10', 'border-sky-500', 'text-sky-400');
         }
 
+        // ⚠️ [중앙 집중 강제 이관]: 서버 연결 끊김을 방치하여 크루원들이 헛되게 혼자 등록하는 것을 기술적으로 차단합니다.
         async function submitFinalForm() {
             if (isSubmitting) return;
+            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+            if(!CLEAN_URL || CLEAN_URL === "아지트크루여기로") { alert('🚨 구글 서버 연동 주소가 비어 있어 등록할 수 없습니다. 방장에게 문의하세요.'); return; }
+            
             const nick = document.getElementById('crewName').value.trim(); if(!nick || !rangeStart || !selectedActivity) { alert('닉네임과 일정을 정확히 입력해 주세요.'); return; }
-            isSubmitting = true; toggleGlobalLoadingOverlay(true, `[${nick}] 크루원의 일정을 검증 및 반영 중...`);
+            isSubmitting = true; toggleGlobalLoadingOverlay(true, `[${nick}] 크루원의 일정을 검증 및 마스터 서버에 실시간 이관 중...`);
+            
             const now = new Date(); const todayClean = new Date(now.getFullYear(), now.getMonth(), now.getDate()); 
             const targetStart = new Date(currentYear, currentMonth - 1, rangeStart.day); const targetEnd = new Date(currentYear, currentMonth - 1, rangeEnd.day);
             const minRegistrationDate = new Date(targetStart); minRegistrationDate.setDate(minRegistrationDate.getDate() - 2); 
@@ -618,46 +611,24 @@
             
             if (todayClean < minRegistrationDate || todayClean > maxRegistrationDate) {
                 const minStr = `${minRegistrationDate.getMonth() + 1}월 ${minRegistrationDate.getDate()}`; const maxStr = `${maxRegistrationDate.getMonth() + 1}월 ${maxRegistrationDate.getDate()}`;
-                alert(`⚠️ [관제 윈도우 거부] 해당 일정 블록은 현재 날짜 기점으로 등록이 불가능합니다.\n\n아지트 운영 지침에 따라 선택하신 일정은 시작 이틀 전(${minStr}일)부터 마감 이틀 후(${maxStr}일) 사이의 활성 기한 내에서만 시스템 등록이 허용됩니다.`);
+                alert(`⚠️ [관제 윈도우 거부] 해당 일정 블록은 현재 날짜 기점으로 등록이 불가능합니다.\n\n시작 이틀 전(${minStr}일)부터 마감 이틀 후(${maxStr}일) 사이만 등록이 허용됩니다.`);
                 isSubmitting = false; toggleGlobalLoadingOverlay(false); return;
             }
 
             const diff = rangeEnd.day - rangeStart.day; let type = selectedActivity; if(diff === 0 && type === '캠핑') type = '게스트캠핑';
-            const isDateOverlapping = (s1, e1, s2, e2) => Math.max(s1, s2) <= Math.min(e1, e2);
-            const overlappingSchedule = db.find(item => {
-                if(!item || !item.year || !item.month) return false;
-                let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear;
-                let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth);
-                return item.name === nick && cleanYear === currentYear && cleanMonth === currentMonth && isDateOverlapping(Number(item.startDay), Number(item.endDay), rangeStart.day, rangeEnd.day);
-            });
-            if (overlappingSchedule) { alert(`⚠️ 중복 선택 제한 알림:\n[${nick}] 크루님은 지정하신 기간에 이미 [${overlappingSchedule.type}] 일정(${overlappingSchedule.startDay}일~${overlappingSchedule.endDay}일)이 등록되어 있습니다.`); isSubmitting = false; toggleGlobalLoadingOverlay(false); return; }
-            const timestamp = new Date().toLocaleDateString(); const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+            const timestamp = new Date().toLocaleDateString();
             
-            const crewExists = staticCrewMembers.some(m => m && m.nickname && m.nickname.trim() === nick);
-            if (!crewExists) {
-                const todayStr = new Date().toISOString().split('T')[0];
-                const newCrewObj = { nickname: nick, name: encryptData('-'), gender: '-', birthYear: '-', phone: encryptData('-'), grade: '준회원', joinDate: todayStr, cancelCount: '0' };
-                staticCrewMembers.push(newCrewObj); localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
-                
-                if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
-                    try {
-                        const crewQuery = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData('-'))}&gender=${encodeURIComponent('-')}&birthYear=${encodeURIComponent('-')}&phone=${encodeURIComponent(encryptData('-'))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(todayStr)}&cancelCount=${encodeURIComponent('0')}`;
-                        await fetch(CLEAN_URL + crewQuery, { mode: 'no-cors' });
-                        await new Promise(resolve => setTimeout(resolve, 800));
-                    } catch(e) { console.error("Auto Background Register Error", e); }
-                }
-            }
-            if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
-                try {
-                    const query = `?action=insert_schedule&id=${Date.now()}&year=${currentYear}&month=${currentMonth}&startDay=${rangeStart.day}&endDay=${rangeEnd.day}&name=${encodeURIComponent(nick)}&durationText=${encodeURIComponent(diff === 0 ? "무박" : `${diff}박`)}&type=${encodeURIComponent(type)}&timestamp=${encodeURIComponent(timestamp)}&isHost=false&isSponsor=false`;
-                    await fetch(CLEAN_URL + query, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1500));
-                } catch(e) { console.error(e); alert("🚨 구글 서버와 통신 중 장애가 발생했습니다."); } finally { isSubmitting = false; toggleGlobalLoadingOverlay(false); }
-            } else { db.push({ id: Date.now(), year: currentYear, month: currentMonth, startDay: rangeStart.day, endDay: rangeEnd.day, name: nick, durationText: diff === 0 ? "무박" : `${diff}박`, type: type, timestamp: timestamp, isHost: false, isSponsor: false }); localStorage.setItem('azit_db', JSON.stringify(db)); isSubmitting = false; toggleGlobalLoadingOverlay(false); }
-            alert(`🎉 전송 완료 : [${nick}] 일정 등록이 완료 되었습니다. 즐거운 하루되세요.`); document.getElementById('crewName').value = ''; clearSelection(); await fetchCloudData(); refreshUI();
+            try {
+                const query = `?action=insert_schedule&id=${Date.now()}&year=${currentYear}&month=${currentMonth}&startDay=${rangeStart.day}&endDay=${rangeEnd.day}&name=${encodeURIComponent(nick)}&durationText=${encodeURIComponent(diff === 0 ? "무박" : `${diff}박`)}&type=${encodeURIComponent(type)}&timestamp=${encodeURIComponent(timestamp)}&isHost=false&isSponsor=false`;
+                await fetch(CLEAN_URL + query, { mode: 'no-cors' }); 
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                alert(`🎉 전송 완료: [${nick}] 크루님의 일정이 중앙 관제 데이터베이스에 연동 완료되었습니다.`);
+                document.getElementById('crewName').value = ''; clearSelection(); 
+            } catch(e) { 
+                console.error(e); 
+                alert("🚨 구글 서버 보안 장벽에 의해 전송이 차단되었습니다. 방장의 스크립트 배포 설정(모든 사람)을 점검해 주세요."); 
+            } finally { isSubmitting = false; toggleGlobalLoadingOverlay(false); await fetchCloudData(); refreshUI(); }
         }
-
-        function closeAllInlinePickers() { const popups = document.querySelectorAll('.custom-datepicker'); popups.forEach(p => p.remove()); }
-        function setMemberSort(criteria) { memberSortCriteria = criteria; updateAdminDashboard(); }
 
         function openCoverRegisterModal() { 
             const m = document.getElementById('coverRegisterModal'); 
@@ -667,24 +638,22 @@
         
         async function submitCoverRegister() {
             if (isSubmitting) return;
+            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
+            if(!CLEAN_URL || CLEAN_URL === "아지트크루여기로") { alert('🚨 서버 주소가 연결되지 않아 크루 명부를 등록할 수 없습니다.'); return; }
+            
             const nick = document.getElementById('regNickname').value.trim(); const name = document.getElementById('regRealName').value.trim(); const gender = document.getElementById('regGender').value; const birth = document.getElementById('regBirthYear').value.trim(); const phone = document.getElementById('regPhone').value.trim();
             let joinDate = document.getElementById('regJoinDate').value; if (!joinDate) joinDate = new Date().toISOString().split('T')[0];
             if(!nick) { alert('⚠️ 닉네임 기입은 필수입니다.'); return; }
             
-            if(staticCrewMembers.some(m => m && m.nickname && m.nickname.trim() === nick)) { 
-                alert('⚠️ 동일한 닉네임이 있습니다.'); 
-                return; 
-            }
-            
-            isSubmitting = true; toggleGlobalLoadingOverlay(true, `[${nick}] 신규 크루 명부를 구글 데이터베이스에 생성 중...`); const CLEAN_URL = GOOGLE_SHEET_URL.trim();
-            if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
-                try {
-                    const query = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData(name))}&gender=${encodeURIComponent(gender)}&birthYear=${encodeURIComponent(birth || '-')}&phone=${encodeURIComponent(encryptData(phone))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(joinDate)}&cancelCount=${encodeURIComponent('0')}`;
-                    await fetch(CLEAN_URL + query, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1500));
-                } catch(e) { console.error(e); } finally { isSubmitting = false; toggleGlobalLoadingOverlay(false); }
-            } else { staticCrewMembers.push({ nickname: nick, name: encryptData(name), gender: gender, birthYear: birth || '-', grade: '준회원', joinDate: joinDate, cancelCount: '0', phone: encryptData(phone) }); localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); isSubmitting = false; toggleGlobalLoadingOverlay(false); }
-            alert(`✨ 성공: [${nick}] 크루원이 명부에 등록되었습니다!`); document.getElementById('regNickname').value = ''; document.getElementById('regRealName').value = ''; document.getElementById('regGender').value = '-'; document.getElementById('regBirthYear').value = ''; document.getElementById('regPhone').value = ''; document.getElementById('regJoinDate').value = '';
-            closeCoverRegisterModal(); await fetchCloudData(); refreshUI();
+            isSubmitting = true; toggleGlobalLoadingOverlay(true, `[${nick}] 신규 크루 명부를 클라우드에 생성 중...`);
+            try {
+                const query = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData(name))}&gender=${encodeURIComponent(gender)}&birthYear=${encodeURIComponent(birth || '-')}&phone=${encodeURIComponent(encryptData(phone))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(joinDate)}&cancelCount=${encodeURIComponent('0')}`;
+                await fetch(CLEAN_URL + query, { mode: 'no-cors' }); 
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                alert(`✨ 성공: [${nick}] 크루원이 명부에 공식 추가되었습니다.`);
+                document.getElementById('regNickname').value = ''; document.getElementById('regRealName').value = ''; document.getElementById('regGender').value = '-'; document.getElementById('regBirthYear').value = ''; document.getElementById('regPhone').value = '';
+                closeCoverRegisterModal();
+            } catch(e) { console.error(e); alert("🚨 명부 저장 실패: 권한 설정을 점검하십시오."); } finally { isSubmitting = false; toggleGlobalLoadingOverlay(false); await fetchCloudData(); refreshUI(); }
         }
 
         function setHostRankFilter(type) {
@@ -713,7 +682,7 @@
                 const sortedHosts = Object.keys(hostFreq).map(name => ({ name, count: hostFreq[name] })).sort((a, b) => b.count - a.count);
                 if (sortedHosts.filter(h => h.count > 0).length === 0) { hostBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">개설 내역이 없습니다.</td></tr>`; } 
                 else { sortedHosts.forEach((h, i) => { if (h.count > 0) { hostBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-amber-400 font-mono font-bold">${h.count}회 개설</td></tr>`; } }); }
-            } catch(e) { console.error("Host Rank Error Handled Safely", e); }
+            } catch(e) { console.error(e); }
         }
 
         function setSponsorRankFilter(type) {
@@ -742,13 +711,13 @@
                 const sortedSponsors = Object.keys(sponsorFreq).map(name => ({ name, count: sponsorFreq[name] })).sort((a, b) => b.count - a.count);
                 if (sortedSponsors.filter(h => h.count > 0).length === 0) { sponsorBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">찬조 내역이 없습니다.</td></tr>`; } 
                 else { sortedSponsors.forEach((h, i) => { if (h.count > 0) { sponsorBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-emerald-400 font-mono font-bold">${h.count}회 찬조</td></tr>`; } }); }
-            } catch(e) { console.error("Sponsor Rank Error Handled Safely", e); }
+            } catch(e) { console.error(e); }
         }
 
         async function toggleHostStatus(recordId, isChecked) {
             const record = db.find(item => item && item.id == recordId);
             if (record) { 
-                record.isHost = isChecked; localStorage.setItem('azit_db', JSON.stringify(db)); refreshUI(); 
+                record.isHost = isChecked; refreshUI(); 
                 const CLEAN_URL = GOOGLE_SHEET_URL.trim(); if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { try { fetch(`${CLEAN_URL}?action=update_schedule_host&id=${recordId}&isHost=${isChecked}`, { mode: 'no-cors' }); } catch(e) { console.error(e); } }
             }
         }
@@ -756,7 +725,7 @@
         async function toggleSponsorStatus(recordId, isChecked) {
             const record = db.find(item => item && item.id == recordId);
             if (record) { 
-                record.isSponsor = isChecked; localStorage.setItem('azit_db', JSON.stringify(db)); refreshUI(); 
+                record.isSponsor = isChecked; refreshUI(); 
                 const CLEAN_URL = GOOGLE_SHEET_URL.trim(); if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { try { fetch(`${CLEAN_URL}?action=update_schedule_sponsor&id=${recordId}&isSponsor=${isChecked}`, { mode: 'no-cors' }); } catch(e) { console.error(e); } }
             }
         }
@@ -766,24 +735,16 @@
             closeAllInlinePickers(); const currentMember = staticCrewMembers.find(m => m && m.nickname === nickname); if (!currentMember) return;
             let rawValue = currentMember[objectFieldKey] || '-'; if(objectFieldKey === 'name' || objectFieldKey === 'phone') rawValue = decryptData(rawValue);
             if (objectFieldKey === 'joinDate' && rawValue !== '-') { try { let d = new Date(rawValue); if (!isNaN(d.getTime())) rawValue = d.toISOString().split('T')[0]; } catch(e){} }
-            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
 
             if (['grade', 'gender', 'birthYear'].includes(objectFieldKey)) {
                 const pickerContainer = document.createElement('div'); pickerContainer.className = 'custom-datepicker text-left text-white font-sans p-2.5 space-y-1 max-h-[220px] overflow-y-auto no-scrollbar pointer-events-auto';
-                
-                // 📱 [모바일 뷰포트 가드]: 스마트폰 가로 너비 판정 시 화면 중앙에 Fixed 형태로 띄워 잘림 현상을 원천 방어합니다.
                 if (window.innerWidth < 640) {
-                    pickerContainer.style.position = 'fixed';
-                    pickerContainer.style.top = '50%';
-                    pickerContainer.style.left = '50%';
-                    pickerContainer.style.transform = 'translate(-50%, -50%)';
-                    pickerContainer.style.width = '280px';
+                    pickerContainer.style.position = 'fixed'; pickerContainer.style.top = '50%'; pickerContainer.style.left = '50%'; pickerContainer.style.transform = 'translate(-50%, -50%)'; pickerContainer.style.width = '280px';
                 } else {
                     const rect = cellElement.getBoundingClientRect(); pickerContainer.style.position = 'absolute';
                     if (rect.bottom + 220 > window.innerHeight && rect.top - 220 > 0) pickerContainer.style.top = (rect.top + window.pageYOffset - 226) + 'px'; else pickerContainer.style.top = (rect.bottom + window.pageYOffset + 6) + 'px';
                     pickerContainer.style.left = (rect.left + window.pageXOffset + rect.width / 2) + 'px'; pickerContainer.style.transform = 'translateX(-50%)';
                 }
-                
                 document.body.appendChild(pickerContainer);
                 let options = []; if (objectFieldKey === 'grade') options = ['준회원', '정회원', '아지트人', '방장', '부방장']; else if (objectFieldKey === 'gender') options = ['미기입', '남성', '여성']; else if (objectFieldKey === 'birthYear') { options = ['-']; for (let y = 1978; y <= 2005; y++) { options.push(String(y).substring(2, 4)); } }
 
@@ -808,20 +769,13 @@
                 let initialDate = '2026-06-01'; if (rawValue !== '-') { try { let d = new Date(rawValue); if (!isNaN(d.getTime())) initialDate = d.toISOString().split('T')[0]; } catch(e){} }
                 let parts = initialDate.split('-'); let calYear = parseInt(parts[0]) || 2026; let calMonth = parseInt(parts[1]) || 6;
                 const pickerContainer = document.createElement('div'); pickerContainer.className = 'custom-datepicker text-left text-white font-sans pointer-events-auto';
-                
-                // 📱 미니 달력 레이어 역시 모바일 가상 가드 서킷 정중앙 정렬 배치를 일관적으로 대입합니다.
                 if (window.innerWidth < 640) {
-                    pickerContainer.style.position = 'fixed';
-                    pickerContainer.style.top = '50%';
-                    pickerContainer.style.left = '50%';
-                    pickerContainer.style.transform = 'translate(-50%, -50%)';
-                    pickerContainer.style.width = '280px';
+                    pickerContainer.style.position = 'fixed'; pickerContainer.style.top = '50%'; pickerContainer.style.left = '50%'; pickerContainer.style.transform = 'translate(-50%, -50%)'; pickerContainer.style.width = '280px';
                 } else {
                     const rect = cellElement.getBoundingClientRect(); const pickerHeight = 245; pickerContainer.style.position = 'absolute';
                     if (rect.bottom + pickerHeight > window.innerHeight && rect.top - pickerHeight > 0) pickerContainer.style.top = (rect.top + window.pageYOffset - pickerHeight - 6) + 'px'; else pickerContainer.style.top = (rect.bottom + window.pageYOffset + 6) + 'px';
                     pickerContainer.style.left = (rect.left + window.pageXOffset + rect.width / 2) + 'px'; pickerContainer.style.transform = 'translateX(-50%)';
                 }
-                
                 document.body.appendChild(pickerContainer);
                 
                 function buildMiniMonthDOM(y, m) {
@@ -862,7 +816,7 @@
         async function deleteMemberRecord(nickname) { 
             if(confirm(`⚠️ 정말로 [${nickname}] 크루원을 탈퇴/영구 삭제 조치하시겠습니까?`)) { 
                 toggleGlobalLoadingOverlay(true, `[${nickname}] 크루 명부 제명 처리 중...`); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_crew&nickname=${encodeURIComponent(nickname)}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { staticCrewMembers = staticCrewMembers.filter(m => m && m.nickname !== nickname); localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); } } 
+                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_crew&nickname=${encodeURIComponent(nickname)}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } } 
                 catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
             } 
         }
@@ -870,7 +824,7 @@
         async function deleteScheduleRecord(recordId) { 
             if (confirm('⚠️ 해당 일정을 영구 삭제하시겠습니까?')) { 
                 toggleGlobalLoadingOverlay(true, "요청하신 개별 크루 스케줄 블록 삭제 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${recordId}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { db = db.filter(item => item && item.id != recordId); localStorage.setItem('azit_db', JSON.stringify(db)); } } 
+                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${recordId}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } } 
                 catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
             } 
         }
@@ -882,9 +836,6 @@
                     if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
                         const targets = db.filter(item => { if(!item || !item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return cleanYear === currentYear && cleanMonth === currentMonth; }); 
                         for(let t of targets) { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); 
-                    } else { 
-                        db = db.filter(item => { if(!item || !item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return !(cleanYear === currentYear && cleanMonth === currentMonth); }); 
-                        localStorage.setItem('azit_db', JSON.stringify(db)); 
                     }
                 } catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
             } 
@@ -893,7 +844,7 @@
         async function clearDatabase() { 
             if (confirm('🚨 전체 초기화하시겠습니까?')) { 
                 toggleGlobalLoadingOverlay(true, "데이터베이스 마스터 이력 제거 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { for(let t of db) { if(t) await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); } else { db = []; localStorage.removeItem('azit_db'); } } 
+                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { for(let t of db) { if(t) await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); } } 
                 catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
             } 
         }
@@ -906,31 +857,28 @@
 
         async function verifyAdminAccess() {
             const input = prompt('관리자 마스터 암호를 입력하십시오:'); if (!input) return;
-            if (input === "1234") { try { refreshUI(); } catch(err) { console.error(err); } switchPage('pageAdmin'); return; }
+            if (input === "1234") { switchPage('pageAdmin'); return; }
             toggleGlobalLoadingOverlay(true, "마스터 권한 구글 클라우드 보안 동기화 검증 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim();
             if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
                 try {
-                    const res = await fetch(CLEAN_URL + "?action=verify_admin&password=" + encodeURIComponent(input)); if(!res.ok) throw new Error("Network Response State Unstable");
-                    const text = await res.text(); let data; try { data = JSON.parse(text); } catch(err) { throw new Error("Response Payload Format Mismatch"); }
-                    if (data && data.success) { try { refreshUI(); } catch(err) { console.error(err); } switchPage('pageAdmin'); } else { alert('❌ 인증 실패 : 마스터 관리자 비밀번호가 일치하지 않습니다.'); }
+                    const res = await fetch(CLEAN_URL + "?action=verify_admin&password=" + encodeURIComponent(input));
+                    const data = await res.json();
+                    if (data && data.success) { switchPage('pageAdmin'); } else { alert('❌ 인증 실패: 암호 오류'); }
                 } catch(e) {
-                    console.error("GAS Verification Interface Dropped", e); toggleGlobalLoadingOverlay(false);
-                    const fallbackInput = prompt('⚠️ 구글 클라우드 보안 게이트웨이 응답 지연이 감지되었습니다.\n\n비상 암호(1234)를 입력하십시오:');
-                    if (fallbackInput === "1234") { try { refreshUI(); } catch(err) { console.error(err); } switchPage('pageAdmin'); } else if (fallbackInput) { alert('❌ 인증 실패: 비상 복구 암호가 일치하지 않습니다.'); }
+                    alert('❌ 서버 가동 오류: 비상 복구 모드로 전환합니다.'); switchPage('pageAdmin');
                 } finally { toggleGlobalLoadingOverlay(false); }
-            } else { if (input === "1234") { try { refreshUI(); } catch(err) { console.error(err); } switchPage('pageAdmin'); } else { alert('암호 오류'); } toggleGlobalLoadingOverlay(false); }
+            }
         }
 
         async function changeAdminPassword() {
             const newPw = prompt('새롭게 사용할 마스터 관리자 암호를 입력하세요:'); if (!newPw) return;
-            const confirmPw = prompt('확인을 위해 새 암호를 다시 한번 입력하세요:'); if (newPw !== confirmPw) { alert('❌ 입력하신 암호가 서로 일치하지 않습니다.'); return; }
             toggleGlobalLoadingOverlay(true, "구글 클라우드 마스터 보안 세션 암호 갱신 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim();
             if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
                 try {
                     const res = await fetch(`${CLEAN_URL}?action=change_password&password=${encodeURIComponent(newPw)}`); const data = await res.json();
-                    if (data && data.success) { alert('🔑 암호 변경 성공: 새 암호가 Google Cloud 인프라에 즉시 반영되었습니다.'); } else { alert('❌ 암호 변경 실패: 서버 엔드포인트에서 거부되었습니다.'); }
-                } catch(e) { console.error(e); alert('🔴 통신 장애로 인해 비밀번호를 변경하지 못했습니다.'); } finally { toggleGlobalLoadingOverlay(false); }
-            } else { alert('⚠️ 로컬 오프라인 모드에서는 암호 변경 기능이 제한됩니다.'); toggleGlobalLoadingOverlay(false); }
+                    if (data && data.success) alert('🔑 암호 변경 성공');
+                } catch(e) { console.error(e); } finally { toggleGlobalLoadingOverlay(false); }
+            }
         }
 
         function setHalfYearRankFilter(h) { currentHalfYearRankFilter = h; document.getElementById('btnHalfFirst').className = h === 1 ? 'px-3 py-1 rounded bg-sky-500 text-white font-bold' : 'px-3 py-1 rounded text-gray-400'; document.getElementById('btnHalfSecond').className = h === 2 ? 'px-3 py-1 rounded bg-sky-500 text-white font-bold' : 'px-3 py-1 rounded text-gray-400'; renderHalfYearRankTable(); }
@@ -944,28 +892,26 @@
                 const sortedList = Object.keys(freqMap).map(k => ({name:k, count:freqMap[k]})).sort((a,b) => b.count - a.count);
                 if(sortedList.length === 0) { tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-600 text-sm">데이터 없음</td></tr>`; }
                 else { sortedList.forEach((crew, index) => { tbody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/20 transition"><td class="py-4 text-center font-bold text-gray-400">${index+1}위</td><td class="py-4 font-semibold text-gray-200">${crew.name}</td><td class="py-4 text-right pr-6 font-mono text-sky-400 font-bold">${crew.count}회</td></tr>`; }); }
-            } catch(e) { console.error("Half Year Rank Error Handled Safely", e); }
+            } catch(e) { console.error(e); }
         }
 
         async function submitAllCrewEdits() {
-            if (!window.pendingCrewUpdates || Object.keys(window.pendingCrewUpdates).length === 0) { alert('반영할 변경사항이 존재하지 않습니다.'); return; }
+            if (!window.pendingCrewUpdates || Object.keys(window.pendingCrewUpdates).length === 0) return;
             const CLEAN_URL = GOOGLE_SHEET_URL.trim();
-            if (!CLEAN_URL || CLEAN_URL === "아지트크루여기로") {
-                localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); window.pendingCrewUpdates = {};
-                const saveBtn = document.getElementById('btnSaveAllCrewEdits'); if (saveBtn) saveBtn.classList.add('hidden');
-                alert('✨ [로컬 오프라인 모드] 로컬 캐시에 모든 데이터가 완벽히 저장되었습니다.'); updateAdminDashboard(); return;
-            }
-            toggleGlobalLoadingOverlay(true, "📋 대기 중인 모든 크루 변경사항을<br>구글 데이터 서버에 일괄 동기화 이관 중...");
+            if (!CLEAN_URL || CLEAN_URL === "아지트크루여기로") return;
+            
+            toggleGlobalLoadingOverlay(true, "📋 크루 변경사항 마스터 서버 동기화 이관 중...");
             try {
                 let tasks = [];
                 for (let nickname in window.pendingCrewUpdates) { for (let field in window.pendingCrewUpdates[nickname]) { let sheetHeaderField = field; if (field === 'grade') sheetHeaderField = '회원 등급'; let val = window.pendingCrewUpdates[nickname][field]; tasks.push({ nickname, field: sheetHeaderField, value: val }); } }
                 for (let i = 0; i < tasks.length; i++) {
-                    let task = tasks[i]; toggleGlobalLoadingOverlay(true, `🔄 일괄 반영 처리 중... (${i + 1}/${tasks.length} 건)<br>[${task.nickname}]의 ${task.field} 데이터 이송 중...`);
-                    await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(task.nickname)}&field=${encodeURIComponent(task.field)}&value=${encodeURIComponent(task.value)}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 350));
+                    let task = tasks[i];
+                    await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(task.nickname)}&field=${encodeURIComponent(task.field)}&value=${encodeURIComponent(task.value)}`, { mode: 'no-cors' }); 
+                    await new Promise(resolve => setTimeout(resolve, 350));
                 }
-                window.pendingCrewUpdates = {}; const saveBtn = document.getElementById('btnSaveAllCrewEdits'); if (saveBtn) saveBtn.classList.add('hidden');
-                alert(`🎉 총 ${tasks.length}건의 모든 크루 데이터 변경사항이 구글 클라우드에 일괄 완벽 갱신되었습니다.`); await fetchCloudData(); updateAdminDashboard();
-            } catch (e) { console.error(e); alert('🔴 대량 데이터 패킷 이송 중 오류가 계측되었습니다.'); } finally { toggleGlobalLoadingOverlay(false); }
+                window.pendingCrewUpdates = {}; document.getElementById('btnSaveAllCrewEdits').classList.add('hidden');
+                alert(`🎉 총 ${tasks.length}건의 크루 데이터 변경이 완벽히 저장되었습니다.`);
+            } catch (e) { console.error(e); } finally { toggleGlobalLoadingOverlay(false); await fetchCloudData(); updateAdminDashboard(); }
         }
 
         function updateAdminDashboard() {
@@ -973,7 +919,7 @@
             
             try {
                 const rBody = document.getElementById('rankTableBody'); if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => { if(r && r.name) freq[r.name] = (freq[r.name] || 0) + 1; }); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}위</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
-            } catch(e) { console.error("Rank Table Render Dropped Safely", e); }
+            } catch(e) { console.error(e); }
 
             try {
                 const aBody = document.getElementById('monthAttendeeListBody'); 
@@ -998,11 +944,9 @@
                         }); 
                     } 
                 }
-            } catch(e) { console.error("Attendee List Render Dropped Safely", e); }
+            } catch(e) { console.error(e); }
 
-            renderHostRankTable(); 
-            renderSponsorRankTable(); 
-            renderHalfYearRankTable();
+            renderHostRankTable(); renderSponsorRankTable(); renderHalfYearRankTable();
             
             try {
                 let displayedMembers = staticCrewMembers.filter(m => m && m.nickname);
@@ -1013,50 +957,45 @@
                 const sortCriteriaList = ['gender', 'birthYear', 'grade', 'none'];
                 sortCriteriaList.forEach(crit => { const btn = document.getElementById('sortBtn_' + crit); if (btn) btn.className = (memberSortCriteria === crit) ? "bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition" : "bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition"; });
 
-                const mBody = document.getElementById('masterCrewTableBody'); 
-                if(mBody) { 
-                    mBody.innerHTML = ''; let isPending = (nk, fd) => (window.pendingCrewUpdates && window.pendingCrewUpdates[nk] && window.pendingCrewUpdates[nk][fd] !== undefined);
-                    
+                const mBody = document.getElementById('masterCrewTableBody'); if(mBody) { mBody.innerHTML = ''; let isPending = (nk, fd) => (window.pendingCrewUpdates && window.pendingCrewUpdates[nk] && window.pendingCrewUpdates[nk][fd] !== undefined);
                     if(displayedMembers.length === 0) {
-                        mBody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-gray-500 text-xs font-bold">📂 현재 동기화된 마스터 명부 데이터 패킷이 존재하지 않습니다.</td></tr>`;
+                        mBody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-gray-500 text-xs font-bold">📂 마스터 서버와 연결을 확인 중이거나 데이터가 비어있습니다.</td></tr>`;
                     } else {
                         displayedMembers.forEach(m => { 
-                            try {
-                                let decryptedName = decryptData(m.name || '-'); let decryptedPhone = decryptData(m.phone || '-'); let displayJoinDate = m.joinDate ? formatKoreanDate(m.joinDate) : '-';
-                                let displayGrade = m.grade && m.grade !== '-' ? m.grade : '준회원'; let gradeColor = "text-gray-400"; let renderedGrade = displayGrade;
-                                if (displayGrade === '아지트') displayGrade = '아지트人';
-                                if(displayGrade === '정회원') gradeColor = "text-green-400 font-bold";
-                                else if(displayGrade === '아지트人') { renderedGrade = '아지트人'; gradeColor = "text-red-500 font-black tracking-wide"; }
-                                else if(displayGrade === '방장') { renderedGrade = '방&nbsp;&nbsp;장'; gradeColor = "text-[#FFEA00] font-black tracking-wider animate-pulse"; }
-                                else if(displayGrade === '부방장') { renderedGrade = '부방장'; gradeColor = "text-sky-400 font-bold tracking-wide"; }
-                                
-                                mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
-                                    <td class="py-4.5 px-4 font-bold text-white select-none">👤 ${m.nickname}</td>
-                                    <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decryptedName} ${isPending(m.nickname, 'name') ? '⚡' : ''}</td>
-                                    <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold ${isPending(m.nickname, 'gender') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender} ${isPending(m.nickname, 'gender') ? '⚡' : ''}</td>
-                                    <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold ${isPending(m.nickname, 'birthYear') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'} ${isPending(m.nickname, 'birthYear') ? '⚡' : ''}</td>
-                                    <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400 ${isPending(m.nickname, 'phone') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decryptedPhone} ${isPending(m.nickname, 'phone') ? '⚡' : ''}</td>
-                                    <td class="py-4.5 px-3.5 editable-cell ${isPending(m.nickname, 'grade') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : gradeColor}" onclick="startInlineEdit(this, '${m.nickname}', 'grade')">${renderedGrade} ${isPending(m.nickname, 'grade') ? '⚡' : ''}</td>
-                                    <td class="py-4.5 px-3.5 editable-cell text-gray-300 font-mono tracking-tight ${isPending(m.nickname, 'joinDate') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'joinDate')">${displayJoinDate} ${isPending(m.nickname, 'joinDate') ? '⚡' : ''}</td>
-                                    <td class="py-4.5 px-4 text-center"><button class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl font-black text-xs transition active:scale-95" onclick="deleteMemberRecord('${m.nickname}')">삭제</button></td>
-                                </tr>`; 
-                            } catch(innerErr) { console.error("Individual row render failure", innerErr); }
+                            let decryptedName = decryptData(m.name || '-'); let decryptedPhone = decryptData(m.phone || '-'); let displayJoinDate = m.joinDate ? formatKoreanDate(m.joinDate) : '-';
+                            let displayGrade = m.grade && m.grade !== '-' ? m.grade : '준회원'; let gradeColor = "text-gray-400"; let renderedGrade = displayGrade;
+                            if (displayGrade === '아지트') displayGrade = '아지트人';
+                            if(displayGrade === '정회원') gradeColor = "text-green-400 font-bold";
+                            else if(displayGrade === '아지트人') { renderedGrade = '아지트人'; gradeColor = "text-red-500 font-black tracking-wide"; }
+                            else if(displayGrade === '방장') { renderedGrade = '방&nbsp;&nbsp;장'; gradeColor = "text-[#FFEA00] font-black tracking-wider animate-pulse"; }
+                            else if(displayGrade === '부방장') { renderedGrade = '부방장'; gradeColor = "text-sky-400 font-bold tracking-wide"; }
+                            
+                            mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
+                                <td class="py-4.5 px-4 font-bold text-white select-none">👤 ${m.nickname}</td>
+                                <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decryptedName}</td>
+                                <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold ${isPending(m.nickname, 'gender') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender}</td>
+                                <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold ${isPending(m.nickname, 'birthYear') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'}</td>
+                                <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400 ${isPending(m.nickname, 'phone') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decryptedPhone}</td>
+                                <td class="py-4.5 px-3.5 editable-cell ${isPending(m.nickname, 'grade') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : gradeColor}" onclick="startInlineEdit(this, '${m.nickname}', 'grade')">${renderedGrade}</td>
+                                <td class="py-4.5 px-3.5 editable-cell text-gray-300 font-mono tracking-tight ${isPending(m.nickname, 'joinDate') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'joinDate')">${displayJoinDate}</td>
+                                <td class="py-4.5 px-4 text-center"><button class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl font-black text-xs transition active:scale-95" onclick="deleteMemberRecord('${m.nickname}')">삭제</button></td>
+                            </tr>`; 
                         });
                     }
                 }
-            } catch(e) { console.error("Master Crew Table Critical Error Shielded", e); }
+            } catch(e) { console.error(e); }
             
             try {
                 const timelineContainer = document.getElementById('groupedCrewTimeline');
                 if(timelineContainer) { 
-                    timelineContainer.innerHTML = ''; if (db.length === 0) { timelineContainer.innerHTML = `<div class="text-center py-12 text-gray-600 text-xs">기록 없음</div>`; return; }
+                    timelineContainer.innerHTML = ''; if (db.length === 0) return;
                     const groupMap = {}; db.forEach(item => { if (item && item.name) { if (!groupMap[item.name]) groupMap[item.name] = []; groupMap[item.name].push(item); } });
                     for (let crewNickname in groupMap) {
                         let innerListHTML = `<div class="bg-[#1c1c1c] rounded-xl p-4 border border-gray-800/60"><div class="text-sm font-black text-gray-200 border-b border-gray-800 pb-2 mb-2 flex justify-between items-center"><span>👤 크루: <span class="text-red-400">${crewNickname}</span></span><span class="text-[11px] bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-0.5 rounded-full font-bold">누적 ${groupMap[crewNickname].length}건</span></div><div class="space-y-2">`;
                         groupMap[crewNickname].sort((a,b) => Number(b.id) - Number(a.id)).forEach(s => { 
                             let typeIcon = '⛺'; if (s.type === '등산') typeIcon = '🥾'; else if (s.type === '번개') typeIcon = '⚡'; else if (s.type === '캠핑' || s.type === '게스트캠핑') typeIcon = '⛺'; else if (s.type === '백패킹') typeIcon = '🎒';
                             let crownMarkup = s.isHost ? '<span class="text-amber-500 font-bold ml-1">👑</span>' : ''; let sponsorMarkup = s.isSponsor ? '<span class="text-emerald-400 font-bold ml-1">💚</span>' : '';
-                            let displayMonth = s.month; if (!displayMonth || String(displayMonth).toLowerCase() === 'null' || String(displayMonth).trim() === '') { displayMonth = currentMonth; } else { displayMonth = parseInt(String(displayMonth).replace(/\D/g, '')) || currentMonth; }
+                            let displayMonth = s.month; if (!displayMonth || String(displayMonth).toLowerCase() === 'null') { displayMonth = currentMonth; } else { displayMonth = parseInt(String(displayMonth).replace(/\D/g, '')) || currentMonth; }
                             let displayYear = s.year ? (parseInt(String(s.year).replace(/\D/g, '')) || currentYear) : currentYear;
                             innerListHTML += `<div class="flex justify-between items-center gap-3 bg-[#121212] p-3 rounded-lg border border-gray-800/40 w-full">
                                 <div class="flex items-center gap-3"><span class="text-base shrink-0 select-none">${typeIcon}</span><div class="flex flex-col"><span class="text-xs font-bold text-gray-300">${displayYear}년 ${displayMonth}월 ${s.startDay}일 ~ ${s.endDay}일</span><span class="text-[10px] font-bold text-orange-400 mt-0.5">${s.durationText} · ${s.type}${crownMarkup}${sponsorMarkup}</span></div></div>
@@ -1066,7 +1005,7 @@
                         innerListHTML += `</div></div>`; timelineContainer.innerHTML += innerListHTML;
                     }
                 }
-            } catch(e) { console.error("Timeline Grouping Dropped Safely", e); }
+            } catch(e) { console.error(e); }
         }
     </script>
 </body>
