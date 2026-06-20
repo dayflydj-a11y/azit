@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AZIT - 같이의 가치</title>
     
-    <!-- ⚡ [PWA 핵심 이식]: 모바일 단독 앱 구동 매니페스트 및 iOS 사파리 전용 웹앱 메타 패킷 탑재 -->
     <link rel="manifest" href="./manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AZIT">
     <link class="html-embed" rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/846/846355.png">
 
-    <!-- ⚡ Tailwind CSS CDN 인프라 구동 엔진 안정화 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link class="html-embed" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -49,7 +47,6 @@
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
 
-    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이 레이어 -->
     <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
             <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
@@ -57,7 +54,6 @@
         </div>
     </div>
 
-    <!-- [PAGE 1] 아지트 인트로 커버 화면 -->
     <div id="pageCover" class="fixed inset-0 z-50 flex flex-col justify-between p-6 transition-all duration-700 ease-in-out transform bg-cover bg-center" 
          style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=1920&q=80');">
         <div class="text-center mt-6 lg:mt-10 animate-fade-in">
@@ -75,7 +71,6 @@
         </div>
     </div>
 
-    <!-- 신규회원 등록 모달 -->
     <div id="coverRegisterModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl transform scale-95 transition-all" id="coverRegBox">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
@@ -94,7 +89,6 @@
         </div>
     </div>
 
-    <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
     <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
         <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-3 sm:py-4 flex flex-col justify-between items-center gap-2">
             <div class="w-full flex justify-between items-center px-2">
@@ -106,15 +100,14 @@
         </header>
         <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <!-- 📢 마스터 공지사항 게시판 레이아웃 단락 (3중 복사방지 락 적용) -->
             <div class="lg:col-span-12 bg-[#1a1a1a] border border-red-500/30 rounded-2xl p-4 shadow-2xl prevent-select" 
                  oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
-                <div class="flex items-center gap-2 mb-2 border-b border-gray-800 pb-2">
+                <div class="flex items-center gap-2 mb-3 border-b border-gray-800 pb-2">
                     <i class="fa-solid fa-bullhorn text-red-500 animate-pulse"></i>
-                    <h3 class="text-sm font-black text-red-500 tracking-wider uppercase">AZIT CREW 알림 및 공지사항</h3>
-                    <span class="text-[9px] bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded-full font-mono font-bold ml-auto select-none">🔒 보안 관제 프로토콜 가동 (복사 금지)</span>
+                    <h3 class="text-sm font-black text-red-500 tracking-wider uppercase">AZIT CREW 공식 공지게시판</h3>
+                    <span class="text-[9px] bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded-full font-mono font-bold ml-auto select-none">🔒 보안 관제 프로토콜 가동 (드래그/복사 불가능)</span>
                 </div>
-                <p id="noticeTextContainer" class="text-xs sm:text-sm text-gray-300 leading-relaxed font-semibold whitespace-pre-wrap tracking-wide break-keep select-none"></p>
+                <div id="noticeAccordionContainer" class="space-y-2 select-none"></div>
             </div>
 
             <div class="lg:col-span-7 bg-[#1e1e1e] border border-gray-800 rounded-2xl p-4 shadow-xl">
@@ -137,7 +130,7 @@
                     <div class="flex items-center gap-2 border-b border-gray-800 pb-3"><i class="fa-solid fa-circle-info text-red-500 text-lg"></i><h4 class="text-sm font-bold text-gray-400">이용 안내 가이드</h4></div>
                     <ul class="space-y-3 text-sm sm:text-base font-medium leading-relaxed mt-4">
                         <li class="flex items-start gap-2.5"><span class="bg-red-500/10 text-red-500 text-xs w-5 h-5 mt-0.5 rounded-full flex items-center justify-center font-bold border border-red-500/20 shrink-0">1</span><p>한 번 누르면 <span class="text-red-500 font-black underline underline-offset-4">무박</span> 일정이 선택이 됩니다.</p></li>
-                        <li class="flex items-start gap-2.5"><span class="bg-gray-800 text-gray-400 text-xs w-5 h-5 mt-0.5 rounded-full flex items-center justify-center font-bold shrink-0">2</span><p>시작일과 마감일 설정 시 일정이 자동 계산됩니다.</p></li>
+                        <li class="flex items-start gap-2.5"><span class="bg-gray-800 text-gray-400 text-xs w-5 h-5 mt-0.5 rounded-full flex items-center justify-center font-bold shrink-0">2</span><p>시작일 and 마감일 설정 시 일정이 자동 계산됩니다.</p></li>
                     </ul>
                 </div>
                 <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 shadow-xl" id="configCard">
@@ -158,7 +151,6 @@
         </main>
     </div>
 
-    <!-- [PAGE 3] 관리자 대시보드 메인 관제 화면 -->
     <div id="pageAdmin" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0e0e0e]">
         <header class="border-b border-gray-800 bg-[#151515] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-lg">
             <button onclick="switchPage('pageCalendar')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 일정 화면으로</button>
@@ -185,24 +177,36 @@
                 </div>
             </div>
 
-            <!-- 🔒 관리자 전용 공지사항 추가/수정 편집 관제 제어 센터 모듈 -->
             <div class="bg-[#151515] border border-gray-800 p-4 sm:p-5 rounded-2xl shadow-xl">
-                <h3 class="text-base font-bold text-gray-200 mb-3 flex items-center gap-2 border-b border-gray-800 pb-3">
-                    <i class="fa-solid fa-pen-to-square text-amber-500"></i> 아지트 공지사항 제어 센터 (관리자 전용)
-                </h3>
-                <div class="flex flex-col gap-3">
-                    <textarea id="adminNoticeInput" rows="4" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-4 py-3 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500 transition font-mono leading-relaxed" placeholder="크루원들에게 하향 전파할 마스터 공지사항 수칙을 기입하십시오."></textarea>
-                    <div class="flex justify-end">
-                        <button onclick="submitNoticeUpdate()" class="bg-amber-500 hover:bg-amber-600 text-black font-black px-5 py-3 rounded-xl text-xs transition active:scale-95 shadow-md flex items-center gap-1.5">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> 공지사항 마스터 갱신 및 실시간 배포
-                        </button>
+                <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
+                    <h3 class="text-base font-bold text-gray-200 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-amber-500"></i> 아지트 공지사항 마스터 관제 센터
+                    </h3>
+                    <button onclick="openNoticeAddForm()" class="bg-amber-500 text-black font-black px-3 py-1.5 rounded-xl text-xs transition active:scale-95 hover:bg-amber-600">+ 새 공지 추가</button>
+                </div>
+
+                <div id="noticeEditorForm" class="hidden bg-[#121212] border border-gray-800 p-4 rounded-xl mb-4 space-y-3">
+                    <input type="hidden" id="editNoticeId">
+                    <div>
+                        <label class="block text-xs text-gray-400 font-bold mb-1">공지사항 제목</label>
+                        <input type="text" id="editNoticeTitle" placeholder="예: 📢 정회원 등급 조정 및 승급 기준 안내" class="w-full bg-[#1e1e1e] border border-gray-800 rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-amber-500 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 font-bold mb-1">공지 본문 내용</label>
+                        <textarea id="editNoticeContent" rows="4" placeholder="크루원들에게 하향 전파할 명세 지침을 입력하십시오." class="w-full bg-[#1e1e1e] border border-gray-800 rounded-xl px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-amber-500 text-white font-mono leading-relaxed"></textarea>
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button onclick="closeNoticeEditor()" class="bg-gray-800 text-gray-400 px-3 py-2 rounded-xl text-xs font-bold">취소</button>
+                        <button onclick="saveNoticeData()" class="bg-amber-500 text-black px-4 py-2 rounded-xl text-xs font-black shadow-md flex items-center gap-1"><i class="fa-solid fa-floppy-disk"></i> 저장 및 동기화</button>
                     </div>
                 </div>
+
+                <div id="adminNoticeList" class="space-y-2 divide-y divide-gray-800/40"></div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
-                    <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center justify-between border-b border-gray-800 pb-3"><span>🏆 월별 활동 크루원 순위</span><span id="rankMonthLabel" class="text-xs font-mono text-green-400 bg-green-400/5 px-2.5 py-1 rounded-lg border border-green-500/10">6월 기준</span></h3>
+                    <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center justify-between border-b border-gray-800 pb-3"><span>🏆 月별 활동 크루원 순위</span><span id="rankMonthLabel" class="text-xs font-mono text-green-400 bg-green-400/5 px-2.5 py-1 rounded-lg border border-green-500/10">6월 기준</span></h3>
                     <div class="overflow-x-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="rankTableBody" class="divide-y divide-gray-800/40"></tbody></table></div>
                 </div>
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
@@ -261,7 +265,6 @@
         </main>
     </div>
 
-    <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
     <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
         <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md">
             <button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button>
@@ -310,9 +313,19 @@
         let db = [], staticCrewMembers = [];
         let isSubmitting = false;
         
-        let noticeText = "📢 안전하고 신뢰도 높은 아지트 크루 활동을 위한 대표 공지사항입니다.\n1. 일정 등록 기한 준수: 현재 날짜 기준으로 [시작일 이틀 전]부터 [마감일 이틀 후] 활성 윈도우 창 안에서만 스케줄 생성 및 제출이 허용됩니다.\n2. 무박(당일치기) 일정 편성 시 카테고리 내 '백패킹' 세부 옵션은 비즈니스 디펜시브 코드에 의해 강제 선택 제약 처리가 수행됩니다.\n3. 모임 찬조 내역은 관리자 관제를 통해 수동 검증 후 찬조자 순위 랭킹 보드에 투명하게 상향 정렬 반영 처리됩니다.";
+        // 🔒 [대개조]: 요청하신 6대 핵심 공지사항 명세를 마스터 하이브리드 데이터 객체형태로 백패킹 가공하여 기본 이식
+        let defaultNotices = [
+            { id: 1, title: "📢 [수칙 1] 아지트 크루 운영 및 가입 기본 서약", content: "아지트(AZIT)는 신뢰와 상호 존중을 바탕으로 캠핑, 등산, 백패킹을 즐기는 동호회입니다. 유령 크루 방지를 위해 등록된 모든 회원은 분기별 최소 1회 이상의 오프라인 모임 참석 의무가 부과됩니다.", date: "2026-06-20" },
+            { id: 2, title: "📢 [수칙 2] 일정 등록 및 관제 활성 윈도우 규정", content: "모든 크루 일정 생성을 위한 참석 신청은 오남용 방지 서킷에 의해 [모임 시작일 이틀 전]부터 [모임 마감일 이틀 후] 사이의 유효 기한 내에서만 시스템 등록 및 제출이 최종 승인 처리됩니다.", date: "2026-06-20" },
+            { id: 3, title: "📢 [수칙 3] 당일치기 무박 일정 카테고리 규제 조치", content: "안전 보장 가이드라인에 따라 달력에서 동력 계산이 '0박(당일치기 무박 모임)'으로 판정될 경우, 디펜시브 스크립트에 의해 활동 카테고리 중 '백패킹' 세부 옵션 선택은 기술적으로 강제 비활성화 제한됩니다.", date: "2026-06-20" },
+            { id: 4, title: "📢 [수칙 4] 모임 협찬 및 크루 찬조금 투명성 집계", content: "아지트 모임을 위해 장비나 물품, 찬조금을 기부해주신 크루원의 내역은 관리자 관제 시스템 수동 검증 절차를 거친 뒤, 대시보드 내 찬조자 순위 보드 랭킹에 가중치 연산 상향 정렬 반영 처리됩니다.", date: "2026-06-20" },
+            { id: 5, title: "📢 [수칙 5] 크루 활동 등급 승급 및 기수 명세 수칙", content: "회원 명부는 신규 유입 시 기본 준회원으로 편입되며, 활동 빈도와 개설 참여 누적 데이터 스코어 요건 충족 시 방장의 승인을 거쳐 정회원 및 핵심 운영 멤버인 아지트人 등급으로 수동 변경 이관됩니다.", date: "2026-06-20" },
+            { id: 6, title: "📢 [수칙 6] 노쇼(무단 불참) 패널티 및 패킷 관리 수칙", content: "일정 제출 완료 후 사전 통보 없는 무단 불참 행위 적발 시 시스템 내 취소 카운트 가산 처리가 집행되며, 누적 3회 이상 초과 계측될 경우 아지트 내부 규정에 따라 명부 제명 및 강제 탈퇴 조치가 수행됩니다.", date: "2026-06-20" }
+        ];
+        let noticeText = JSON.stringify(defaultNotices);
         
         window.pendingCrewUpdates = {};
+        let openNoticeIdGlobal = null; 
         
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbw1wbZaaE-PYfswF1jVlmc8i9lsPirstS5P7CIhaqNTkiBZD7LFlDAA6-80bDi7ZuYK/exec"; 
         
@@ -412,7 +425,7 @@
             if (CLEAN_URL === "아지트크루여기로" || !CLEAN_URL) {
                 db = JSON.parse(localStorage.getItem('azit_db')) || [];
                 staticCrewMembers = JSON.parse(localStorage.getItem('azit_crews')) || [];
-                noticeText = localStorage.getItem('azit_notice') || noticeText;
+                noticeText = localStorage.getItem('azit_notice') || JSON.stringify(defaultNotices);
                 updateNetworkStatusDOM("⚠️ 오프라인 모드 (로컬 저장소 전용)", "local");
                 return;
             }
@@ -422,46 +435,177 @@
                 if (data.db) db = data.db;
                 if (data.crews) staticCrewMembers = data.crews;
                 if (data.notice) noticeText = data.notice; 
-                else noticeText = localStorage.getItem('azit_notice') || noticeText;
+                else noticeText = localStorage.getItem('azit_notice') || JSON.stringify(defaultNotices);
                 updateNetworkStatusDOM("🟢 실시간 구글 클라우드 동기화 완료", "success");
             } catch(e) { 
                 console.error("Cloud Fetch Error", e);
                 db = JSON.parse(localStorage.getItem('azit_db')) || [];
                 staticCrewMembers = JSON.parse(localStorage.getItem('azit_crews')) || [];
-                noticeText = localStorage.getItem('azit_notice') || noticeText;
+                noticeText = localStorage.getItem('azit_notice') || JSON.stringify(defaultNotices);
                 updateNetworkStatusDOM("🔴 연동 오류 (CORS 규제 또는 구글 권한 거부)", "fail");
             }
         }
 
+        // 🔒 [대개조]: JSON 다중 객체 기반 아코디언 공지사항 렌더링 엔진 구축 (구 버전 평문 텍스트 호환 가드 포함)
         function renderNoticeDOM() {
-            const container = document.getElementById('noticeTextContainer');
-            if (container) container.innerText = noticeText;
-            const textInput = document.getElementById('adminNoticeInput');
-            if (textInput && !textInput.value) textInput.value = noticeText;
+            const container = document.getElementById('noticeAccordionContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            let notices = [];
+            try {
+                notices = JSON.parse(noticeText);
+                if(!Array.isArray(notices)) throw new Error();
+            } catch(e) {
+                notices = [{ id: Date.now(), title: "📢 마스터 크루 메인 공지사항", content: noticeText, date: "2026-06-20" }];
+            }
+            
+            notices.forEach(n => {
+                const isOpen = (openNoticeIdGlobal === n.id);
+                const noticeBox = document.createElement('div');
+                noticeBox.className = "border border-gray-800 rounded-xl bg-[#151515] overflow-hidden transition-all duration-200";
+                
+                noticeBox.innerHTML = `
+                    <button onclick="toggleNoticeAccordion(${n.id})" class="w-full text-left px-4 py-3.5 flex justify-between items-center hover:bg-gray-800/40 transition">
+                        <div class="flex flex-col gap-0.5">
+                            <span class="text-xs sm:text-sm font-bold text-gray-200">${n.title}</span>
+                            <span class="text-[9px] font-mono text-gray-500">배포일자: ${n.date}</span>
+                        </div>
+                        <i class="fa-solid ${isOpen ? 'fa-chevron-up text-red-500' : 'fa-chevron-down text-gray-500'} text-xs"></i>
+                    </button>
+                    <div class="${isOpen ? 'block border-t border-gray-800/60 p-4 bg-[#121212]' : 'hidden'} text-xs sm:text-sm text-gray-400 leading-relaxed tracking-wide whitespace-pre-wrap break-keep">
+                        ${n.content}
+                    </div>
+                `;
+                container.appendChild(noticeBox);
+            });
+            
+            // 관리자 모드 백엔드 리스트 동시 빌드
+            renderAdminNoticeListDOM(notices);
         }
 
-        async function submitNoticeUpdate() {
-            const inputField = document.getElementById('adminNoticeInput');
-            if (!inputField) return;
-            const nextNotice = inputField.value.trim();
-            if (!nextNotice) { alert('공지사항 본문 내용이 누락되었습니다.'); return; }
+        function toggleNoticeAccordion(id) {
+            if(openNoticeIdGlobal === id) openNoticeIdGlobal = null;
+            else openNoticeIdGlobal = id;
+            renderNoticeDOM();
+        }
+
+        // 관리자용 공지제어 CRUD 리스트 출력 모듈
+        function renderAdminNoticeListDOM(notices) {
+            const adminList = document.getElementById('adminNoticeList');
+            if(!adminList) return;
+            adminList.innerHTML = '';
             
-            toggleGlobalLoadingOverlay(true, "📢 공지사항 전 사원 배포 패킷 유효성 검증 중...");
-            noticeText = nextNotice;
-            localStorage.setItem('azit_notice', nextNotice);
+            if(notices.length === 0) {
+                adminList.innerHTML = `<div class="text-center py-6 text-gray-600 text-xs">등록된 다중 공지사항 패킷이 비어있습니다.</div>`;
+                return;
+            }
+            
+            notices.forEach(n => {
+                const item = document.createElement('div');
+                item.className = "py-3 flex justify-between items-center gap-4 text-xs";
+                item.innerHTML = `
+                    <div class="flex flex-col gap-0.5 truncate">
+                        <span class="font-bold text-gray-200 truncate">${n.title}</span>
+                        <span class="text-[10px] font-mono text-gray-500">ID: ${n.id} · 개정일: ${n.date}</span>
+                    </div>
+                    <div class="flex gap-1.5 shrink-0">
+                        <button onclick="openNoticeEditForm(${n.id})" class="bg-blue-600/10 border border-blue-500/20 hover:bg-blue-600/20 text-blue-400 px-2.5 py-1.5 rounded-lg font-bold">수정</button>
+                        <button onclick="deleteNoticeItem(${n.id})" class="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 px-2.5 py-1.5 rounded-lg font-bold">제거</button>
+                    </div>
+                `;
+                adminList.appendChild(item);
+            });
+        }
+
+        function openNoticeAddForm() {
+            document.getElementById('editNoticeId').value = '';
+            document.getElementById('editNoticeTitle').value = '';
+            document.getElementById('editNoticeContent').value = '';
+            document.getElementById('noticeEditorForm').classList.remove('hidden');
+        }
+
+        function openNoticeEditForm(id) {
+            let notices = [];
+            try { notices = JSON.parse(noticeText); } catch(e) { return; }
+            const target = notices.find(n => n.id == id);
+            if(!target) return;
+            
+            document.getElementById('editNoticeId').value = target.id;
+            document.getElementById('editNoticeTitle').value = target.title;
+            document.getElementById('editNoticeContent').value = target.content;
+            document.getElementById('noticeEditorForm').classList.remove('hidden');
+        }
+
+        function closeNoticeEditor() {
+            document.getElementById('noticeEditorForm').classList.add('hidden');
+        }
+
+        async function saveNoticeData() {
+            const idVal = document.getElementById('editNoticeId').value;
+            const titleVal = document.getElementById('editNoticeTitle').value.trim();
+            const contentVal = document.getElementById('editNoticeContent').value.trim();
+            
+            if(!titleVal || !contentVal) { alert('공지 제목과 수칙 본문 내용을 기입해 주십시오.'); return; }
+            
+            let notices = [];
+            try {
+                notices = JSON.parse(noticeText);
+                if(!Array.isArray(notices)) throw new Error();
+            } catch(e) { notices = []; }
+            
+            const todayStr = new Date().toISOString().split('T')[0];
+            
+            if(idVal) {
+                // 수정 모드
+                const target = notices.find(n => n.id == idVal);
+                if(target) {
+                    target.title = titleVal;
+                    target.content = contentVal;
+                    target.date = todayStr;
+                }
+            } else {
+                // 신규 추가 모드
+                notices.push({
+                    id: Date.now(),
+                    title: titleVal,
+                    content: contentVal,
+                    date: todayStr
+                });
+            }
+            
+            await pushNoticeServerArray(notices);
+        }
+
+        async function deleteNoticeItem(id) {
+            if(!confirm('⚠️ 선택하신 독립 공지사항 조항을 영구 삭제 처리하시겠습니까?')) return;
+            let notices = [];
+            try { notices = JSON.parse(noticeText); } catch(e) { return; }
+            
+            notices = notices.filter(n => n.id != id);
+            await pushNoticeServerArray(notices);
+        }
+
+        async function pushNoticeServerArray(nextArray) {
+            const serializedStr = JSON.stringify(nextArray);
+            toggleGlobalLoadingOverlay(true, "📋 공지사항 매트릭스 패킷 암축 데이터 동기화 중...");
+            
+            noticeText = serializedStr;
+            localStorage.setItem('azit_notice', serializedStr);
             
             const CLEAN_URL = GOOGLE_SHEET_URL.trim();
             if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
                 try {
-                    await fetch(`${CLEAN_URL}?action=update_notice&text=${encodeURIComponent(nextNotice)}`, { mode: 'no-cors' });
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                } catch(e) { console.error("Cloud Notice Sync Fail", e); }
+                    await fetch(`${CLEAN_URL}?action=update_notice&text=${encodeURIComponent(serializedStr)}`, { mode: 'no-cors' });
+                    await new Promise(resolve => setTimeout(resolve, 1200));
+                } catch(e) { console.error("Cloud Notice Bulk Sync Mismatch", e); }
             }
             
             await fetchCloudData();
             refreshUI();
+            closeNoticeEditor();
             toggleGlobalLoadingOverlay(false);
-            alert('🎉 반영 완료: 새 수칙 공지사항이 전체 크루 화면에 실시간 배포 및 강제 적용되었습니다.');
+            alert('🎉 반영 완료: 다중 공지사항의 변이 상태가 마스터 서버에 실시간 배포 저장되었습니다.');
         }
 
         function updateLabels() {
@@ -754,7 +898,6 @@
             else { sortedSponsors.forEach((h, i) => { if (h.count > 0) { sponsorBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-emerald-400 font-mono font-bold">${h.count}회 찬조</td></tr>`; } }); }
         }
 
-        /* ⚡ [낙관적 UI 가동 패치]: 느슨한 비교 연산자(==) 교정으로 ID 데이터 타입 충돌 완벽 방어 */
         async function toggleHostStatus(recordId, isChecked) {
             const record = db.find(item => item.id == recordId);
             if (record) { 
@@ -771,7 +914,6 @@
             }
         }
 
-        /* ⚡ [낙관적 UI 가동 패치]: 느슨한 비교 연산자(==) 교정으로 클릭 즉시 체크 고정 및 실시간 스코어 즉각 가산 */
         async function toggleSponsorStatus(recordId, isChecked) {
             const record = db.find(item => item.id == recordId);
             if (record) { 
