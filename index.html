@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AZIT - 같이의 가치</title>
     
+    <!-- ⚡ [PWA 핵심 이식]: 모바일 단독 앱 구동 매니페스트 및 iOS 사파리 전용 웹앱 메타 패킷 탑재 -->
     <link rel="manifest" href="./manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AZIT">
     <link class="html-embed" rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/846/846355.png">
 
+    <!-- ⚡ Tailwind CSS CDN 인프라 구동 엔진 안정화 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link class="html-embed" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -47,6 +49,7 @@
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
 
+    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이 레이어 -->
     <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
             <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
@@ -54,6 +57,7 @@
         </div>
     </div>
 
+    <!-- [PAGE 1] 아지트 인트로 커버 화면 -->
     <div id="pageCover" class="fixed inset-0 z-50 flex flex-col justify-between p-6 transition-all duration-700 ease-in-out transform bg-cover bg-center" 
          style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=1920&q=80');">
         <div class="text-center mt-6 lg:mt-10 animate-fade-in">
@@ -71,6 +75,7 @@
         </div>
     </div>
 
+    <!-- 신규회원 등록 모달 -->
     <div id="coverRegisterModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl transform scale-95 transition-all" id="coverRegBox">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
@@ -89,6 +94,7 @@
         </div>
     </div>
 
+    <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
     <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
         <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-3 sm:py-4 flex flex-col justify-between items-center gap-2">
             <div class="w-full flex justify-between items-center px-2">
@@ -100,6 +106,7 @@
         </header>
         <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
+            <!-- 📢 마스터 공지사항 게시판 레이아웃 단락 (3중 복사방지 락 적용) -->
             <div class="lg:col-span-12 bg-[#1a1a1a] border border-red-500/30 rounded-2xl p-4 shadow-2xl prevent-select" 
                  oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
                 <div class="flex items-center gap-2 mb-2 border-b border-gray-800 pb-2">
@@ -151,6 +158,7 @@
         </main>
     </div>
 
+    <!-- [PAGE 3] 관리자 대시보드 메인 관제 화면 -->
     <div id="pageAdmin" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0e0e0e]">
         <header class="border-b border-gray-800 bg-[#151515] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-lg">
             <button onclick="switchPage('pageCalendar')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 일정 화면으로</button>
@@ -177,6 +185,7 @@
                 </div>
             </div>
 
+            <!-- 🔒 관리자 전용 공지사항 추가/수정 편집 관제 제어 센터 모듈 -->
             <div class="bg-[#151515] border border-gray-800 p-4 sm:p-5 rounded-2xl shadow-xl">
                 <h3 class="text-base font-bold text-gray-200 mb-3 flex items-center gap-2 border-b border-gray-800 pb-3">
                     <i class="fa-solid fa-pen-to-square text-amber-500"></i> 아지트 공지사항 제어 센터 (관리자 전용)
@@ -252,6 +261,7 @@
         </main>
     </div>
 
+    <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
     <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
         <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md">
             <button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button>
@@ -370,7 +380,6 @@
             }
         };
         
-        /* 🛠️ [Fail-Safe UI 패치]: 데이터 파손 시 하위 컴포넌트 렌더링 예외 전면 격리 통제 서킷 */
         function refreshUI() { 
             if (!Array.isArray(db)) db = [];
             if (!Array.isArray(staticCrewMembers)) staticCrewMembers = [];
@@ -745,42 +754,38 @@
             else { sortedSponsors.forEach((h, i) => { if (h.count > 0) { sponsorBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-emerald-400 font-mono font-bold">${h.count}회 찬조</td></tr>`; } }); }
         }
 
+        /* ⚡ [낙관적 UI 가동 패치]: 레이스 컨디션을 완벽히 종식시키는 선반영 통제 모듈 */
         async function toggleHostStatus(recordId, isChecked) {
-            toggleGlobalLoadingOverlay(true, "방장 기여도 가중치 변경 사항 동기화 중...");
             const record = db.find(item => item.id === recordId);
             if (record) { 
                 record.isHost = isChecked; 
+                localStorage.setItem('azit_db', JSON.stringify(db));
+                refreshUI(); 
+                
                 const CLEAN_URL = GOOGLE_SHEET_URL.trim();
                 if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
                     try {
-                        await fetch(`${CLEAN_URL}?action=update_schedule_host&id=${recordId}&isHost=${isChecked}`, { mode: 'no-cors' }); 
-                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        fetch(`${CLEAN_URL}?action=update_schedule_host&id=${recordId}&isHost=${isChecked}`, { mode: 'no-cors' }); 
                     } catch(e) { console.error(e); }
-                    await fetchCloudData(); refreshUI();
                 }
-                else localStorage.setItem('azit_db', JSON.stringify(db));
-                renderHostRankTable(); 
             }
-            toggleGlobalLoadingOverlay(false);
         }
 
+        /* ⚡ [낙관적 UI 가동 패치]: 화면 잠금(Overlay) 없이 클릭 즉시 체크박스 고정 및 랭킹 스코어 즉시 가산 */
         async function toggleSponsorStatus(recordId, isChecked) {
-            toggleGlobalLoadingOverlay(true, "찬조자 기여도 변경 사항 동기화 중...");
             const record = db.find(item => item.id === recordId);
             if (record) { 
                 record.isSponsor = isChecked; 
+                localStorage.setItem('azit_db', JSON.stringify(db));
+                refreshUI(); 
+                
                 const CLEAN_URL = GOOGLE_SHEET_URL.trim();
                 if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
                     try {
-                        await fetch(`${CLEAN_URL}?action=update_schedule_sponsor&id=${recordId}&isSponsor=${isChecked}`, { mode: 'no-cors' }); 
-                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        fetch(`${CLEAN_URL}?action=update_schedule_sponsor&id=${recordId}&isSponsor=${isChecked}`, { mode: 'no-cors' }); 
                     } catch(e) { console.error(e); }
-                    await fetchCloudData(); refreshUI();
                 }
-                else localStorage.setItem('azit_db', JSON.stringify(db));
-                renderSponsorRankTable(); 
             }
-            toggleGlobalLoadingOverlay(false);
         }
 
         function startInlineEdit(cellElement, nickname, objectFieldKey) {
@@ -968,7 +973,6 @@
             setTimeout(() => { pages.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); }); const target = document.getElementById(p); if(target) { target.classList.remove('hidden'); setTimeout(() => { target.classList.remove('opacity-0', 'scale-95'); }, 50); } }, 300);
         }
 
-        /* 🔒 [보안 통제 서킷 결함 정정]: 하위 통계 함수 에러 발생 여부와 상관없이 pageAdmin 화면 전환권을 강제 보장 */
         async function verifyAdminAccess() {
             const input = prompt('관리자 마스터 암호를 입력하십시오:');
             if (!input) return;
@@ -1124,6 +1128,7 @@
             }
         }
 
+        /* 🛠️ [엄격한 타입 필터링 패치]: HTML 문자열 보간법 파손을 유발하는 원시 타입 평가 수리 및 오타 청산 완료 */
         function updateAdminDashboard() {
             const targetRecords = db.filter(item => {
                 if(!item.year || !item.month) return false;
@@ -1133,7 +1138,7 @@
             });
             
             const rBody = document.getElementById('rankTableBody'); 
-            if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => freq[r.name] = (freq[r.name] || 0) + 1); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}위</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
+            if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => freq[r.name] = (freq[r.name] || 0) + 1); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}位</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
             
             const aBody = document.getElementById('monthAttendeeListBody'); 
             if(aBody) { 
@@ -1142,13 +1147,17 @@
                     aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; 
                 } else { 
                     targetRecords.sort((a,b) => Number(a.startDay) - Number(b.startDay)).forEach(r => { 
+                        // 🔒 [보안 통제]: 구글 시트의 데이터 타입을 3중 필터링하여 Boolean 값으로 표준 전처리
+                        let isHostChecked = Number(r.isHost) === 1 || r.isHost === true || String(r.isHost).toLowerCase() === 'true';
+                        let isSponsorChecked = Number(r.isSponsor) === 1 || r.isSponsor === true || String(r.isSponsor).toLowerCase() === 'true';
+                        
                         aBody.innerHTML += `<tr class="border-b border-gray-800/20 hover:bg-gray-800/10 transition">
                             <td class="py-3 pl-1 font-bold text-gray-200 flex items-center gap-2 min-w-[145px]">
                                 <div class="flex items-center gap-1.5 shrink-0 select-none">
                                     <span class="text-[9px] text-gray-500 font-black">방</span>
-                                    <input type="checkbox" ${r.isHost ? 'checked' : ''} onchange="toggleHostStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-red-500 rounded bg-[#121212] border-gray-700 cursor-pointer">
+                                    <input type="checkbox" ${isHostChecked ? 'checked' : ''} onchange="toggleHostStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-red-500 rounded bg-[#121212] border-gray-700 cursor-pointer">
                                     <span class="text-[9px] text-gray-500 font-black ml-0.5">찬</span>
-                                    <input type="checkbox" ${r.isSponsor ? 'checked' : ''} onchange="toggleSponsorStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-emerald-500 rounded bg-[#121212] border-gray-700 cursor-pointer">
+                                    <input type="checkbox" ${isSponsorChecked ? 'checked' : ''} onchange="toggleSponsorStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-emerald-500 rounded bg-[#121212] border-gray-700 cursor-pointer">
                                 </div>
                                 <span class="truncate max-w-[65px]">👤 ${r.name}</span>
                             </td>
@@ -1214,9 +1223,10 @@
                         gradeColor = "text-sky-400 font-bold tracking-wide";
                     }
                     
+                    // 🛠️ [오타 수정 완료]: Alb 에러 구문을 명확하게 '${m.nickname}' 패킷 주소로 치환 이관 완료
                     mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
                         <td class="py-4.5 px-4 font-bold text-white select-none">👤 ${m.nickname}</td>
-                        <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, Alb, 'name')">${decryptedName} ${isPending(m.nickname, 'name') ? '⚡' : ''}</td>
+                        <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decryptedName} ${isPending(m.nickname, 'name') ? '⚡' : ''}</td>
                         <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold ${isPending(m.nickname, 'gender') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender} ${isPending(m.nickname, 'gender') ? '⚡' : ''}</td>
                         <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold ${isPending(m.nickname, 'birthYear') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'} ${isPending(m.nickname, 'birthYear') ? '⚡' : ''}</td>
                         <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400 ${isPending(m.nickname, 'phone') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decryptedPhone} ${isPending(m.nickname, 'phone') ? '⚡' : ''}</td>
