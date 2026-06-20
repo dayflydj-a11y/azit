@@ -945,7 +945,15 @@
             toggleGlobalLoadingOverlay(true, "📋 크루 변경사항 마스터 서버 동기화 이관 중...");
             try {
                 let tasks = [];
-                for (let nickname in window.pendingCrewUpdates) { for (let field in window.pendingCrewUpdates[nickname]) { let sheetHeaderField = field; if (field === 'grade') sheetHeaderField = '회원 등급'; let val = window.pendingCrewUpdates[nickname][field]; tasks.push({ nickname, field: sheetHeaderField, value: val }); } }
+                for (let nickname in window.pendingCrewUpdates) { 
+                    for (let field in window.pendingCrewUpdates[nickname]) { 
+                        let sheetHeaderField = field; 
+                        if (field === 'grade') sheetHeaderField = '회원 등급'; 
+                        if (field === 'nickname') sheetHeaderField = '크루 닉네임'; 
+                        let val = window.pendingCrewUpdates[nickname][field]; 
+                        tasks.push({ nickname, field: sheetHeaderField, value: val }); 
+                    } 
+                }
                 for (let i = 0; i < tasks.length; i++) {
                     let task = tasks[i];
                     await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(task.nickname)}&field=${encodeURIComponent(task.field)}&value=${encodeURIComponent(task.value)}&ts=${Date.now()}`, { mode: 'no-cors' }); 
@@ -954,6 +962,11 @@
                 window.pendingCrewUpdates = {}; document.getElementById('btnSaveAllCrewEdits').classList.add('hidden');
                 alert(`🎉 총 ${tasks.length}건의 크루 데이터 변경이 완벽히 저장되었습니다.`);
             } catch (e) { console.error(e); } finally { toggleGlobalLoadingOverlay(false); await fetchCloudData(); updateAdminDashboard(); }
+        }
+
+        function setMemberSort(criteria) {
+            memberSortCriteria = criteria;
+            updateAdminDashboard();
         }
 
         function updateAdminDashboard() {
@@ -1013,7 +1026,7 @@
                             else if(displayGrade === '부방장') { renderedGrade = '부방장'; gradeColor = "text-sky-400 font-bold tracking-wide"; }
                             
                             mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
-                                <td class="py-4.5 px-4 font-bold text-white select-none">👤 ${m.nickname}</td>
+                                <td class="py-4.5 px-4 editable-cell font-bold text-white ${isPending(m.nickname, 'nickname') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'nickname')">👤 ${m.nickname}</td>
                                 <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decryptedName}</td>
                                 <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold ${isPending(m.nickname, 'gender') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender}</td>
                                 <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold ${isPending(m.nickname, 'birthYear') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'}</td>
