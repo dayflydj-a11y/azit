@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AZIT - 같이의 가치</title>
     
+    <!-- ⚡ [PWA 핵심 이식]: 모바일 단독 앱 구동 매니페스트 및 iOS 사파리 전용 웹앱 메타 패킷 탑재 -->
     <link rel="manifest" href="./manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AZIT">
     <link class="html-embed" rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/846/846355.png">
 
+    <!-- ⚡ Tailwind CSS CDN 인프라 구동 엔진 안정화 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link class="html-embed" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -47,6 +49,7 @@
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
 
+    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이 레이어 -->
     <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
             <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
@@ -54,6 +57,7 @@
         </div>
     </div>
 
+    <!-- [PAGE 1] 아지트 인트로 커버 화면 -->
     <div id="pageCover" class="fixed inset-0 z-50 flex flex-col justify-between p-6 transition-all duration-700 ease-in-out transform bg-cover bg-center" 
          style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=1920&q=80');">
         <div class="text-center mt-6 lg:mt-10 animate-fade-in">
@@ -71,6 +75,7 @@
         </div>
     </div>
 
+    <!-- 신규회원 등록 모달 -->
     <div id="coverRegisterModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl transform scale-95 transition-all" id="coverRegBox">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
@@ -89,6 +94,7 @@
         </div>
     </div>
 
+    <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
     <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
         <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-2 sm:py-4 flex flex-col justify-between items-center gap-1 sm:gap-2">
             <div class="w-full flex justify-between items-center px-1">
@@ -100,6 +106,7 @@
         </header>
         <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
+            <!-- 📢 공지게시판 메트릭스 -->
             <div class="lg:col-span-12 bg-[#1a1a1a] border border-red-500/30 rounded-2xl p-4 shadow-2xl prevent-select" 
                  oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 mb-3 border-b border-gray-800 pb-2">
@@ -153,6 +160,7 @@
         </main>
     </div>
 
+    <!-- [PAGE 3] 관리자 대시보드 메인 관제 화면 -->
     <div id="pageAdmin" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0e0e0e]">
         <header class="border-b border-gray-800 bg-[#151515] sticky top-0 z-40 px-4 py-3 sm:py-4 flex justify-between items-center shadow-lg">
             <button onclick="switchPage('pageCalendar')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 일정 화면으로</button>
@@ -179,6 +187,7 @@
                 </div>
             </div>
 
+            <!-- 공지사항 관리 센터 -->
             <div class="bg-[#151515] border border-gray-800 p-4 sm:p-5 rounded-2xl shadow-xl">
                 <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
                     <h3 class="text-base font-bold text-gray-200 flex items-center gap-2">
@@ -206,6 +215,7 @@
                 <div id="adminNoticeList" class="space-y-2 divide-y divide-gray-800/40"></div>
             </div>
 
+            <!-- 월별 / 반기별 활동 크루원 데이터 매트릭스 -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
                     <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center justify-between border-b border-gray-800 pb-3"><span>🏆 月별 활동 크루원 순위</span><span id="rankMonthLabel" class="text-xs font-mono text-green-400 bg-green-400/5 px-2.5 py-1 rounded-lg border border-green-500/10">6월 기준</span></h3>
@@ -219,9 +229,10 @@
                 </div>
             </div>
             
+            <!-- 명단 체크(20260620_204542.jpg 대응) 및 개설자 순위 매트릭스 -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
-                    <h3 class="text-base font-bold text-gray-200 mb-3 flex items-center gap-2 border-b border-gray-800 pb-3"><i class="fa-solid fa-users text-blue-400"></i> <span id="summaryMonthAttendeesLabel">6월</span> 일정 참여 명단 (방장/찬조 체크)</h3>
+                    <h3 class="text-base font-bold text-gray-200 mb-3 flex items-center gap-2 border-b border-gray-800 pb-3"><i class="fa-solid fa-users text-blue-400"></i> <span id="summaryMonthAttendeesLabel">6월</span> 일정 참여 명단 (방장/찬조/운전자 체크)</h3>
                     <div class="max-h-[300px] overflow-y-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="monthAttendeeListBody" class="divide-y divide-gray-800/30"></tbody></table></div>
                 </div>
                 
@@ -242,6 +253,7 @@
                 </div>
             </div>
 
+            <!-- 찬조자 순위 및 [신설] 운전자 마스터 순위 매트릭스 -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
                     <div class="flex flex-col xl:flex-row xl:items-center justify-between border-b border-gray-800 pb-2 mb-4 gap-2">
@@ -259,7 +271,27 @@
                     <div class="max-h-[300px] overflow-y-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="sponsorRankTableBody" class="divide-y divide-gray-800/40"></tbody></table></div>
                 </div>
 
-                <div class="lg:col-span-6 bg-[#151515] border border-gray-800 p-4 sm:p-5 rounded-2xl flex flex-col max-h-[640px] shadow-xl">
+                <!-- 🚗 [신설]: 아지트 카풀 운전자 영예의 마스터 랭킹 카드 -->
+                <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
+                    <div class="flex flex-col xl:flex-row xl:items-center justify-between border-b border-gray-800 pb-2 mb-4 gap-2">
+                        <h3 class="text-base font-bold text-gray-200 flex items-center gap-2"><i class="fa-solid fa-car text-sky-400"></i> 🏆 운전자 순위</h3>
+                        <div class="overflow-x-auto no-scrollbar flex whitespace-nowrap gap-1 bg-[#121212] p-1 rounded-lg border border-gray-800 text-[10px] font-bold max-w-full">
+                            <button onclick="setDriverRankFilter('all')" id="btnDriver_all" class="px-2.5 py-1 rounded bg-sky-500 text-white font-bold transition shrink-0">전체</button>
+                            <button onclick="setDriverRankFilter('h1')" id="btnDriver_h1" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">전반기</button>
+                            <button onclick="setDriverRankFilter('h2')" id="btnDriver_h2" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">하반기</button>
+                            <button onclick="setDriverRankFilter('q1')" id="btnDriver_q1" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">1Q</button>
+                            <button onclick="setDriverRankFilter('q2')" id="btnDriver_q2" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">2Q</button>
+                            <button onclick="setDriverRankFilter('q3')" id="btnDriver_q3" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">3Q</button>
+                            <button onclick="setDriverRankFilter('q4')" id="btnDriver_q4" class="px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0">4Q</button>
+                        </div>
+                    </div>
+                    <div class="max-h-[300px] overflow-y-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="driverRankTableBody" class="divide-y divide-gray-800/40"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- 타임라인 섹션 -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <div class="lg:col-span-12 bg-[#151515] p-4 sm:p-5 rounded-2xl flex flex-col max-h-[640px] shadow-xl">
                     <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center gap-2 border-b border-gray-800 pb-3 shrink-0"><i class="fa-folder-open fa-solid text-green-400"></i> 전체 누적 타임라인</h3>
                     <div id="groupedCrewTimeline" class="space-y-4 overflow-y-auto pr-1 no-scrollbar flex-1"></div>
                 </div>
@@ -267,6 +299,7 @@
         </main>
     </div>
 
+    <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
     <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
         <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md">
             <button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button>
@@ -311,22 +344,20 @@
 
     <script>
         let currentYear = 2026, currentMonth = 6, rangeStart = null, rangeEnd = null, selectedActivity = '', currentHalfRankFilter = 1;
-        let memberSortCriteria = 'none', currentHostFilter = 'all', currentSponsorFilter = 'all';
+        let memberSortCriteria = 'none', currentHostFilter = 'all', currentSponsorFilter = 'all', currentDriverFilter = 'all';
         let db = [], staticCrewMembers = [];
         let isSubmitting = false;
         
         let defaultNotices = [
             { id: 1001, title: "1️⃣ 🌟 일정 개설 및 진행 기준 🌟", content: "아지트(AZIT) 크루 내 정기 및 번개 일정을 개설할 때 적용되는 의무 기준 가이드라인입니다. 모든 모임 주최자는 크루원들의 투명한 참여를 보장하기 위해 규정된 양식 명세를 반드시 충족해야 합니다.", date: "2026-06-20" },
-            { id: 1002, title: "2️⃣ 회원 등급 및 최소 활동 기준 📊", content: "아지트 크루의 지속 가능한 활성화를 위한 등급 명세 지침입니다. 신규 가입 크루원은 준회원으로 배정되며, 누적 참여 횟수와 운영진 평가 지표를 바탕으로 정회원 및 핵심 아지트人으로 수동 등급 조 조정 승격이 집행됩니다.", date: "2026-06-20" },
+            { id: 1002, title: "2️⃣ 회원 등급 및 최소 활동 기준 📊", content: "아지트 크루의 지속 가능한 활성화를 위한 등급 명세 지침입니다. 신규 가입 크루원은 준회원으로 배정되며, 누적 참여 횟수와 운영진 평가 지표를 바탕으로 정회원 및 핵심 아지트人으로 수동 등급 조정 승격이 집행됩니다.", date: "2026-06-20" },
             { id: 1003, title: "3️⃣ 🌟 경고 및 추방 기준 🌟", content: "건전한 크루 생태계 교란 행위를 방어하기 위한 패널티 관제 수칙입니다. 일정 제출 완료 확정 후 정당한 사유나 사전 통보 없이 무단 불참하는 '노쇼(No-Show)' 행위가 누적 3회 이상 계측될 경우, 마스터 명부에서 제명 및 강제 추방 조치됩니다.", date: "2026-06-20" },
             { id: 1004, title: "4️⃣ 🌟 2026 하반기 등급 현황 🌟", content: "2026년도 하반기 기준 아지트 크루원들의 회원 등급 현황 보드입니다. 본 명부의 권한 등급은 관리자 관제 센터의 데이터 검증 절차를 실시간 통과한 결과값이며, 변경사항은 서버 반영 처리를 통해 구글 클라우드에 영구 기록됩니다.", date: "2026-06-20" }
         ];
         let noticeText = JSON.stringify(defaultNotices);
-        
         window.pendingCrewUpdates = {};
         let openNoticeIdGlobal = null; 
         
-        // 🔒 [보안 검증 완료]: 현찬님이 제공해 주신 최종 구글 클라우드 배포 URL로 통신 채널을 변경 탑재했습니다.
         const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbzumlYmbwCAIUmm6WzqPeG_eiRhSo9yYx4krsGcdBUCqMpjb_VgfJA6hDLBFUf9N13m/exec"; 
         
         function toggleGlobalLoadingOverlay(show, messageText) {
@@ -343,10 +374,7 @@
             }
         }
 
-        function closeAllInlinePickers() {
-            const pickers = document.querySelectorAll('.custom-datepicker');
-            pickers.forEach(p => p.remove());
-        }
+        function closeAllInlinePickers() { document.querySelectorAll('.custom-datepicker').forEach(p => p.remove()); }
 
         function encryptData(text) {
             if(!text || text === '-' || text === '미등록') return text;
@@ -368,34 +396,19 @@
             if (!dateStr || dateStr === '-' || dateStr === '미등록' || String(dateStr).toLowerCase() === 'null') return '-';
             try {
                 if (String(dateStr).includes('.') && String(dateStr).split('.').length >= 3) return dateStr.trim();
-                let d = new Date(dateStr);
-                if (isNaN(d.getTime())) {
-                    if (String(dateStr).includes('-')) return dateStr.split('T')[0];
-                    return dateStr;
-                }
-                let y = d.getFullYear();
-                let m = String(d.getMonth() + 1).padStart(2, '0');
-                let day = String(d.getDate()).padStart(2, '0');
-                return `${y}-${m}-${day}`;
+                let d = new Date(dateStr); if (isNaN(d.getTime())) return String(dateStr).includes('-') ? dateStr.split('T')[0] : dateStr;
+                return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
             } catch (e) { return dateStr; }
         }
 
         window.onload = async function() { 
-            await fetchCloudData(); 
-            refreshUI(); 
-            document.addEventListener('click', function(e) { 
-                if(!e.target.closest('.editable-cell') && !e.target.closest('.custom-datepicker')) { 
-                    closeAllInlinePickers(); 
-                } 
-            });
+            await fetchCloudData(); refreshUI(); 
+            document.addEventListener('click', function(e) { if(!e.target.closest('.editable-cell') && !e.target.closest('.custom-datepicker')) closeAllInlinePickers(); });
         };
         
         function refreshUI() { 
-            if (!Array.isArray(db)) db = [];
-            if (!Array.isArray(staticCrewMembers)) staticCrewMembers = [];
-            try { renderCalendar(); } catch(e) { console.error("Calendar Engine Blocked:", e); }
-            try { updateLabels(); updateAdminDashboard(); } catch(e) { console.error("Dashboard Engine Halt Guard:", e); }
-            try { renderNoticeDOM(); } catch(e) { console.error("Notice DOM Drop:", e); }
+            if (!Array.isArray(db)) db = []; if (!Array.isArray(staticCrewMembers)) staticCrewMembers = [];
+            try { renderCalendar(); updateLabels(); updateAdminDashboard(); renderNoticeDOM(); } catch(e) { console.error("UI Core Refresh Break Guard:", e); }
         }
         
         function moveMonth(dir) { currentMonth += dir; if(currentMonth > 12) { currentMonth = 1; currentYear++; } else if(currentMonth < 1) { currentMonth = 12; currentYear--; } clearSelection(); refreshUI(); }
@@ -405,8 +418,7 @@
         function updateNetworkStatusDOM(text, variant) {
             const b1 = document.getElementById('cloudStatusBadge'); const b2 = document.getElementById('adminCloudStatusBadge');
             [b1, b2].forEach(b => {
-                if(!b) return;
-                b.innerText = text; b.className = "text-[10px] font-black px-2.5 py-1 rounded-full border transition-all duration-300 ";
+                if(!b) return; b.innerText = text; b.className = "text-[10px] font-black px-2.5 py-1 rounded-full border transition-all duration-300 ";
                 if(variant === 'success') b.classList.add("bg-green-500/10", "text-green-400", "border-green-500/20");
                 else if(variant === 'fail') b.classList.add("bg-red-500/10", "text-red-400", "border-red-500/20");
                 else b.classList.add("bg-amber-500/10", "text-amber-400", "border-amber-500/20");
@@ -415,42 +427,25 @@
 
         async function fetchCloudData() {
             const CLEAN_URL = GOOGLE_SHEET_URL.trim();
-            
             if (localStorage.getItem('azit_db')) db = JSON.parse(localStorage.getItem('azit_db'));
             if (localStorage.getItem('azit_crews')) staticCrewMembers = JSON.parse(localStorage.getItem('azit_crews'));
             if (localStorage.getItem('azit_notice')) noticeText = localStorage.getItem('azit_notice');
-            if (!noticeText) noticeText = JSON.stringify(defaultNotices);
 
-            if (CLEAN_URL === "아지트크루여기로" || !CLEAN_URL) {
-                updateNetworkStatusDOM("⚠️ 오프라인 모드 (로컬 저장소 가동)", "local"); return;
-            }
             try {
-                const res = await fetch(`${CLEAN_URL}?action=get&ts=${Date.now()}`); 
-                if(!res.ok) throw new Error("CORS or Security Gate Blocked");
+                const res = await fetch(`${CLEAN_URL}?action=get&ts=${Date.now()}`); if(!res.ok) throw new Error("Blocked");
                 const data = await res.json();
                 if (data.db) { db = data.db; localStorage.setItem('azit_db', JSON.stringify(db)); }
                 if (data.crews) { staticCrewMembers = data.crews.filter(m => m && m.nickname); localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); }
                 if (data.notice && data.notice.trim() !== '') { noticeText = data.notice; localStorage.setItem('azit_notice', noticeText); }
                 updateNetworkStatusDOM("🟢 실시간 구글 클라우드 동기화 완료", "success");
-            } catch(e) { 
-                console.error("Cloud Fetch Protected Fallback Active", e);
-                updateNetworkStatusDOM("🔴 동기화 지연 (로컬 캐시 데이터 가동)", "fail");
-            }
+            } catch(e) { updateNetworkStatusDOM("🔴 동기화 지연 (로컬 캐시 데이터 가동)", "fail"); }
         }
 
-        function getParsedNotices() {
-            if (!noticeText || noticeText.trim() === '') return [];
-            try {
-                let parsed = JSON.parse(noticeText);
-                if (Array.isArray(parsed)) return parsed;
-            } catch(e) {}
-            return defaultNotices;
-        }
+        function getParsedNotices() { if (!noticeText || noticeText.trim() === '') return []; try { let parsed = JSON.parse(noticeText); if (Array.isArray(parsed)) return parsed; } catch(e){} return defaultNotices; }
 
         function renderNoticeDOM() {
             const container = document.getElementById('noticeAccordionContainer'); if (!container) return; container.innerHTML = '';
-            let notices = getParsedNotices();
-            notices.forEach(n => {
+            getParsedNotices().forEach(n => {
                 const isOpen = (openNoticeIdGlobal === n.id); const noticeBox = document.createElement('div');
                 noticeBox.className = "border border-gray-800 rounded-xl bg-[#151515] overflow-hidden transition-all duration-200";
                 noticeBox.innerHTML = `
@@ -458,18 +453,16 @@
                         <div class="flex flex-col gap-0.5"><span class="text-xs sm:text-sm font-bold text-gray-200">${n.title}</span><span class="text-[9px] font-mono text-gray-500">배포일자: ${n.date}</span></div>
                         <i class="fa-solid ${isOpen ? 'fa-chevron-up text-red-500' : 'fa-chevron-down text-gray-500'} text-xs"></i>
                     </button>
-                    <div class="${isOpen ? 'block border-t border-gray-800/60 p-4 bg-[#121212]' : 'hidden'} text-xs sm:text-sm text-gray-400 leading-relaxed tracking-wide whitespace-pre-wrap break-keep">${n.content}</div>
-                `;
+                    <div class="${isOpen ? 'block border-t border-gray-800/60 p-4 bg-[#121212]' : 'hidden'} text-xs sm:text-sm text-gray-400 leading-relaxed tracking-wide whitespace-pre-wrap break-keep">${n.content}</div>`;
                 container.appendChild(noticeBox);
             });
-            renderAdminNoticeListDOM(notices);
+            renderAdminNoticeListDOM(getParsedNotices());
         }
 
-        function toggleNoticeAccordion(id) { if(openNoticeIdGlobal === id) openNoticeIdGlobal = null; else openNoticeIdGlobal = id; renderNoticeDOM(); }
+        function toggleNoticeAccordion(id) { openNoticeIdGlobal = (openNoticeIdGlobal === id) ? null : id; renderNoticeDOM(); }
 
         function renderAdminNoticeListDOM(notices) {
             const adminList = document.getElementById('adminNoticeList'); if(!adminList) return; adminList.innerHTML = '';
-            if(notices.length === 0) return;
             notices.forEach(n => {
                 const item = document.createElement('div'); item.className = "py-3 flex justify-between items-center gap-4 text-xs";
                 item.innerHTML = `
@@ -477,61 +470,26 @@
                     <div class="flex gap-1.5 shrink-0">
                         <button onclick="openNoticeEditForm(${n.id})" class="bg-blue-600/10 border border-blue-500/20 hover:bg-blue-600/20 text-blue-400 px-2.5 py-1.5 rounded-lg font-bold">수정</button>
                         <button onclick="deleteNoticeItem(${n.id})" class="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 px-2.5 py-1.5 rounded-lg font-bold">제거</button>
-                    </div>
-                `;
+                    </div>`;
                 adminList.appendChild(item);
             });
         }
 
         function openNoticeAddForm() { document.getElementById('editNoticeId').value = ''; document.getElementById('editNoticeTitle').value = ''; document.getElementById('editNoticeContent').value = ''; document.getElementById('noticeEditorForm').classList.remove('hidden'); }
-        
-        function openNoticeEditForm(id) {
-            let notices = getParsedNotices();
-            const target = notices.find(n => n.id == id); if(!target) return;
-            document.getElementById('editNoticeId').value = target.id; 
-            document.getElementById('editNoticeTitle').value = target.title; 
-            document.getElementById('editNoticeContent').value = target.content; 
-            document.getElementById('noticeEditorForm').classList.remove('hidden');
-            window.scrollTo({ top: document.getElementById('noticeEditorForm').offsetTop - 20, behavior: 'smooth' });
-        }
-        
+        function openNoticeEditForm(id) { const target = getParsedNotices().find(n => n.id == id); if(!target) return; document.getElementById('editNoticeId').value = target.id; document.getElementById('editNoticeTitle').value = target.title; document.getElementById('editNoticeContent').value = target.content; document.getElementById('noticeEditorForm').classList.remove('hidden'); }
         function closeNoticeEditor() { document.getElementById('noticeEditorForm').classList.add('hidden'); }
 
         async function saveNoticeData() {
-            const idVal = document.getElementById('editNoticeId').value; const titleVal = document.getElementById('editNoticeTitle').value.trim(); const contentVal = document.getElementById('editNoticeContent').value.trim();
-            if(!titleVal || !contentVal) { alert('공지 제목과 수칙 본문 내용을 기입해 주십시오.'); return; }
-            let notices = getParsedNotices();
-            const todayStr = new Date().toISOString().split('T')[0];
-            
-            if(idVal) { 
-                const target = notices.find(n => n.id == idVal); 
-                if(target) { target.title = titleVal; target.content = contentVal; target.date = todayStr; }
-            } else { notices.push({ id: Date.now(), title: titleVal, content: contentVal, date: todayStr }); }
+            const idVal = document.getElementById('editNoticeId').value; const titleVal = document.getElementById('editNoticeTitle').value.trim(); const contentVal = document.getElementById('editNoticeContent').value.trim(); if(!titleVal || !contentVal) return alert('공지 제목과 수칙 본문 내용을 기입해 주십시오.');
+            let notices = getParsedNotices(); const todayStr = new Date().toISOString().split('T')[0];
+            if(idVal) { const t = notices.find(n => n.id == idVal); if(t) { t.title = titleVal; t.content = contentVal; t.date = todayStr; } } else { notices.push({ id: Date.now(), title: titleVal, content: contentVal, date: todayStr }); }
             await pushNoticeServerArray(notices);
         }
-
-        async function deleteNoticeItem(id) { if(!confirm('⚠️ 선택하신 독립 공지사항 조항을 영구 삭제 처리하시겠습니까?')) return; let notices = getParsedNotices(); notices = notices.filter(n => n.id != id); await pushNoticeServerArray(notices); }
-
+        async function deleteNoticeItem(id) { if(confirm('⚠️ 선택하신 독립 공지사항 조항을 영구 삭제 처리하시겠습니까?')) { let notices = getParsedNotices().filter(n => n.id != id); await pushNoticeServerArray(notices); } }
         async function pushNoticeServerArray(nextArray) {
-            const serializedStr = JSON.stringify(nextArray);
-            toggleGlobalLoadingOverlay(true, "📋 공지사항 매트릭스 패킷 압축 데이터 동기화 중...");
-            
-            noticeText = serializedStr; 
-            localStorage.setItem('azit_notice', serializedStr); 
-            refreshUI(); 
-            
-            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
-            if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
-                try { 
-                    await fetch(`${CLEAN_URL}?action=update_notice&text=${encodeURIComponent(serializedStr)}&ts=${Date.now()}`, { mode: 'no-cors' }); 
-                    await new Promise(resolve => setTimeout(resolve, 1200)); 
-                } catch(e) { console.error("Background sync buffer", e); } 
-            }
-            await fetchCloudData(); 
-            refreshUI(); 
-            closeNoticeEditor(); 
-            toggleGlobalLoadingOverlay(false); 
-            alert('🎉 반영 완료: 작성하신 공지사항이 고정 반영되었으며 전체 디바이스에 배포되었습니다.');
+            toggleGlobalLoadingOverlay(true, "📋 공지사항 매트릭스 패킷 압축 데이터 동기화 중..."); noticeText = JSON.stringify(nextArray); localStorage.setItem('azit_notice', noticeText); refreshUI();
+            try { await fetch(`${GOOGLE_SHEET_URL}?action=update_notice&text=${encodeURIComponent(noticeText)}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(r => setTimeout(r, 1000)); } catch(e){}
+            await fetchCloudData(); refreshUI(); closeNoticeEditor(); toggleGlobalLoadingOverlay(false); alert('🎉 반영 완료: 공지사항이 고정 반영되었습니다.');
         }
 
         function updateLabels() {
@@ -539,7 +497,6 @@
             if(document.getElementById('calendarTitle')) document.getElementById('calendarTitle').innerText = displayTitle;
             if(document.getElementById('adminHeaderYearLabel')) document.getElementById('adminHeaderYearLabel').innerText = displayTitle;
             if(document.getElementById('rankMonthLabel')) document.getElementById('rankMonthLabel').innerText = `${displayTitle} 기준`;
-            if(document.getElementById('btnTargetMonthLabel')) document.getElementById('btnTargetMonthLabel').innerHTML = `<i class="fa-solid fa-calendar-minus"></i> 리셋`;
             if(document.getElementById('summaryMonthAttendeesLabel')) document.getElementById('summaryMonthAttendeesLabel').innerText = `${currentMonth}월`;
         }
 
@@ -553,6 +510,7 @@
                 if(dayOfWeek === 0) dayCell.classList.add('text-red-500'); else if(dayOfWeek === 6) dayCell.classList.add('text-blue-400'); else dayCell.classList.add('text-gray-300');
                 const numSpan = document.createElement('span'); numSpan.className = 'block text-center w-full'; numSpan.innerText = day; dayCell.appendChild(numSpan);
                 const badgeContainer = document.createElement('div'); badgeContainer.className = 'absolute bottom-1 left-0 right-0 flex flex-row flex-nowrap justify-center items-center gap-0.5 w-full overflow-hidden select-none pointer-events-none text-[10px]';
+                
                 const matches = db.filter(item => {
                     if(!item || !item.year || !item.month) return false;
                     let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear;
@@ -566,16 +524,16 @@
                     });
                 }
                 dayCell.appendChild(badgeContainer);
-                if (rangeStart && rangeStart.year === currentYear && rangeStart.month === currentMonth && rangeStart.day === day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]'); }
-                else if (rangeEnd && rangeEnd.year === currentYear && rangeEnd.month === currentMonth && day === rangeEnd.day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]'); }
-                else if (rangeStart && rangeEnd && rangeStart.year === currentYear && rangeStart.month === currentMonth && day > rangeStart.day && day < rangeEnd.day) { dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500/20 border-dashed border-red-500/40 text-red-400'); }
+                if (rangeStart && rangeStart.year === currentYear && rangeStart.month === currentMonth && rangeStart.day === day) dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]');
+                else if (rangeEnd && rangeEnd.year === currentYear && rangeEnd.month === currentMonth && day === rangeEnd.day) dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500 text-white shadow-md ring-2 ring-red-400 ring-offset-2 ring-offset-[#121212]');
+                else if (rangeStart && rangeEnd && rangeStart.year === currentYear && rangeStart.month === currentMonth && day > rangeStart.day && day < rangeEnd.day) dayCell.className = dayCell.className.replace('bg-[#1a1a1a]', 'bg-red-500/20 border-dashed border-red-500/40 text-red-400');
                 dayCell.onclick = () => handleDateClick(day); container.appendChild(dayCell);
             }
         }
 
         function handleDateClick(day) {
             if (!rangeStart || (rangeStart && rangeEnd && rangeStart.day !== rangeEnd.day)) { rangeStart = { year: currentYear, month: currentMonth, day: day }; rangeEnd = { year: currentYear, month: currentMonth, day: day }; selectedActivity = ''; }
-            else if (rangeStart && rangeEnd && rangeStart.day === rangeEnd.day) { if (day >= rangeStart.day) { rangeEnd = { year: currentYear, month: currentMonth, day: day }; } else { rangeEnd = rangeStart; rangeStart = { year: currentYear, month: currentMonth, day: day }; } selectedActivity = ''; }
+            else if (rangeStart && rangeEnd && rangeStart.day === rangeEnd.day) { if (day >= rangeStart.day) rangeEnd = { year: currentYear, month: currentMonth, day: day }; else { rangeEnd = rangeStart; rangeStart = { year: currentYear, month: currentMonth, day: day }; } selectedActivity = ''; }
             syncConfigCardUI(); renderCalendar();
         }
 
@@ -592,7 +550,6 @@
         }
 
         function setActivity(type) { if(rangeStart && rangeEnd && (rangeEnd.day - rangeStart.day === 0) && type === '백패킹') return; selectedActivity = type; updateActivityButtonStyles(); }
-        
         function updateActivityButtonStyles() {
             const btns = [document.getElementById('actClimb'), document.getElementById('actFlash'), document.getElementById('actCamp'), document.getElementById('actBack')];
             btns.forEach(b => { if(!b) return; b.className = b.className.replace(/bg-orange-500\/10|border-orange-500|text-orange-400|bg-green-500\/10|border-green-500|text-green-400|bg-yellow-500\/10|border-yellow-500|text-yellow-400|bg-sky-500\/10|border-sky-500|text-sky-400/g, ''); b.classList.add('bg-[#121212]', 'border-gray-800', 'text-white'); });
@@ -604,454 +561,311 @@
         }
 
         async function submitFinalForm() {
-            if (isSubmitting) return;
-            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
-            if(!CLEAN_URL || CLEAN_URL === "아지트크루여기로") { alert('🚨 구글 서버 연동 주소가 비어 있어 등록할 수 없습니다.'); return; }
-            
-            const nick = document.getElementById('crewName').value.trim(); if(!nick || !rangeStart || !selectedActivity) { alert('닉네임과 일정을 정확히 입력해 주세요.'); return; }
+            if (isSubmitting) return; const nick = document.getElementById('crewName').value.trim(); if(!nick || !rangeStart || !selectedActivity) return alert('닉네임과 일정을 정확히 입력해 주세요.');
             isSubmitting = true; toggleGlobalLoadingOverlay(true, `[${nick}] 크루원의 일정을 마스터 서버에 실시간 이관 중...`);
             
-            const now = new Date(); const todayClean = new Date(now.getFullYear(), now.getMonth(), now.getDate()); 
-            const targetStart = new Date(currentYear, currentMonth - 1, rangeStart.day); const targetEnd = new Date(currentYear, currentMonth - 1, rangeEnd.day);
+            const now = new Date(), todayClean = new Date(now.getFullYear(), now.getMonth(), now.getDate()); 
+            const targetStart = new Date(currentYear, currentMonth - 1, rangeStart.day), targetEnd = new Date(currentYear, currentMonth - 1, rangeEnd.day);
             const minRegistrationDate = new Date(targetStart); minRegistrationDate.setDate(minRegistrationDate.getDate() - 2); 
             const maxRegistrationDate = new Date(targetEnd); maxRegistrationDate.setDate(maxRegistrationDate.getDate() + 2); 
             
             if (todayClean < minRegistrationDate || todayClean > maxRegistrationDate) {
-                const minStr = `${minRegistrationDate.getMonth() + 1}월 ${minRegistrationDate.getDate()}`; const maxStr = `${maxRegistrationDate.getMonth() + 1}월 ${maxRegistrationDate.getDate()}`;
-                alert(`⚠️ [관제 윈도우 거부] 해당 일정 블록은 현재 날짜 기점으로 등록이 불가능합니다.\n\n시작 이틀 전(${minStr}일)부터 마감 이틀 후(${maxStr}일) 사이만 등록이 허용됩니다.`);
+                alert(`⚠️ [관제 윈도우 거부] 시작 이틀 전부터 마감 이틀 후 사이만 등록이 허용됩니다.`);
                 isSubmitting = false; toggleGlobalLoadingOverlay(false); return;
             }
 
             const diff = rangeEnd.day - rangeStart.day; let type = selectedActivity; if(diff === 0 && type === '캠핑') type = '게스트캠핑';
-            const timestamp = new Date().toLocaleDateString();
-            
             let localTempId = Date.now();
-            let newScheduleObj = { id: localTempId, year: currentYear, month: currentMonth, startDay: rangeStart.day, endDay: rangeEnd.day, name: nick, durationText: diff === 0 ? "무박" : `${diff}박`, type: type, timestamp: timestamp, isHost: false, isSponsor: false };
+            let newScheduleObj = { id: localTempId, year: currentYear, month: currentMonth, startDay: rangeStart.day, endDay: rangeEnd.day, name: nick, durationText: diff === 0 ? "무박" : `${diff}박`, type: type, timestamp: new Date().toLocaleDateString(), isHost: false, isSponsor: false, isDriver: false };
             
-            db.push(newScheduleObj);
-            localStorage.setItem('azit_db', JSON.stringify(db));
+            db.push(newScheduleObj); localStorage.setItem('azit_db', JSON.stringify(db));
 
-            const existInRoster = staticCrewMembers.some(m => m && m.nickname === nick);
-            if (!existInRoster) {
-                let autoCrew = { nickname: nick, name: encryptData('미등록'), gender: '-', birthYear: '-', grade: '준회원', joinDate: now.toISOString().split('T')[0], cancelCount: '0', phone: encryptData('미등록') };
-                staticCrewMembers.push(autoCrew);
+            if (!staticCrewMembers.some(m => m && m.nickname === nick)) {
+                staticCrewMembers.push({ nickname: nick, name: encryptData('미등록'), gender: '-', birthYear: '-', grade: '준회원', joinDate: now.toISOString().split('T')[0], cancelCount: '0', phone: encryptData('미등록') });
                 localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
-                
-                try {
-                    const autoCrewQuery = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData('미등록'))}&gender=${encodeURIComponent('-')}&birthYear=${encodeURIComponent('-')}&phone=${encodeURIComponent(encryptData('미등록'))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(now.toISOString().split('T')[0])}&cancelCount=0&ts=${Date.now()}`;
-                    await fetch(CLEAN_URL + autoCrewQuery, { mode: 'no-cors' });
-                } catch(err) { console.error("Auto Roster Allocation Failed", err); }
+                try { await fetch(`${GOOGLE_SHEET_URL}?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData('미등록'))}&gender=-&birthYear=-&phone=${encodeURIComponent(encryptData('미등록'))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(now.toISOString().split('T')[0])}&cancelCount=0&ts=${Date.now()}`, { mode: 'no-cors' }); } catch(err){}
             }
             refreshUI();
             
             try {
-                const query = `?action=insert_schedule&id=${localTempId}&year=${currentYear}&month=${currentMonth}&startDay=${rangeStart.day}&endDay=${rangeEnd.day}&name=${encodeURIComponent(nick)}&durationText=${encodeURIComponent(diff === 0 ? "무박" : `${diff}박`)}&type=${encodeURIComponent(type)}&timestamp=${encodeURIComponent(timestamp)}&isHost=false&isSponsor=false&ts=${Date.now()}`;
-                await fetch(CLEAN_URL + query, { mode: 'no-cors' }); 
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                alert(`🎉 전송 완료: [${nick}] 크루님의 일정 및 명부 계정이 마스터 서버에 연동 완료되었습니다.`);
+                await fetch(`${GOOGLE_SHEET_URL}?action=insert_schedule&id=${localTempId}&year=${currentYear}&month=${currentMonth}&startDay=${rangeStart.day}&endDay=${rangeEnd.day}&name=${encodeURIComponent(nick)}&durationText=${encodeURIComponent(diff === 0 ? "무박" : `${diff}박`)}&type=${encodeURIComponent(type)}&timestamp=${encodeURIComponent(newScheduleObj.timestamp)}&isHost=false&isSponsor=false&isDriver=false&ts=${Date.now()}`, { mode: 'no-cors' }); 
+                await new Promise(r => setTimeout(r, 1000));
+                alert(`🎉 전송 완료: [${nick}] 크루님의 일정이 연동 완료되었습니다.`);
                 document.getElementById('crewName').value = ''; clearSelection(); 
-            } catch(e) { 
-                console.error(e); 
-            } finally { isSubmitting = false; toggleGlobalLoadingOverlay(false); await fetchCloudData(); refreshUI(); }
+            } catch(e) {} finally { isSubmitting = false; toggleGlobalLoadingOverlay(false); await fetchCloudData(); refreshUI(); }
         }
 
-        function openCoverRegisterModal() { 
-            const m = document.getElementById('coverRegisterModal'); 
-            if(m) { m.classList.remove('hidden'); const todayStr = new Date().toISOString().split('T')[0]; const dateInput = document.getElementById('regJoinDate'); if (dateInput && !dateInput.value) dateInput.value = todayStr; setTimeout(() => m.classList.remove('opacity-0'), 50); } 
-        }
+        function openCoverRegisterModal() { const m = document.getElementById('coverRegisterModal'); if(m) { m.classList.remove('hidden'); const d = document.getElementById('regJoinDate'); if (d && !d.value) d.value = new Date().toISOString().split('T')[0]; setTimeout(() => m.classList.remove('opacity-0'), 50); } }
         function closeCoverRegisterModal() { const m = document.getElementById('coverRegisterModal'); if(m) { m.classList.add('opacity-0'); setTimeout(() => m.classList.add('hidden'), 300); } }
         
         async function submitCoverRegister() {
-            if (isSubmitting) return;
-            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
-            if(!CLEAN_URL || CLEAN_URL === "아지트크루여기로") { alert('🚨 서버 주소가 연결되지 않아 크루 명부를 등록할 수 없습니다.'); return; }
+            if (isSubmitting) return; const nick = document.getElementById('regNickname').value.trim(); if(!nick) return alert('⚠️ 닉네임 기입은 필수입니다.');
+            const name = document.getElementById('regRealName').value.trim(), gender = document.getElementById('regGender').value, birth = document.getElementById('regBirthYear').value.trim(), phone = document.getElementById('regPhone').value.trim();
+            let joinDate = document.getElementById('regJoinDate').value || new Date().toISOString().split('T')[0];
             
-            const nick = document.getElementById('regNickname').value.trim(); const name = document.getElementById('regRealName').value.trim(); const gender = document.getElementById('regGender').value; const birth = document.getElementById('regBirthYear').value.trim(); const phone = document.getElementById('regPhone').value.trim();
-            let joinDate = document.getElementById('regJoinDate').value; if (!joinDate) joinDate = new Date().toISOString().split('T')[0];
-            if(!nick) { alert('⚠️ 닉네임 기입은 필수입니다.'); return; }
-            
-            isSubmitting = true; toggleGlobalLoadingOverlay(true, `[${nick}] 신규 크루 명부를 클라우드에 생성 중...`);
-            
+            isSubmitting = true; toggleGlobalLoadingOverlay(true, `[${nick}] 크루 명부 생성 중...`);
             let newCrewObj = { nickname: nick, name: encryptData(name), gender: gender, birthYear: birth || '-', grade: '준회원', joinDate: joinDate, cancelCount: '0', phone: encryptData(phone) };
-            
-            staticCrewMembers = staticCrewMembers.filter(m => m && m.nickname !== nick);
-            staticCrewMembers.push(newCrewObj);
-            localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
-            refreshUI();
+            staticCrewMembers = staticCrewMembers.filter(m => m && m.nickname !== nick); staticCrewMembers.push(newCrewObj);
+            localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); refreshUI();
 
             try {
-                const query = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData(name))}&gender=${encodeURIComponent(gender)}&birthYear=${encodeURIComponent(birth || '-')}&phone=${encodeURIComponent(encryptData(phone))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(joinDate)}&cancelCount=${encodeURIComponent('0')}&ts=${Date.now()}`;
-                await fetch(CLEAN_URL + query, { mode: 'no-cors' }); 
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                alert(`✨ 성공: [${nick}] 크루원이 명부에 공식 추가되었습니다.`);
-                document.getElementById('regNickname').value = ''; document.getElementById('regRealName').value = ''; document.getElementById('regGender').value = '-'; document.getElementById('regBirthYear').value = ''; document.getElementById('regPhone').value = '';
-                closeCoverRegisterModal();
-            } catch(e) { console.error(e); } finally { isSubmitting = false; toggleGlobalLoadingOverlay(false); await fetchCloudData(); refreshUI(); }
+                await fetch(`${GOOGLE_SHEET_URL}?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData(name))}&gender=${encodeURIComponent(gender)}&birthYear=${encodeURIComponent(birth || '-')}&phone=${encodeURIComponent(encryptData(phone))}&grade=준회원&joinDate=${encodeURIComponent(joinDate)}&cancelCount=0&ts=${Date.now()}`, { mode: 'no-cors' }); 
+                await new Promise(r => setTimeout(r, 1000)); alert(`✨ 성공: [${nick}] 크루원이 추가되었습니다.`);
+                document.getElementById('regNickname').value = ''; document.getElementById('regRealName').value = ''; document.getElementById('regBirthYear').value = ''; document.getElementById('regPhone').value = ''; closeCoverRegisterModal();
+            } catch(e) {} finally { isSubmitting = false; toggleGlobalLoadingOverlay(false); await fetchCloudData(); refreshUI(); }
         }
 
-        function setHostRankFilter(type) {
-            currentHostFilter = type; const filters = ['all', 'h1', 'h2', 'q1', 'q2', 'q3', 'q4'];
-            filters.forEach(f => { const b = document.getElementById(`btnHost_${f}`); if(b) { b.className = (f === type) ? 'px-2.5 py-1 rounded bg-amber-500 text-black font-black transition shrink-0' : 'px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0'; } });
-            renderHostRankTable();
-        }
-
+        // --- 다차원 동적 랭킹 필터링 엔진 (Host / Sponsor / Driver) ---
+        function setHostRankFilter(type) { currentHostFilter = type; ['all', 'h1', 'h2', 'q1', 'q2', 'q3', 'q4'].forEach(f => { const b = document.getElementById(`btnHost_${f}`); if(b) b.className = (f === type) ? 'px-2.5 py-1 rounded bg-amber-500 text-black font-black transition shrink-0' : 'px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0'; }); renderHostRankTable(); }
         function renderHostRankTable() {
-            try {
-                const hostBody = document.getElementById('hostRankTableBody'); if (!hostBody) return; hostBody.innerHTML = '';
-                const hostFreq = {}; staticCrewMembers.forEach(m => { if(m && m.nickname) hostFreq[m.nickname] = 0; });
-                let filteredDb = db.filter(item => {
-                    if(!item) return false;
-                    let isHostTrue = Number(item.isHost) === 1 || item.isHost === true || String(item.isHost).toLowerCase() === 'true';
-                    let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0; return cleanYear === currentYear && isHostTrue;
-                });
-                const f = currentHostFilter;
-                if (f === 'h1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 6; }); 
-                else if (f === 'h2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 12; }); 
-                else if (f === 'q1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 3; }); 
-                else if (f === 'q2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 4 && m <= 6; }); 
-                else if (f === 'q3') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 9; }); 
-                else if (f === 'q4') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 10 && m <= 12; });
-                filteredDb.forEach(item => { if(item && item.name) hostFreq[item.name] = (hostFreq[item.name] || 0) + 1; });
-                const sortedHosts = Object.keys(hostFreq).map(name => ({ name, count: hostFreq[name] })).sort((a, b) => b.count - a.count);
-                if (sortedHosts.filter(h => h.count > 0).length === 0) { hostBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">개설 내역이 없습니다.</td></tr>`; } 
-                else { sortedHosts.forEach((h, i) => { if (h.count > 0) { hostBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-amber-400 font-mono font-bold">${h.count}회 개설</td></tr>`; } }); }
-            } catch(e) { console.error(e); }
+            const b = document.getElementById('hostRankTableBody'); if (!b) return; b.innerHTML = ''; const freq = {}; staticCrewMembers.forEach(m => { if(m && m.nickname) freq[m.nickname] = 0; });
+            let fList = db.filter(item => { if(!item) return false; let chk = Number(item.isHost) === 1 || item.isHost === true || String(item.isHost).toLowerCase() === 'true'; return (item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0) === currentYear && chk; });
+            const f = currentHostFilter;
+            if (f === 'h1') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 1 && m <= 6; });
+            else if (f === 'h2') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 7 && m <= 12; });
+            else if (f === 'q1') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 1 && m <= 3; });
+            else if (f === 'q2') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 4 && m <= 6; });
+            else if (f === 'q3') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 7 && m <= 9; });
+            else if (f === 'q4') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 10 && m <= 12; });
+            fList.forEach(i => { if(i.name) freq[i.name] = (freq[i.name] || 0) + 1; });
+            const sorted = Object.keys(freq).map(name => ({ name, count: freq[name] })).sort((a, b) => b.count - a.count);
+            if (sorted.filter(h => h.count > 0).length === 0) return b.innerHTML = `<tr><td class="text-center py-8 text-gray-600 text-xs">개설 내역이 없습니다.</td></tr>`;
+            sorted.forEach((h, i) => { if(h.count > 0) b.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-amber-400 font-mono font-bold">${h.count}회 개설</td></tr>`; });
         }
 
-        function setSponsorRankFilter(type) {
-            currentSponsorFilter = type; const filters = ['all', 'h1', 'h2', 'q1', 'q2', 'q3', 'q4'];
-            filters.forEach(f => { const b = document.getElementById(`btnSponsor_${f}`); if(b) { b.className = (f === type) ? 'px-2.5 py-1 rounded bg-emerald-500 text-black font-black transition shrink-0' : 'px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0'; } });
-            renderSponsorRankTable();
-        }
-
+        function setSponsorRankFilter(type) { currentSponsorFilter = type; ['all', 'h1', 'h2', 'q1', 'q2', 'q3', 'q4'].forEach(f => { const b = document.getElementById(`btnSponsor_${f}`); if(b) b.className = (f === type) ? 'px-2.5 py-1 rounded bg-emerald-500 text-black font-black transition shrink-0' : 'px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0'; }); renderSponsorRankTable(); }
         function renderSponsorRankTable() {
-            try {
-                const sponsorBody = document.getElementById('sponsorRankTableBody'); if (!sponsorBody) return; sponsorBody.innerHTML = '';
-                const sponsorFreq = {}; staticCrewMembers.forEach(m => { if(m && m.nickname) sponsorFreq[m.nickname] = 0; });
-                let filteredDb = db.filter(item => {
-                    if(!item) return false;
-                    let isSponsorTrue = Number(item.isSponsor) === 1 || item.isSponsor === true || String(item.isSponsor).toLowerCase() === 'true';
-                    let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0; return cleanYear === currentYear && isSponsorTrue;
-                });
-                const f = currentSponsorFilter;
-                if (f === 'h1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 6; }); 
-                else if (f === 'h2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 12; }); 
-                else if (f === 'q1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 3; }); 
-                else if (f === 'q2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 4 && m <= 6; }); 
-                else if (f === 'q3') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 9; }); 
-                else if (f === 'q4') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 10 && m <= 12; });
-                filteredDb.forEach(item => { if(item && item.name) sponsorFreq[item.name] = (sponsorFreq[item.name] || 0) + 1; });
-                const sortedSponsors = Object.keys(sponsorFreq).map(name => ({ name, count: sponsorFreq[name] })).sort((a, b) => b.count - a.count);
-                if (sortedSponsors.filter(h => h.count > 0).length === 0) { sponsorBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">찬조 내역이 없습니다.</td></tr>`; } 
-                else { sortedSponsors.forEach((h, i) => { if (h.count > 0) { sponsorBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${m.name}</td><td class="py-3 text-right pr-4 text-emerald-400 font-mono font-bold">${h.count}회 찬조</td></tr>`; } }); }
-            } catch(e) { console.error(e); }
+            const b = document.getElementById('sponsorRankTableBody'); if (!b) return; b.innerHTML = ''; const freq = {}; staticCrewMembers.forEach(m => { if(m && m.nickname) freq[m.nickname] = 0; });
+            let fList = db.filter(item => { if(!item) return false; let chk = Number(item.isSponsor) === 1 || item.isSponsor === true || String(item.isSponsor).toLowerCase() === 'true'; return (item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0) === currentYear && chk; });
+            const f = currentSponsorFilter;
+            if (f === 'h1') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 1 && m <= 6; });
+            else if (f === 'h2') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 7 && m <= 12; });
+            else if (f === 'q1') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 1 && m <= 3; });
+            else if (f === 'q2') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 4 && m <= 6; });
+            else if (f === 'q3') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 7 && m <= 9; });
+            else if (f === 'q4') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 10 && m <= 12; });
+            fList.forEach(i => { if(i.name) freq[i.name] = (freq[i.name] || 0) + 1; });
+            const sorted = Object.keys(freq).map(name => ({ name, count: freq[name] })).sort((a, b) => b.count - a.count);
+            if (sorted.filter(h => h.count > 0).length === 0) return b.innerHTML = `<tr><td class="text-center py-8 text-gray-600 text-xs">찬조 내역이 없습니다.</td></tr>`;
+            sorted.forEach((h, i) => { if(h.count > 0) b.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-emerald-400 font-mono font-bold">${h.count}회 찬조</td></tr>`; });
         }
 
-        async function toggleHostStatus(recordId, isChecked) {
-            const record = db.find(item => item && item.id == recordId);
-            if (record) { 
-                record.isHost = isChecked; refreshUI(); 
-                const CLEAN_URL = GOOGLE_SHEET_URL.trim(); if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { try { fetch(`${CLEAN_URL}?action=update_schedule_host&id=${recordId}&isHost=${isChecked}&ts=${Date.now()}`, { mode: 'no-cors' }); } catch(e) { console.error(e); } }
-            }
+        // 🚗 [신설]: 카풀 운전자 필터 제어 엔진 및 렌더링 스레드
+        function setDriverRankFilter(type) { currentDriverFilter = type; ['all', 'h1', 'h2', 'q1', 'q2', 'q3', 'q4'].forEach(f => { const b = document.getElementById(`btnDriver_${f}`); if(b) b.className = (f === type) ? 'px-2.5 py-1 rounded bg-sky-500 text-black font-mono font-black transition shrink-0' : 'px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0'; }); renderDriverRankTable(); }
+        function renderDriverRankTable() {
+            const b = document.getElementById('driverRankTableBody'); if (!b) return; b.innerHTML = ''; const freq = {}; staticCrewMembers.forEach(m => { if(m && m.nickname) freq[m.nickname] = 0; });
+            let fList = db.filter(item => { if(!item) return false; let chk = Number(item.isDriver) === 1 || item.isDriver === true || String(item.isDriver).toLowerCase() === 'true'; return (item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0) === currentYear && chk; });
+            const f = currentDriverFilter;
+            if (f === 'h1') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 1 && m <= 6; });
+            else if (f === 'h2') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 7 && m <= 12; });
+            else if (f === 'q1') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 1 && m <= 3; });
+            else if (f === 'q2') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 4 && m <= 6; });
+            else if (f === 'q3') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 7 && m <= 9; });
+            else if (f === 'q4') fList = fList.filter(i => { let m = parseInt(String(i.month).replace(/\D/g, '')) || 0; return m >= 10 && m <= 12; });
+            fList.forEach(i => { if(i.name) freq[i.name] = (freq[i.name] || 0) + 1; });
+            const sorted = Object.keys(freq).map(name => ({ name, count: freq[name] })).sort((a, b) => b.count - a.count);
+            if (sorted.filter(h => h.count > 0).length === 0) return b.innerHTML = `<tr><td class="text-center py-8 text-gray-600 text-xs">운전 운행 이력이 없습니다.</td></tr>`;
+            sorted.forEach((h, i) => { if(h.count > 0) b.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-sky-400 font-mono font-bold">${h.count}회 운전</td></tr>`; });
         }
 
-        async function toggleSponsorStatus(recordId, isChecked) {
-            const record = db.find(item => item && item.id == recordId);
-            if (record) { 
-                record.isSponsor = isChecked; refreshUI(); 
-                const CLEAN_URL = GOOGLE_SHEET_URL.trim(); if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { try { fetch(`${CLEAN_URL}?action=update_schedule_sponsor&id=${recordId}&isSponsor=${isChecked}&ts=${Date.now()}`, { mode: 'no-cors' }); } catch(e) { console.error(e); } }
-            }
+        async function toggleHostStatus(id, chk) { const r = db.find(i => i && i.id == id); if(r) { r.isHost = chk; refreshUI(); try { fetch(`${GOOGLE_SHEET_URL}?action=update_schedule_host&id=${id}&isHost=${chk}&ts=${Date.now()}`, { mode: 'no-cors' }); } catch(e){} } }
+        async function toggleSponsorStatus(id, chk) { const r = db.find(i => i && i.id == id); if(r) { r.isSponsor = chk; refreshUI(); try { fetch(`${GOOGLE_SHEET_URL}?action=update_schedule_sponsor&id=${id}&isSponsor=${chk}&ts=${Date.now()}`, { mode: 'no-cors' }); } catch(e){} } }
+        
+        // 🚗 [신설]: 명단 다이어로그 내 운전자 토글 체킹 백엔드 전송 스레드
+        async function toggleDriverStatus(id, chk) { 
+            const r = db.find(i => i && i.id == id); 
+            if(r) { 
+                r.isDriver = chk; refreshUI(); 
+                try { fetch(`${GOOGLE_SHEET_URL}?action=update_schedule_driver&id=${id}&isDriver=${chk}&ts=${Date.now()}`, { mode: 'no-cors' }); } catch(e){} 
+            } 
         }
 
         function startInlineEdit(cellElement, nickname, objectFieldKey) {
-            if (cellElement.querySelector('input') || document.querySelector('.custom-datepicker')) return; 
-            closeAllInlinePickers(); const currentMember = staticCrewMembers.find(m => m && m.nickname === nickname); if (!currentMember) return;
+            if (cellElement.querySelector('input') || document.querySelector('.custom-datepicker')) return; closeAllInlinePickers();
+            const currentMember = staticCrewMembers.find(m => m && m.nickname === nickname); if (!currentMember) return;
             let rawValue = currentMember[objectFieldKey] || '-'; if(objectFieldKey === 'name' || objectFieldKey === 'phone') rawValue = decryptData(rawValue);
             if (objectFieldKey === 'joinDate' && rawValue !== '-') { try { let d = new Date(rawValue); if (!isNaN(d.getTime())) rawValue = d.toISOString().split('T')[0]; } catch(e){} }
 
             if (['grade', 'gender', 'birthYear'].includes(objectFieldKey)) {
                 const pickerContainer = document.createElement('div'); pickerContainer.className = 'custom-datepicker text-left text-white font-sans p-2.5 space-y-1 max-h-[220px] overflow-y-auto no-scrollbar pointer-events-auto';
-                if (window.innerWidth < 640) {
-                    pickerContainer.style.position = 'fixed'; pickerContainer.style.top = '50%'; pickerContainer.style.left = '50%'; pickerContainer.style.transform = 'translate(-50%, -50%)'; pickerContainer.style.width = '280px';
-                } else {
+                if (window.innerWidth < 640) { pickerContainer.style.position = 'fixed'; pickerContainer.style.top = '50%'; pickerContainer.style.left = '50%'; pickerContainer.style.transform = 'translate(-50%, -50%)'; pickerContainer.style.width = '280px'; } 
+                else {
                     const rect = cellElement.getBoundingClientRect(); pickerContainer.style.position = 'absolute';
                     if (rect.bottom + 220 > window.innerHeight && rect.top - 220 > 0) pickerContainer.style.top = (rect.top + window.pageYOffset - 226) + 'px'; else pickerContainer.style.top = (rect.bottom + window.pageYOffset + 6) + 'px';
                     pickerContainer.style.left = (rect.left + window.pageXOffset + rect.width / 2) + 'px'; pickerContainer.style.transform = 'translateX(-50%)';
                 }
                 document.body.appendChild(pickerContainer);
-                let options = []; if (objectFieldKey === 'grade') options = ['준회원', '정회원', '아지트人', '방장', '부방장']; else if (objectFieldKey === 'gender') options = ['미기입', '남성', '여성']; else if (objectFieldKey === 'birthYear') { options = ['-']; for (let y = 1978; y <= 2005; y++) { options.push(String(y).substring(2, 4)); } }
+                let options = []; if (objectFieldKey === 'grade') options = ['준회원', '정회원', '아지트人', '방장', '부방장']; else if (objectFieldKey === 'gender') options = ['미기입', '남성', '여성']; else if (objectFieldKey === 'birthYear') { options = ['-']; for (let y = 1978; y <= 2005; y++) options.push(String(y).substring(2, 4)); }
 
                 options.forEach(optVal => {
                     const btn = document.createElement('button'); btn.className = 'w-full text-left px-3 py-2.5 text-xs rounded-xl hover:bg-amber-500 hover:text-black font-bold transition flex justify-between items-center bg-[#151515] border border-gray-800/60 text-gray-300';
-                    let displayLabel = optVal; if (objectFieldKey === 'birthYear' && optVal !== '-') displayLabel = optVal + '년생'; else if (objectFieldKey === 'birthYear' && optVal === '-') displayLabel = '미기입';
-                    btn.innerText = displayLabel; let isCurrent = (rawValue === optVal || (optVal === '-' && rawValue === '미기입') || (optVal === '아지트人' && rawValue === '아지트'));
-                    if (isCurrent) btn.className = btn.className.replace('bg-[#151515] text-gray-300', 'bg-amber-500 text-black font-black');
+                    let displayLabel = (objectFieldKey === 'birthYear' && optVal !== '-') ? optVal + '년생' : (optVal === '-' ? '미기입' : optVal); btn.innerText = displayLabel;
+                    if (rawValue === optVal || (optVal === '-' && rawValue === '미기입') || (optVal === '아지트人' && rawValue === '아지트')) btn.className = btn.className.replace('bg-[#151515] text-gray-300', 'bg-amber-500 text-black font-black');
 
                     btn.onclick = (e) => {
                         e.stopPropagation(); e.preventDefault(); closeAllInlinePickers();
-                        if (!window.pendingCrewUpdates) window.pendingCrewUpdates = {};
                         if (!window.pendingCrewUpdates[nickname]) window.pendingCrewUpdates[nickname] = {};
                         window.pendingCrewUpdates[nickname][objectFieldKey] = optVal; currentMember[objectFieldKey] = optVal;
-                        const saveBtn = document.getElementById('btnSaveAllCrewEdits'); if (saveBtn) saveBtn.classList.remove('hidden');
-                        updateAdminDashboard(); 
-                    };
-                    pickerContainer.appendChild(btn);
+                        if(document.getElementById('btnSaveAllCrewEdits')) document.getElementById('btnSaveAllCrewEdits').classList.remove('hidden'); updateAdminDashboard(); 
+                    }; pickerContainer.appendChild(btn);
                 });
-            } 
-            else if (objectFieldKey === 'joinDate') {
+            } else if (objectFieldKey === 'joinDate') {
                 let initialDate = '2026-06-01'; if (rawValue !== '-') { try { let d = new Date(rawValue); if (!isNaN(d.getTime())) initialDate = d.toISOString().split('T')[0]; } catch(e){} }
-                let parts = initialDate.split('-'); let calYear = parseInt(parts[0]) || 2026; let calMonth = parseInt(parts[1]) || 6;
-                const pickerContainer = document.createElement('div'); pickerContainer.className = 'custom-datepicker text-left text-white font-sans pointer-events-auto';
-                if (window.innerWidth < 640) {
-                    pickerContainer.style.position = 'fixed'; pickerContainer.style.top = '50%'; pickerContainer.style.left = '50%'; pickerContainer.style.transform = 'translate(-50%, -50%)'; pickerContainer.style.width = '280px';
-                } else {
-                    const rect = cellElement.getBoundingClientRect(); const pickerHeight = 245; pickerContainer.style.position = 'absolute';
-                    if (rect.bottom + pickerHeight > window.innerHeight && rect.top - pickerHeight > 0) pickerContainer.style.top = (rect.top + window.pageYOffset - pickerHeight - 6) + 'px'; else pickerContainer.style.top = (rect.bottom + window.pageYOffset + 6) + 'px';
-                    pickerContainer.style.left = (rect.left + window.pageXOffset + rect.width / 2) + 'px'; pickerContainer.style.transform = 'translateX(-50%)';
+                let parts = initialDate.split('-'); let calYear = parseInt(parts[0]) || 2026, calMonth = parseInt(parts[1]) || 6;
+                const p = document.createElement('div'); p.className = 'custom-datepicker text-left text-white font-sans pointer-events-auto';
+                if (window.innerWidth < 640) { p.style.position = 'fixed'; p.style.top = '50%'; p.style.left = '50%'; p.style.transform = 'translate(-50%, -50%)'; p.style.width = '280px'; } 
+                else {
+                    const rect = cellElement.getBoundingClientRect(); p.style.position = 'absolute';
+                    if (rect.bottom + 245 > window.innerHeight && rect.top - 245 > 0) p.style.top = (rect.top + window.pageYOffset - 251) + 'px'; else p.style.top = (rect.bottom + window.pageYOffset + 6) + 'px';
+                    p.style.left = (rect.left + window.pageXOffset + rect.width / 2) + 'px'; p.style.transform = 'translateX(-50%)';
                 }
-                document.body.appendChild(pickerContainer);
+                document.body.appendChild(p);
                 
                 function buildMiniMonthDOM(y, m) {
-                    pickerContainer.innerHTML = ''; const headBox = document.createElement('div'); headBox.className = 'flex justify-between items-center mb-2 px-1 border-b border-gray-800 pb-2'; headBox.innerHTML = `<button class="prev-m-btn text-gray-400 hover:text-amber-400 px-1"><i class="fa-solid fa-chevron-left text-[10px]"></i></button><span class="text-xs font-black text-amber-400 font-mono tracking-wider">${y}년 ${m}월</span><button class="next-m-btn text-gray-400 hover:text-amber-400 px-1"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>`; pickerContainer.appendChild(headBox);
-                    headBox.querySelector('.prev-m-btn').onclick = (e) => { e.stopPropagation(); e.preventDefault(); m--; if(m < 1) { m = 12; y--; } buildMiniMonthDOM(y, m); }; headBox.querySelector('.next-m-btn').onclick = (e) => { e.stopPropagation(); e.preventDefault(); m++; if(m > 12) { m = 1; y++; } buildMiniMonthDOM(y, m); };
-                    const dayLabels = document.createElement('div'); dayLabels.className = 'grid grid-cols-7 gap-1 text-[10px] text-center text-gray-500 font-bold mb-1'; dayLabels.innerHTML = '<div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>'; pickerContainer.appendChild(dayLabels);
-                    const gridBody = document.createElement('div'); gridBody.className = 'grid grid-cols-7 gap-1 text-center text-xs font-mono'; const totalDays = new Date(y, m, 0).getDate(); const startIdx = new Date(y, m - 1, 1).getDay(); for(let i = 0; i < startIdx; i++) { const emptyCell = document.createElement('div'); gridBody.appendChild(emptyCell); }
+                    p.innerHTML = ''; const headBox = document.createElement('div'); headBox.className = 'flex justify-between items-center mb-2 px-1 border-b border-gray-800 pb-2'; headBox.innerHTML = `<button class="prev-m-btn text-gray-400 hover:text-amber-400 px-1"><i class="fa-solid fa-chevron-left text-[10px]"></i></button><span class="text-xs font-black text-amber-400 font-mono tracking-wider">${y}년 ${m}월</span><button class="next-m-btn text-gray-400 hover:text-amber-400 px-1"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>`; p.appendChild(headBox);
+                    headBox.querySelector('.prev-m-btn').onclick = (e) => { e.stopPropagation(); m--; if(m < 1) { m = 12; y--; } buildMiniMonthDOM(y, m); }; headBox.querySelector('.next-m-btn').onclick = (e) => { e.stopPropagation(); m++; if(m > 12) { m = 1; y++; } buildMiniMonthDOM(y, m); };
+                    const dayLabels = document.createElement('div'); dayLabels.className = 'grid grid-cols-7 gap-1 text-[10px] text-center text-gray-500 font-bold mb-1'; dayLabels.innerHTML = '<div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>'; p.appendChild(dayLabels);
+                    const gridBody = document.createElement('div'); gridBody.className = 'grid grid-cols-7 gap-1 text-center text-xs font-mono'; const totalDays = new Date(y, m, 0).getDate(), startIdx = new Date(y, m - 1, 1).getDay(); for(let i = 0; i < startIdx; i++) gridBody.appendChild(document.createElement('div'));
                     for(let d = 1; d <= totalDays; d++) {
                         const dayCell = document.createElement('div'); dayCell.innerText = d; dayCell.className = 'py-1 rounded cursor-pointer hover:bg-amber-500 hover:text-black font-bold transition text-gray-300'; const currentStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; if(currentStr === rawValue) dayCell.className = 'py-1 rounded bg-amber-500 text-black font-black';
                         dayCell.onclick = (e) => { 
-                            e.stopPropagation(); e.preventDefault(); closeAllInlinePickers();
-                            if (!window.pendingCrewUpdates) window.pendingCrewUpdates = {};
-                            if (!window.pendingCrewUpdates[nickname]) window.pendingCrewUpdates[nickname] = {};
+                            e.stopPropagation(); closeAllInlinePickers(); if (!window.pendingCrewUpdates[nickname]) window.pendingCrewUpdates[nickname] = {};
                             window.pendingCrewUpdates[nickname]['joinDate'] = currentStr; currentMember.joinDate = currentStr;
-                            const saveBtn = document.getElementById('btnSaveAllCrewEdits'); if (saveBtn) saveBtn.classList.remove('hidden');
-                            updateAdminDashboard();
+                            if(document.getElementById('btnSaveAllCrewEdits')) document.getElementById('btnSaveAllCrewEdits').classList.remove('hidden'); updateAdminDashboard();
                         }; gridBody.appendChild(dayCell);
                     }
-                    pickerContainer.appendChild(gridBody);
+                    p.appendChild(gridBody);
                 }
                 buildMiniMonthDOM(calYear, calMonth);
-            } 
-            else {
+            } else {
                 const inputComponent = document.createElement('input'); inputComponent.type = 'text'; inputComponent.value = rawValue; inputComponent.className = 'w-full bg-[#121212] border border-amber-500 rounded px-2 py-1 text-xs text-white focus:outline-none'; cellElement.innerHTML = ''; cellElement.appendChild(inputComponent); inputComponent.focus();
                 const saveChanges = () => { 
-                    let updatedValue = inputComponent.value.trim(); if (!updatedValue) updatedValue = '-'; 
-                    let finalVal = (objectFieldKey=='name' || objectFieldKey=='phone') ? encryptData(updatedValue) : updatedValue; 
-                    if (!window.pendingCrewUpdates) window.pendingCrewUpdates = {};
-                    if (!window.pendingCrewUpdates[nickname]) window.pendingCrewUpdates[nickname] = {};
-                    window.pendingCrewUpdates[nickname][objectFieldKey] = finalVal; currentMember[objectFieldKey] = finalVal;
-                    const saveBtn = document.getElementById('btnSaveAllCrewEdits'); if (saveBtn) saveBtn.classList.remove('hidden');
-                    updateAdminDashboard();
+                    let updatedValue = inputComponent.value.trim(); if (!updatedValue) updatedValue = '-'; let finalVal = (objectFieldKey=='name' || objectFieldKey=='phone') ? encryptData(updatedValue) : updatedValue; 
+                    if (!window.pendingCrewUpdates[nickname]) window.pendingCrewUpdates[nickname] = {}; window.pendingCrewUpdates[nickname][objectFieldKey] = finalVal; currentMember[objectFieldKey] = finalVal;
+                    if(document.getElementById('btnSaveAllCrewEdits')) document.getElementById('btnSaveAllCrewEdits').classList.remove('hidden'); updateAdminDashboard();
                 };
                 inputComponent.onkeydown = (e) => { if (e.key === 'Enter') saveChanges(); }; inputComponent.onblur = saveChanges;
             }
         }
 
-        async function deleteMemberRecord(nickname) { 
-            if(confirm(`⚠️ 정말로 [${nickname}] 크루원을 탈퇴/영구 삭제 조치하시겠습니까?`)) { 
-                toggleGlobalLoadingOverlay(true, `[${nickname}] 크루 명부 제명 처리 중...`); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_crew&nickname=${encodeURIComponent(nickname)}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } } 
-                catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
-            } 
-        }
-        
-        async function deleteScheduleRecord(recordId) { 
-            if (confirm('⚠️ 해당 일정을 영구 삭제하시겠습니까?')) { 
-                toggleGlobalLoadingOverlay(true, "요청하신 개별 크루 스케줄 블록 삭제 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${recordId}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } } 
-                catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
-            } 
-        }
-        
-        async function clearTargetMonthDatabase() { 
-            if (confirm(`${currentMonth}월의 일정 데이터만 삭제하시겠습니까?`)) { 
-                toggleGlobalLoadingOverlay(true, `${currentMonth}월 스케줄 벌크 삭제 진행 중...`); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try {
-                    if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
-                        const targets = db.filter(item => { if(!item || !item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return cleanYear === currentYear && cleanMonth === currentMonth; }); 
-                        for(let t of targets) { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}&ts=${Date.now()}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); 
-                    }
-                } catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
-            } 
-        }
-        
-        async function clearDatabase() { 
-            if (confirm('🚨 전체 초기화하시겠습니까?')) { 
-                toggleGlobalLoadingOverlay(true, "데이터베이스 마스터 이력 제거 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { for(let t of db) { if(t) await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}&ts=${Date.now()}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); } } 
-                catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
-            } 
-        }
+        async function deleteMemberRecord(nickname) { if(confirm(`⚠️ 정말로 [${nickname}] 크루원을 제명 조치하시겠습니까?`)) { toggleGlobalLoadingOverlay(true, `제명 처리 중...`); try { await fetch(`${GOOGLE_SHEET_URL}?action=delete_crew&nickname=${encodeURIComponent(nickname)}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(r => setTimeout(r, 1000)); } catch(e){} await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false); } }
+        async function deleteScheduleRecord(id) { if (confirm('⚠️ 해당 일정을 영구 삭제하시겠습니까?')) { toggleGlobalLoadingOverlay(true, "크루 스케줄 제거 중..."); try { await fetch(`${GOOGLE_SHEET_URL}?action=delete_schedule&id=${id}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(r => setTimeout(r, 1000)); } catch(e){} await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false); } }
+        async function clearTargetMonthDatabase() { if (confirm(`${currentMonth}월의 일정 데이터만 전부 삭제하시겠습니까?`)) { toggleGlobalLoadingOverlay(true, "월별 스케줄 리셋 중..."); try { const targets = db.filter(i => { let y = parseInt(String(i.year).replace(/\D/g, '')) || currentYear, m = String(i.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(i.month).replace(/\D/g, '')) || currentMonth); return y === currentYear && m === currentMonth; }); for(let t of targets) await fetch(`${GOOGLE_SHEET_URL}?action=delete_schedule&id=${t.id}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(r => setTimeout(r, 1500)); } catch(e){} await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false); } }
+        async function clearDatabase() { if (confirm('🚨 마스터 데이터베이스 전체 초기화하시겠습니까?')) { toggleGlobalLoadingOverlay(true, "전체 이력 데이터 제거 중..."); try { for(let t of db) if(t) await fetch(`${GOOGLE_SHEET_URL}?action=delete_schedule&id=${t.id}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(r => setTimeout(r, 1500)); } catch(e){} await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false); } }
 
         function switchPage(p) {
             const pages = ['pageCover', 'pageCalendar', 'pageAdmin', 'pageMemberManage'];
             pages.forEach(id => { const el = document.getElementById(id); if (el && !el.classList.contains('hidden')) el.classList.add('opacity-0', 'scale-95'); });
-            setTimeout(() => { pages.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); }); const target = document.getElementById(p); if(target) { target.classList.remove('hidden'); setTimeout(() => { target.classList.remove('opacity-0', 'scale-95'); }, 50); } }, 300);
+            setTimeout(() => { pages.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); }); const target = document.getElementById(p); if(target) { target.classList.remove('hidden'); setTimeout(() => target.classList.remove('opacity-0', 'scale-95'), 50); } }, 300);
         }
 
         async function verifyAdminAccess() {
-            const input = prompt('관리자 마스터 암호를 입력하십시오:'); if (!input) return;
-            if (input === "1234") { switchPage('pageAdmin'); return; }
-            toggleGlobalLoadingOverlay(true, "마스터 권한 구글 클라우드 보안 동기화 검증 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim();
-            if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
-                try {
-                    const res = await fetch(CLEAN_URL + "?action=verify_admin&password=" + encodeURIComponent(input) + "&ts=" + Date.now());
-                    const data = await res.json();
-                    if (data && data.success) { switchPage('pageAdmin'); } else { alert('❌ 인증 실패: 암호 오류'); }
-                } catch(e) {
-                    alert('❌ 비상 복구 세션 진입 : 마스터 비상 암호(1234) 대조를 통해 대시보드를 임시 개방합니다.'); switchPage('pageAdmin');
-                } finally { toggleGlobalLoadingOverlay(false); }
-            }
+            const input = prompt('관리자 마스터 암호를 입력하십시오:'); if (!input) return; if (input === "1234") return switchPage('pageAdmin');
+            toggleGlobalLoadingOverlay(true, "보안 세션 검증 중...");
+            try { const res = await fetch(`${GOOGLE_SHEET_URL}?action=verify_admin&password=${encodeURIComponent(input)}&ts=${Date.now()}`); const data = await res.json(); if (data && data.success) switchPage('pageAdmin'); else alert('❌ 인증 실패'); } 
+            catch(e) { alert('❌ 비상 세션 개방 (비상암호: 1234 대조)'); switchPage('pageAdmin'); } finally { toggleGlobalLoadingOverlay(false); }
         }
 
         async function changeAdminPassword() {
-            const newPw = prompt('새롭게 사용할 마스터 관리자 암호를 입력하세요:'); if (!newPw) return;
-            toggleGlobalLoadingOverlay(true, "구글 클라우드 마스터 보안 세션 암호 갱신 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim();
-            if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
-                try {
-                    const res = await fetch(`${CLEAN_URL}?action=change_password&password=${encodeURIComponent(newPw)}&ts=${Date.now()}`); const data = await res.json();
-                    if (data && data.success) alert('🔑 암호 변경 성공');
-                } catch(e) { console.error(e); } finally { toggleGlobalLoadingOverlay(false); }
-            }
+            const newPw = prompt('새롭게 사용할 관리자 암호를 입력하세요:'); if (!newPw) return; toggleGlobalLoadingOverlay(true, "암호 갱신 중...");
+            try { const res = await fetch(`${GOOGLE_SHEET_URL}?action=change_password&password=${encodeURIComponent(newPw)}&ts=${Date.now()}`); const data = await res.json(); if (data && data.success) alert('🔑 암호 변경 성공'); } catch(e){} finally { toggleGlobalLoadingOverlay(false); }
         }
 
         function setHalfYearRankFilter(h) { currentHalfYearRankFilter = h; document.getElementById('btnHalfFirst').className = h === 1 ? 'px-3 py-1 rounded bg-sky-500 text-white font-bold' : 'px-3 py-1 rounded text-gray-400'; document.getElementById('btnHalfSecond').className = h === 2 ? 'px-3 py-1 rounded bg-sky-500 text-white font-bold' : 'px-3 py-1 rounded text-gray-400'; renderHalfYearRankTable(); }
-
         function renderHalfYearRankTable() {
-            try {
-                const tbody = document.getElementById('halfRankTableBody'); if(!tbody) return; tbody.innerHTML = '';
-                const startMonth = currentHalfYearRankFilter === 1 ? 1 : 7, endMonth = currentHalfYearRankFilter === 1 ? 6 : 12;
-                const halfRecords = db.filter(item => { if(!item || !item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return cleanYear === currentYear && cleanMonth >= startMonth && cleanMonth <= endMonth; });
-                const freqMap = {}; halfRecords.forEach(r => { if(r && r.name) freqMap[r.name] = (freqMap[r.name] || 0) + 1; });
-                const sortedList = Object.keys(freqMap).map(k => ({name:k, count:freqMap[k]})).sort((a,b) => b.count - a.count);
-                if(sortedList.length === 0) { tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-600 text-sm">데이터 없음</td></tr>`; }
-                else { sortedList.forEach((crew, index) => { tbody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/20 transition"><td class="py-4 text-center font-bold text-gray-400">${index+1}위</td><td class="py-4 font-semibold text-gray-200">${crew.name}</td><td class="py-4 text-right pr-6 font-mono text-sky-400 font-bold">${crew.count}회</td></tr>`; }); }
-            } catch(e) { console.error(e); }
+            const tbody = document.getElementById('halfRankTableBody'); if(!tbody) return; tbody.innerHTML = ''; const startMonth = currentHalfYearRankFilter === 1 ? 1 : 7, endMonth = currentHalfYearRankFilter === 1 ? 6 : 12;
+            const records = db.filter(i => { let y = parseInt(String(i.year).replace(/\D/g, '')) || currentYear, m = parseInt(String(i.month).replace(/\D/g, '')) || currentMonth; return y === currentYear && m >= startMonth && m <= endMonth; });
+            const freqMap = {}; records.forEach(r => { if(r && r.name) freqMap[r.name] = (freqMap[r.name] || 0) + 1; });
+            const sorted = Object.keys(freqMap).map(k => ({name:k, count:freqMap[k]})).sort((a,b) => b.count - a.count);
+            if(sorted.length === 0) tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-600 text-sm">데이터 없음</td></tr>`;
+            else sorted.forEach((c, idx) => { tbody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/20 transition"><td class="py-4 text-center font-bold text-gray-400">${idx+1}위</td><td class="py-4 font-semibold text-gray-200">${c.name}</td><td class="py-4 text-right pr-6 font-mono text-sky-400 font-bold">${c.count}회</td></tr>`; });
         }
 
         async function submitAllCrewEdits() {
-            if (!window.pendingCrewUpdates || Object.keys(window.pendingCrewUpdates).length === 0) return;
-            const CLEAN_URL = GOOGLE_SHEET_URL.trim();
-            if (!CLEAN_URL || CLEAN_URL === "아지트크루여기로") return;
-            
-            toggleGlobalLoadingOverlay(true, "📋 크루 변경사항 마스터 서버 동기화 이관 중...");
+            if (!window.pendingCrewUpdates || Object.keys(window.pendingCrewUpdates).length === 0) return; toggleGlobalLoadingOverlay(true, "📋 크루 변경사항 마스터 서버 동기화 이관 중...");
             try {
-                let tasks = [];
-                for (let nickname in window.pendingCrewUpdates) { 
-                    for (let field in window.pendingCrewUpdates[nickname]) { 
-                        let sheetHeaderField = field; 
-                        if (field === 'grade') sheetHeaderField = '회원 등급'; 
-                        if (field === 'nickname') sheetHeaderField = '크루 닉네임'; 
-                        let val = window.pendingCrewUpdates[nickname][field]; 
-                        tasks.push({ nickname, field: sheetHeaderField, value: val }); 
-                    } 
-                }
-                for (let i = 0; i < tasks.length; i++) {
-                    let task = tasks[i];
-                    await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(task.nickname)}&field=${encodeURIComponent(task.field)}&value=${encodeURIComponent(task.value)}&ts=${Date.now()}`, { mode: 'no-cors' }); 
-                    await new Promise(resolve => setTimeout(resolve, 350));
-                }
-                window.pendingCrewUpdates = {}; document.getElementById('btnSaveAllCrewEdits').classList.add('hidden');
-                alert(`🎉 총 ${tasks.length}건의 크루 데이터 변경이 완벽히 저장되었습니다.`);
-            } catch (e) { console.error(e); } finally { toggleGlobalLoadingOverlay(false); await fetchCloudData(); updateAdminDashboard(); }
+                let tasks = []; for (let nickname in window.pendingCrewUpdates) { for (let field in window.pendingCrewUpdates[nickname]) { let hField = field === 'grade' ? '회원 등급' : (field === 'nickname' ? '크루 닉네임' : field); tasks.push({ nickname, field: hField, value: window.pendingCrewUpdates[nickname][field] }); } }
+                for (let i = 0; i < tasks.length; i++) { let t = tasks[i]; await fetch(`${GOOGLE_SHEET_URL}?action=update_crew&nickname=${encodeURIComponent(t.nickname)}&field=${encodeURIComponent(t.field)}&value=${encodeURIComponent(t.value)}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(r => setTimeout(r, 350)); }
+                window.pendingCrewUpdates = {}; document.getElementById('btnSaveAllCrewEdits').classList.add('hidden'); alert(`🎉 데이터 변경 내역이 완벽히 저장되었습니다.`);
+            } catch (e) {} finally { toggleGlobalLoadingOverlay(false); await fetchCloudData(); updateAdminDashboard(); }
         }
 
-        function setMemberSort(criteria) {
-            memberSortCriteria = criteria;
-            updateAdminDashboard();
-        }
+        function setMemberSort(criteria) { memberSortCriteria = criteria; updateAdminDashboard(); }
 
         function updateAdminDashboard() {
             const targetRecords = db.filter(item => { if(!item || !item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return cleanYear === currentYear && cleanMonth === currentMonth; });
             
-            try {
-                const rBody = document.getElementById('rankTableBody'); if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => { if(r && r.name) freq[r.name] = (freq[r.name] || 0) + 1; }); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}위</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
-            } catch(e) { console.error(e); }
+            const rBody = document.getElementById('rankTableBody'); if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => { if(r && r.name) freq[r.name] = (freq[r.name] || 0) + 1; }); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}위</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
 
-            try {
-                const aBody = document.getElementById('monthAttendeeListBody'); 
-                if(aBody) { 
-                    aBody.innerHTML = ''; 
-                    if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; } 
-                    else { 
-                        targetRecords.sort((a,b) => Number(a.startDay) - Number(b.startDay)).forEach(r => { 
-                            if(!r) return;
-                            let isHostChecked = Number(r.isHost) === 1 || r.isHost === true || String(r.isHost).toLowerCase() === 'true'; let isSponsorChecked = Number(r.isSponsor) === 1 || r.isSponsor === true || String(r.isSponsor).toLowerCase() === 'true';
-                            aBody.innerHTML += `<tr class="border-b border-gray-800/20 hover:bg-gray-800/10 transition">
-                                <td class="py-3 pl-1 font-bold text-gray-200 flex items-center gap-2 min-w-[145px]">
-                                    <div class="flex items-center gap-1.5 shrink-0 select-none">
-                                        <span class="text-[9px] text-gray-500 font-black">방</span><input type="checkbox" ${isHostChecked ? 'checked' : ''} onchange="toggleHostStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-red-500 rounded bg-[#121212] border-gray-700 cursor-pointer">
-                                        <span class="text-[9px] text-gray-500 font-black ml-0.5">찬</span><input type="checkbox" ${isSponsorChecked ? 'checked' : ''} onchange="toggleSponsorStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-emerald-500 rounded bg-[#121212] border-gray-700 cursor-pointer">
-                                    </div>
-                                    <span class="truncate max-w-[65px]">👤 ${r.name}</span>
-                                </td>
-                                <td class="py-3 text-gray-400 text-[11px] font-mono">${r.startDay}일~${r.endDay}일</td>
-                                <td class="py-3 text-right pr-1 flex items-center justify-end gap-2"><span class="text-orange-400 font-bold text-[11px] shrink-0">${r.type}</span><button onclick="deleteScheduleRecord(${r.id})" class="bg-red-500/10 border border-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0">삭제</button></td>
-                            </tr>`; 
-                        }); 
-                    } 
-                }
-            } catch(e) { console.error(e); }
+            // 🚗 명단 렌더러 레이어 개편 (20260620_204542.jpg 완벽 연동)
+            const aBody = document.getElementById('monthAttendeeListBody'); 
+            if(aBody) { 
+                aBody.innerHTML = ''; 
+                if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; } 
+                else { 
+                    targetRecords.sort((a,b) => Number(a.startDay) - Number(b.startDay)).forEach(r => { 
+                        if(!r) return;
+                        let isHostChecked = Number(r.isHost) === 1 || r.isHost === true || String(r.isHost).toLowerCase() === 'true'; 
+                        let isSponsorChecked = Number(r.isSponsor) === 1 || r.isSponsor === true || String(r.isSponsor).toLowerCase() === 'true';
+                        let isDriverChecked = Number(r.isDriver) === 1 || r.isDriver === true || String(r.isDriver).toLowerCase() === 'true';
+                        
+                        aBody.innerHTML += `<tr class="border-b border-gray-800/20 hover:bg-gray-800/10 transition">
+                            <td class="py-3 pl-1 font-bold text-gray-200 flex items-center gap-1.5 min-w-[170px]">
+                                <div class="flex items-center gap-1 shrink-0 select-none text-[9px] text-gray-500 font-black">
+                                    <span>방</span><input type="checkbox" ${isHostChecked ? 'checked' : ''} onchange="toggleHostStatus(${r.id}, this.checked)" class="w-3 h-3 accent-red-500 rounded cursor-pointer">
+                                    <span class="ml-0.5">찬</span><input type="checkbox" ${isSponsorChecked ? 'checked' : ''} onchange="toggleSponsorStatus(${r.id}, this.checked)" class="w-3 h-3 accent-emerald-500 rounded cursor-pointer">
+                                    <span class="ml-0.5 text-sky-400">운</span><input type="checkbox" ${isDriverChecked ? 'checked' : ''} onchange="toggleDriverStatus(${r.id}, this.checked)" class="w-3 h-3 accent-sky-500 rounded cursor-pointer">
+                                </div>
+                                <span class="truncate max-w-[60px] ml-1">👤 ${r.name}</span>
+                            </td>
+                            <td class="py-3 text-gray-400 text-[11px] font-mono">${r.startDay}일~${r.endDay}일</td>
+                            <td class="py-3 text-right pr-1 flex items-center justify-end gap-2"><span class="text-orange-400 font-bold text-[11px] shrink-0">${r.type}</span><button onclick="deleteScheduleRecord(${r.id})" class="bg-red-500/10 border border-red-500/20 text-red-400 px-2 py-0.5 rounded font-black text-[10px] transition shrink-0">삭제</button></td>
+                        </tr>`; 
+                    }); 
+                } 
+            }
 
-            renderHostRankTable(); renderSponsorRankTable(); renderHalfYearRankTable();
+            renderHostRankTable(); renderSponsorRankTable(); renderDriverRankTable(); renderHalfYearRankTable();
             
-            try {
-                let displayedMembers = staticCrewMembers.filter(m => m && m.nickname);
-                if (memberSortCriteria === 'gender') { displayedMembers.sort((a, b) => (a.gender || '').localeCompare(b.gender || '')); } 
-                else if (memberSortCriteria === 'birthYear') { displayedMembers.sort((a, b) => (a.birthYear || '99').localeCompare(b.birthYear || '99')); } 
-                else if (memberSortCriteria === 'grade') { const gradeOrder = { '방장': 1, '부방장': 2, '아지트人': 3, '아지트': 3, '정회원': 4, '준회원': 5 }; displayedMembers.sort((a, b) => (gradeOrder[a.grade] || 6) - (gradeOrder[b.grade] || 6)); }
-                
-                const sortCriteriaList = ['gender', 'birthYear', 'grade', 'none'];
-                sortCriteriaList.forEach(crit => { const btn = document.getElementById('sortBtn_' + crit); if (btn) btn.className = (memberSortCriteria === crit) ? "bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition" : "bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition"; });
-
-                const mBody = document.getElementById('masterCrewTableBody'); if(mBody) { mBody.innerHTML = ''; let isPending = (nk, fd) => (window.pendingCrewUpdates && window.pendingCrewUpdates[nk] && window.pendingCrewUpdates[nk][fd] !== undefined);
-                    if(displayedMembers.length === 0) {
-                        mBody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-gray-500 text-xs font-bold">📂 마스터 서버와 연결을 확인 중이거나 데이터가 비어있습니다.</td></tr>`;
-                    } else {
-                        displayedMembers.forEach(m => { 
-                            let decryptedName = decryptData(m.name || '-'); let decryptedPhone = decryptData(m.phone || '-'); let displayJoinDate = m.joinDate ? formatKoreanDate(m.joinDate) : '-';
-                            let displayGrade = m.grade && m.grade !== '-' ? m.grade : '준회원'; let gradeColor = "text-gray-400"; let renderedGrade = displayGrade;
-                            if (displayGrade === '아지트') displayGrade = '아지트人';
-                            if(displayGrade === '정회원') gradeColor = "text-green-400 font-bold";
-                            else if(displayGrade === '아지트人') { renderedGrade = '아지트人'; gradeColor = "text-red-500 font-black tracking-wide"; }
-                            else if(displayGrade === '방장') { renderedGrade = '방&nbsp;&nbsp;장'; gradeColor = "text-[#FFEA00] font-black tracking-wider animate-pulse"; }
-                            else if(displayGrade === '부방장') { renderedGrade = '부방장'; gradeColor = "text-sky-400 font-bold tracking-wide"; }
-                            
-                            mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
-                                <td class="py-4.5 px-4 editable-cell font-bold text-white ${isPending(m.nickname, 'nickname') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'nickname')">👤 ${m.nickname}</td>
-                                <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decryptedName}</td>
-                                <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold ${isPending(m.nickname, 'gender') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender}</td>
-                                <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold ${isPending(m.nickname, 'birthYear') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'}</td>
-                                <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400 ${isPending(m.nickname, 'phone') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decryptedPhone}</td>
-                                <td class="py-4.5 px-3.5 editable-cell ${isPending(m.nickname, 'grade') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : gradeColor}" onclick="startInlineEdit(this, '${m.nickname}', 'grade')">${renderedGrade}</td>
-                                <td class="py-4.5 px-3.5 editable-cell text-gray-300 font-mono tracking-tight ${isPending(m.nickname, 'joinDate') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'joinDate')">${displayJoinDate}</td>
-                                <td class="py-4.5 px-4 text-center"><button class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl font-black text-xs transition active:scale-95" onclick="deleteMemberRecord('${m.nickname}')">삭제</button></td>
-                            </tr>`; 
-                        });
-                    }
-                }
-            } catch(e) { console.error(e); }
+            // 명부 빌더 레이어
+            let dMembers = staticCrewMembers.filter(m => m && m.nickname);
+            if (memberSortCriteria === 'gender') dMembers.sort((a, b) => (a.gender || '').localeCompare(b.gender || ''));
+            else if (memberSortCriteria === 'birthYear') dMembers.sort((a, b) => (a.birthYear || '99').localeCompare(b.birthYear || '99'));
+            else if (memberSortCriteria === 'grade') { const gOrder = { '방장': 1, '부방장': 2, '아지트人': 3, '아지트': 3, '정회원': 4, '준회원': 5 }; dMembers.sort((a, b) => (gOrder[a.grade] || 6) - (gOrder[b.grade] || 6)); }
             
-            try {
-                const timelineContainer = document.getElementById('groupedCrewTimeline');
-                if(timelineContainer) { 
-                    timelineContainer.innerHTML = ''; if (db.length === 0) return;
-                    const groupMap = {}; db.forEach(item => { if (item && item.name) { if (!groupMap[item.name]) groupMap[item.name] = []; groupMap[item.name].push(item); } });
-                    for (let crewNickname in groupMap) {
-                        let innerListHTML = `<div class="bg-[#1c1c1c] rounded-xl p-4 border border-gray-800/60"><div class="text-sm font-black text-gray-200 border-b border-gray-800 pb-2 mb-2 flex justify-between items-center"><span>👤 크루: <span class="text-red-400">${crewNickname}</span></span><span class="text-[11px] bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-0.5 rounded-full font-bold">누적 ${groupMap[crewNickname].length}건</span></div><div class="space-y-2">`;
-                        groupMap[crewNickname].sort((a,b) => Number(b.id) - Number(a.id)).forEach(s => { 
-                            let typeIcon = '⛺'; if (s.type === '등산') typeIcon = '🥾'; else if (s.type === '번개') typeIcon = '⚡'; else if (s.type === '캠핑' || s.type === '게스트캠핑') typeIcon = '⛺'; else if (s.type === '백패킹') typeIcon = '🎒';
-                            let crownMarkup = s.isHost ? '<span class="text-amber-500 font-bold ml-1">👑</span>' : ''; let sponsorMarkup = s.isSponsor ? '<span class="text-emerald-400 font-bold ml-1">💚</span>' : '';
-                            let displayMonth = s.month; if (!displayMonth || String(displayMonth).toLowerCase() === 'null') { displayMonth = currentMonth; } else { displayMonth = parseInt(String(displayMonth).replace(/\D/g, '')) || currentMonth; }
-                            let displayYear = s.year ? (parseInt(String(s.year).replace(/\D/g, '')) || currentYear) : currentYear;
-                            innerListHTML += `<div class="flex justify-between items-center gap-3 bg-[#121212] p-3 rounded-lg border border-gray-800/40 w-full">
-                                <div class="flex items-center gap-3"><span class="text-base shrink-0 select-none">${typeIcon}</span><div class="flex flex-col"><span class="text-xs font-bold text-gray-300">${displayYear}년 ${displayMonth}월 ${s.startDay}일 ~ ${s.endDay}일</span><span class="text-[10px] font-bold text-orange-400 mt-0.5">${s.durationText} · ${s.type}${crownMarkup}${sponsorMarkup}</span></div></div>
-                                <button onclick="deleteScheduleRecord(${s.id})" class="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0 active:scale-95">강제 삭제</button>
-                            </div>`; 
-                        });
-                        innerListHTML += `</div></div>`; timelineContainer.innerHTML += innerListHTML;
-                    }
+            ['gender', 'birthYear', 'grade', 'none'].forEach(crit => { const btn = document.getElementById('sortBtn_' + crit); if (btn) btn.className = (memberSortCriteria === crit) ? "bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition" : "bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition"; });
+            const mBody = document.getElementById('masterCrewTableBody'); if(mBody) { mBody.innerHTML = ''; let isPending = (nk, fd) => (window.pendingCrewUpdates && window.pendingCrewUpdates[nk] && window.pendingCrewUpdates[nk][fd] !== undefined);
+                if(dMembers.length === 0) mBody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-gray-500 text-xs font-bold">📂 명부 데이터를 확인 중입니다.</td></tr>`;
+                else dMembers.forEach(m => { 
+                    let decName = decryptData(m.name || '-'), decPhone = decryptData(m.phone || '-'), dJoinDate = m.joinDate ? formatKoreanDate(m.joinDate) : '-';
+                    let dGrade = m.grade && m.grade !== '-' ? m.grade : '준회원', gColor = "text-gray-400", rGrade = dGrade; if (dGrade === '아지트') dGrade = '아지트人';
+                    if(dGrade === '정회원') gColor = "text-green-400 font-bold"; else if(dGrade === '아지트人') { rGrade = '아지트人'; gColor = "text-red-500 font-black tracking-wide"; } else if(dGrade === '방장') { rGrade = '방&nbsp;&nbsp;장'; gColor = "text-[#FFEA00] font-black tracking-wider animate-pulse"; } else if(dGrade === '부방장') { rGrade = '부방장'; gColor = "text-sky-400 font-bold tracking-wide"; }
+                    
+                    mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
+                        <td class="py-4.5 px-4 editable-cell font-bold text-white ${isPending(m.nickname, 'nickname') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'nickname')">👤 ${m.nickname}</td>
+                        <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decName}</td>
+                        <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold ${isPending(m.nickname, 'gender') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender}</td>
+                        <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold ${isPending(m.nickname, 'birthYear') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'}</td>
+                        <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400 ${isPending(m.nickname, 'phone') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decPhone}</td>
+                        <td class="py-4.5 px-3.5 editable-cell ${isPending(m.nickname, 'grade') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : gColor}" onclick="startInlineEdit(this, '${m.nickname}', 'grade')">${rGrade}</td>
+                        <td class="py-4.5 px-3.5 editable-cell text-gray-300 font-mono tracking-tight ${isPending(m.nickname, 'joinDate') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'joinDate')">${dJoinDate}</td>
+                        <td class="py-4.5 px-4 text-center"><button class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl font-black text-xs transition active:scale-95" onclick="deleteMemberRecord('${m.nickname}')">삭제</button></td>
+                    </tr>`; 
+                });
+            }
+            
+            // 타임라인 컴포넌트 렌더러
+            const tContainer = document.getElementById('groupedCrewTimeline'); if(tContainer) { tContainer.innerHTML = ''; if (db.length === 0) return; const gMap = {}; db.forEach(i => { if (i && i.name) { if (!gMap[i.name]) gMap[i.name] = []; gMap[i.name].push(i); } });
+                for (let cNick in gMap) {
+                    let innerHTML = `<div class="bg-[#1c1c1c] rounded-xl p-4 border border-gray-800/60"><div class="text-sm font-black text-gray-200 border-b border-gray-800 pb-2 mb-2 flex justify-between items-center"><span>👤 크루: <span class="text-red-400">${cNick}</span></span><span class="text-[11px] bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-0.5 rounded-full font-bold">누적 ${gMap[cNick].length}건</span></div><div class="space-y-2">`;
+                    gMap[cNick].sort((a,b) => Number(b.id) - Number(a.id)).forEach(s => { 
+                        let tIcon = s.type === '등산' ? '🥾' : (s.type === '번개' ? '⚡' : (s.type === '백패킹' ? '🎒' : '⛺'));
+                        let hM = s.isHost ? '<span class="text-amber-500 font-bold ml-1">👑</span>' : '', sM = s.isSponsor ? '<span class="text-emerald-400 font-bold ml-1">💚</span>' : '', dM = s.isDriver ? '<span class="text-sky-400 font-bold ml-1">🚗</span>' : '';
+                        let dMth = parseInt(String(s.month).replace(/\D/g, '')) || currentMonth, dYr = s.year ? (parseInt(String(s.year).replace(/\D/g, '')) || currentYear) : currentYear;
+                        innerHTML += `<div class="flex justify-between items-center gap-3 bg-[#121212] p-3 rounded-lg border border-gray-800/40 w-full"><div class="flex items-center gap-3"><span class="text-base shrink-0 select-none">${tIcon}</span><div class="flex flex-col"><span class="text-xs font-bold text-gray-300">${dYr}년 ${dMth}월 ${s.startDay}일 ~ ${s.endDay}일</span><span class="text-[10px] font-bold text-orange-400 mt-0.5">${s.durationText} · ${s.type}${hM}${sM}${dM}</span></div></div><button onclick="deleteScheduleRecord(${s.id})" class="bg-red-500/10 border border-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0 active:scale-95">강제 삭제</button></div>`; 
+                    }); innerHTML += `</div></div>`; tContainer.innerHTML += innerHTML;
                 }
-            } catch(e) { console.error(e); }
+            }
         }
     </script>
 </body>
