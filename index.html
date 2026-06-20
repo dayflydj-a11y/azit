@@ -450,11 +450,20 @@
             }
         }
 
+        // 🛡️ [공지 파싱 허브 엔진]: 구형 데이터와 신형 다중 공지 배열 간의 포맷 충돌을 차단하는 통합 서킷
+        function getParsedNotices() {
+            if (!noticeText || noticeText.trim() === '') return [];
+            try {
+                let parsed = JSON.parse(noticeText);
+                if (Array.isArray(parsed)) return parsed;
+            } catch(e) {}
+            // 데이터베이스에 구조화되지 않은 예전 일반 텍스트 공지가 들어있을 경우 고정 마스터 ID로 임시 맵핑 처리
+            return [{ id: 1781948870932, title: "📢 마스터 크루 메인 공지사항", content: noticeText, date: "2026-06-20" }];
+        }
+
         function renderNoticeDOM() {
             const container = document.getElementById('noticeAccordionContainer'); if (!container) return; container.innerHTML = '';
-            let notices = [];
-            try { notices = JSON.parse(noticeText); if(!Array.isArray(notices)) throw new Error(); } 
-            catch(e) { notices = [{ id: Date.now(), title: "📢 마스터 크루 메인 공지사항", content: noticeText, date: "2026-06-20" }]; }
+            let notices = getParsedNotices();
             notices.forEach(n => {
                 const isOpen = (openNoticeIdGlobal === n.id); const noticeBox = document.createElement('div');
                 noticeBox.className = "border border-gray-800 rounded-xl bg-[#151515] overflow-hidden transition-all duration-200";
@@ -489,24 +498,36 @@
         }
 
         function openNoticeAddForm() { document.getElementById('editNoticeId').value = ''; document.getElementById('editNoticeTitle').value = ''; document.getElementById('editNoticeContent').value = ''; document.getElementById('noticeEditorForm').classList.remove('hidden'); }
+        
+        // 🔒 [수정 작동 서킷 해제]: 무조건 안전 추출기를 통과하게 하여 에러로 버튼이 먹통이 되던 결함을 파괴했습니다.
         function openNoticeEditForm(id) {
-            let notices = []; try { notices = JSON.parse(noticeText); } catch(e) { return; }
+            let notices = getParsedNotices();
             const target = notices.find(n => n.id == id); if(!target) return;
-            document.getElementById('editNoticeId').value = target.id; document.getElementById('editNoticeTitle').value = target.title; document.getElementById('editNoticeContent').value = target.content; document.getElementById('noticeEditorForm').classList.remove('hidden');
+            document.getElementById('editNoticeId').value = target.id; 
+            document.getElementById('editNoticeTitle').value = target.title; 
+            document.getElementById('editNoticeContent').value = target.content; 
+            document.getElementById('noticeEditorForm').classList.remove('hidden');
+            window.scrollTo({ top: document.getElementById('noticeEditorForm').offsetTop - 20, behavior: 'smooth' });
         }
+        
         function closeNoticeEditor() { document.getElementById('noticeEditorForm').classList.add('hidden'); }
 
         async function saveNoticeData() {
             const idVal = document.getElementById('editNoticeId').value; const titleVal = document.getElementById('editNoticeTitle').value.trim(); const contentVal = document.getElementById('editNoticeContent').value.trim();
             if(!titleVal || !contentVal) { alert('공지 제목과 수칙 본문 내용을 기입해 주십시오.'); return; }
-            let notices = []; try { notices = JSON.parse(noticeText); if(!Array.isArray(notices)) throw new Error(); } catch(e) { notices = []; }
+            let notices = getParsedNotices();
             const todayStr = new Date().toISOString().split('T')[0];
-            if(idVal) { const target = notices.find(n => n.id == idVal); if(target) { target.title = titleVal; target.content = contentVal; target.date = todayStr; } } 
+            
+            if(idVal) { 
+                const target = notices.find(n => n.id == idVal); 
+                if(target) { target.title = titleVal; target.content = contentVal; target.date = todayStr; }
+                else { notices = [{ id: Date.now(), title: titleVal, content: contentVal, date: todayStr }]; }
+            } 
             else { notices.push({ id: Date.now(), title: titleVal, content: contentVal, date: todayStr }); }
             await pushNoticeServerArray(notices);
         }
 
-        async function deleteNoticeItem(id) { if(!confirm('⚠️ 선택하신 독립 공지사항 조항을 영구 삭제 처리하시겠습니까?')) return; let notices = []; try { notices = JSON.parse(noticeText); } catch(e) { return; } notices = notices.filter(n => n.id != id); await pushNoticeServerArray(notices); }
+        async function deleteNoticeItem(id) { if(!confirm('⚠️ 선택하신 독립 공지사항 조항을 영구 삭제 처리하시겠습니까?')) return; let notices = getParsedNotices(); notices = notices.filter(n => n.id != id); await pushNoticeServerArray(notices); }
 
         async function pushNoticeServerArray(nextArray) {
             const serializedStr = JSON.stringify(nextArray); toggleGlobalLoadingOverlay(true, "📋 공지사항 매트릭스 패킷 압축 데이터 동기화 중...");
@@ -922,7 +943,6 @@
         }
 
         function updateAdminDashboard() {
-            // 🔒 [오류 경계 보안 레이어]: 각 출력 영역을 try-catch 블록으로 분리 격리하여 연쇄적 렌더링 중단 결함을 완전히 방어했습니다.
             const targetRecords = db.filter(item => { if(!item || !item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return cleanYear === currentYear && cleanMonth === currentMonth; });
             
             try {
@@ -954,12 +974,10 @@
                 }
             } catch(e) { console.error("Attendee List Render Dropped Safely", e); }
 
-            // 하위 통계 모듈 격리 실행
             renderHostRankTable(); 
             renderSponsorRankTable(); 
             renderHalfYearRankTable();
             
-            // 🛡️ [마스터 명부 독립 실행]: 앞선 통계에 데이터 결함이 있어도 무조건 완벽하게 명부를 렌더링하도록 쉴드를 쳤습니다.
             try {
                 let displayedMembers = staticCrewMembers.filter(m => m && m.nickname);
                 if (memberSortCriteria === 'gender') { displayedMembers.sort((a, b) => (a.gender || '').localeCompare(b.gender || '')); } 
@@ -1017,7 +1035,7 @@
                             innerListHTML += `<div class="flex justify-between items-center gap-3 bg-[#121212] p-3 rounded-lg border border-gray-800/40 w-full">
                                 <div class="flex items-center gap-3"><span class="text-base shrink-0 select-none">${typeIcon}</span><div class="flex flex-col"><span class="text-xs font-bold text-gray-300">${displayYear}년 ${displayMonth}월 ${s.startDay}일 ~ ${s.endDay}일</span><span class="text-[10px] font-bold text-orange-400 mt-0.5">${s.durationText} · ${s.type}${crownMarkup}${sponsorMarkup}</span></div></div>
                                 <button onclick="deleteScheduleRecord(${s.id})" class="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0 active:scale-95">강제 삭제</button>
-                        </div>`; 
+                            </div>`; 
                         });
                         innerListHTML += `</div></div>`; timelineContainer.innerHTML += innerListHTML;
                     }
