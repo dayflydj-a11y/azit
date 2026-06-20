@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AZIT - 같이의 가치</title>
     
+    <!-- ⚡ [PWA 핵심 이식]: 모바일 단독 앱 구동 매니페스트 및 iOS 사파리 전용 웹앱 메타 패킷 탑재 -->
     <link rel="manifest" href="./manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AZIT">
     <link class="html-embed" rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/846/846355.png">
 
+    <!-- ⚡ Tailwind CSS CDN 인프라 구동 엔진 안정화 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link class="html-embed" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -47,6 +49,7 @@
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
 
+    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이... -->
     <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
             <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
@@ -54,6 +57,7 @@
         </div>
     </div>
 
+    <!-- [PAGE 1] 아지트 인트로 커버 화면 -->
     <div id="pageCover" class="fixed inset-0 z-50 flex flex-col justify-between p-6 transition-all duration-700 ease-in-out transform bg-cover bg-center" 
          style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=1920&q=80');">
         <div class="text-center mt-6 lg:mt-10 animate-fade-in">
@@ -71,6 +75,7 @@
         </div>
     </div>
 
+    <!-- 신규회원 등록 모달 -->
     <div id="coverRegisterModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl transform scale-95 transition-all" id="coverRegBox">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
@@ -89,6 +94,7 @@
         </div>
     </div>
 
+    <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
     <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
         <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-2 sm:py-4 flex flex-col justify-between items-center gap-1 sm:gap-2">
             <div class="w-full flex justify-between items-center px-1">
@@ -100,6 +106,7 @@
         </header>
         <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
+            <!-- 📢 공지게시판 메트릭스 -->
             <div class="lg:col-span-12 bg-[#1a1a1a] border border-red-500/30 rounded-2xl p-4 shadow-2xl prevent-select" 
                  oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 mb-3 border-b border-gray-800 pb-2">
@@ -153,6 +160,7 @@
         </main>
     </div>
 
+    <!-- [PAGE 3] 관리자 대시보드 메인 관제 화면 -->
     <div id="pageAdmin" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0e0e0e]">
         <header class="border-b border-gray-800 bg-[#151515] sticky top-0 z-40 px-4 py-3 sm:py-4 flex justify-between items-center shadow-lg">
             <button onclick="switchPage('pageCalendar')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 일정 화면으로</button>
@@ -179,6 +187,7 @@
                 </div>
             </div>
 
+            <!-- 공지사항 관리 센터 -->
             <div class="bg-[#151515] border border-gray-800 p-4 sm:p-5 rounded-2xl shadow-xl">
                 <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
                     <h3 class="text-base font-bold text-gray-200 flex items-center gap-2">
@@ -267,6 +276,7 @@
         </main>
     </div>
 
+    <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
     <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
         <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md">
             <button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button>
@@ -407,7 +417,7 @@
             });
         }
 
-        // 🛡️ [하이브리드 캐싱 핵심]: 구글 로딩 실패 시 기존 입력 데이터를 리셋하지 않고 로컬 스토리지 보존 자산을 로딩합니다.
+        // 🔒 [캐시 버스터 가드 장착]: 구글 API 요청 시 'ts' 파라미터에 실시간 밀리초 타임스탬프를 부여해 모바일 브라우저의 본문 캐시를 완전 파괴합니다.
         async function fetchCloudData() {
             const CLEAN_URL = GOOGLE_SHEET_URL.trim();
             
@@ -420,7 +430,7 @@
                 updateNetworkStatusDOM("⚠️ 오프라인 모드 (로컬 저장소 가동)", "local"); return;
             }
             try {
-                const res = await fetch(`${CLEAN_URL}?action=get`); 
+                const res = await fetch(`${CLEAN_URL}?action=get&ts=${Date.now()}`); 
                 if(!res.ok) throw new Error("CORS or Security Gate Blocked");
                 const data = await res.json();
                 if (data.db) { db = data.db; localStorage.setItem('azit_db', JSON.stringify(db)); }
@@ -507,7 +517,6 @@
 
         async function deleteNoticeItem(id) { if(!confirm('⚠️ 선택하신 독립 공지사항 조항을 영구 삭제 처리하시겠습니까?')) return; let notices = getParsedNotices(); notices = notices.filter(n => n.id != id); await pushNoticeServerArray(notices); }
 
-        // 🛡️ [선반영 가드 탑재]: 수정한 공지를 화면과 브라우저 메모리에 즉시 밀어 넣어 고정시키고, 비동기로 서버 배포를 완수합니다.
         async function pushNoticeServerArray(nextArray) {
             const serializedStr = JSON.stringify(nextArray);
             toggleGlobalLoadingOverlay(true, "📋 공지사항 매트릭스 패킷 압축 데이터 동기화 중...");
@@ -519,8 +528,8 @@
             const CLEAN_URL = GOOGLE_SHEET_URL.trim();
             if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
                 try { 
-                    await fetch(`${CLEAN_URL}?action=update_notice&text=${encodeURIComponent(serializedStr)}`, { mode: 'no-cors' }); 
-                    await new Promise(resolve => setTimeout(resolve, 1000)); 
+                    await fetch(`${CLEAN_URL}?action=update_notice&text=${encodeURIComponent(serializedStr)}&ts=${Date.now()}`, { mode: 'no-cors' }); 
+                    await new Promise(resolve => setTimeout(resolve, 1200)); 
                 } catch(e) { console.error("Background sync buffer", e); } 
             }
             await fetchCloudData(); 
@@ -599,6 +608,7 @@
             else if (s === '백패킹') document.getElementById('actBack').classList.add('bg-sky-500/10', 'border-sky-500', 'text-sky-400');
         }
 
+        // 🛡️ [자동 등 등재 시스템]: 크루원이 새 닉네임으로 일정을 등록하면 명부 유실을 막기 위해 'Crews' 시트에 자동 등재(준회원 배정) 프로세스를 트리거합니다.
         async function submitFinalForm() {
             if (isSubmitting) return;
             const CLEAN_URL = GOOGLE_SHEET_URL.trim();
@@ -626,17 +636,30 @@
             
             db.push(newScheduleObj);
             localStorage.setItem('azit_db', JSON.stringify(db));
+
+            // 명부 행렬 상 존재 유무 체크 및 즉시 프로비저닝 서킷 가동
+            const existInRoster = staticCrewMembers.some(m => m && m.nickname === nick);
+            if (!existInRoster) {
+                let autoCrew = { nickname: nick, name: encryptData('미등록'), gender: '-', birthYear: '-', grade: '준회원', joinDate: now.toISOString().split('T')[0], cancelCount: '0', phone: encryptData('미등록') };
+                staticCrewMembers.push(autoCrew);
+                localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
+                
+                try {
+                    const autoCrewQuery = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData('미등록'))}&gender=${encodeURIComponent('-')}&birthYear=${encodeURIComponent('-')}&phone=${encodeURIComponent(encryptData('미등록'))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(now.toISOString().split('T')[0])}&cancelCount=0&ts=${Date.now()}`;
+                    await fetch(CLEAN_URL + autoCrewQuery, { mode: 'no-cors' });
+                } catch(err) { console.error("Auto Roster Allocation Failed", err); }
+            }
             refreshUI();
             
             try {
-                const query = `?action=insert_schedule&id=${localTempId}&year=${currentYear}&month=${currentMonth}&startDay=${rangeStart.day}&endDay=${rangeEnd.day}&name=${encodeURIComponent(nick)}&durationText=${encodeURIComponent(diff === 0 ? "무박" : `${diff}박`)}&type=${encodeURIComponent(type)}&timestamp=${encodeURIComponent(timestamp)}&isHost=false&isSponsor=false`;
+                const query = `?action=insert_schedule&id=${localTempId}&year=${currentYear}&month=${currentMonth}&startDay=${rangeStart.day}&endDay=${rangeEnd.day}&name=${encodeURIComponent(nick)}&durationText=${encodeURIComponent(diff === 0 ? "무박" : `${diff}박`)}&type=${encodeURIComponent(type)}&timestamp=${encodeURIComponent(timestamp)}&isHost=false&isSponsor=false&ts=${Date.now()}`;
                 await fetch(CLEAN_URL + query, { mode: 'no-cors' }); 
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                alert(`🎉 전송 완료: [${nick}] 크루님의 일정이 중앙 관제 데이터베이스에 연동 완료되었습니다.`);
+                alert(`🎉 전송 완료: [${nick}] 크루님의 일정 및 명부 계정이 마스터 서버에 연동 완료되었습니다.`);
                 document.getElementById('crewName').value = ''; clearSelection(); 
             } catch(e) { 
                 console.error(e); 
-            } finally { isSubmitting = false; toggleGlobalLoadingOverlay(false); await fetchCloudData(); refreshUI(); }
+            } final { isSubmitting = false; toggleGlobalLoadingOverlay(false); await fetchCloudData(); refreshUI(); }
         }
 
         function openCoverRegisterModal() { 
@@ -657,12 +680,15 @@
             isSubmitting = true; toggleGlobalLoadingOverlay(true, `[${nick}] 신규 크루 명부를 클라우드에 생성 중...`);
             
             let newCrewObj = { nickname: nick, name: encryptData(name), gender: gender, birthYear: birth || '-', grade: '준회원', joinDate: joinDate, cancelCount: '0', phone: encryptData(phone) };
+            
+            // 중복 닉네임 덮어쓰기 방어
+            staticCrewMembers = staticCrewMembers.filter(m => m && m.nickname !== nick);
             staticCrewMembers.push(newCrewObj);
             localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
             refreshUI();
 
             try {
-                const query = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData(name))}&gender=${encodeURIComponent(gender)}&birthYear=${encodeURIComponent(birth || '-')}&phone=${encodeURIComponent(encryptData(phone))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(joinDate)}&cancelCount=${encodeURIComponent('0')}`;
+                const query = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData(name))}&gender=${encodeURIComponent(gender)}&birthYear=${encodeURIComponent(birth || '-')}&phone=${encodeURIComponent(encryptData(phone))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(joinDate)}&cancelCount=${encodeURIComponent('0')}&ts=${Date.now()}`;
                 await fetch(CLEAN_URL + query, { mode: 'no-cors' }); 
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 alert(`✨ 성공: [${nick}] 크루원이 명부에 공식 추가되었습니다.`);
@@ -733,7 +759,7 @@
             const record = db.find(item => item && item.id == recordId);
             if (record) { 
                 record.isHost = isChecked; refreshUI(); 
-                const CLEAN_URL = GOOGLE_SHEET_URL.trim(); if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { try { fetch(`${CLEAN_URL}?action=update_schedule_host&id=${recordId}&isHost=${isChecked}`, { mode: 'no-cors' }); } catch(e) { console.error(e); } }
+                const CLEAN_URL = GOOGLE_SHEET_URL.trim(); if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { try { fetch(`${CLEAN_URL}?action=update_schedule_host&id=${recordId}&isHost=${isChecked}&ts=${Date.now()}`, { mode: 'no-cors' }); } catch(e) { console.error(e); } }
             }
         }
 
@@ -741,7 +767,7 @@
             const record = db.find(item => item && item.id == recordId);
             if (record) { 
                 record.isSponsor = isChecked; refreshUI(); 
-                const CLEAN_URL = GOOGLE_SHEET_URL.trim(); if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { try { fetch(`${CLEAN_URL}?action=update_schedule_sponsor&id=${recordId}&isSponsor=${isChecked}`, { mode: 'no-cors' }); } catch(e) { console.error(e); } }
+                const CLEAN_URL = GOOGLE_SHEET_URL.trim(); if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { try { fetch(`${CLEAN_URL}?action=update_schedule_sponsor&id=${recordId}&isSponsor=${isChecked}&ts=${Date.now()}`, { mode: 'no-cors' }); } catch(e) { console.error(e); } }
             }
         }
 
@@ -831,7 +857,7 @@
         async function deleteMemberRecord(nickname) { 
             if(confirm(`⚠️ 정말로 [${nickname}] 크루원을 탈퇴/영구 삭제 조치하시겠습니까?`)) { 
                 toggleGlobalLoadingOverlay(true, `[${nickname}] 크루 명부 제명 처리 중...`); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_crew&nickname=${encodeURIComponent(nickname)}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } } 
+                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_crew&nickname=${encodeURIComponent(nickname)}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } } 
                 catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
             } 
         }
@@ -839,7 +865,7 @@
         async function deleteScheduleRecord(recordId) { 
             if (confirm('⚠️ 해당 일정을 영구 삭제하시겠습니까?')) { 
                 toggleGlobalLoadingOverlay(true, "요청하신 개별 크루 스케줄 블록 삭제 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${recordId}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } } 
+                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${recordId}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } } 
                 catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
             } 
         }
@@ -850,7 +876,7 @@
                 try {
                     if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
                         const targets = db.filter(item => { if(!item || !item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return cleanYear === currentYear && cleanMonth === currentMonth; }); 
-                        for(let t of targets) { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); 
+                        for(let t of targets) { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}&ts=${Date.now()}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); 
                     }
                 } catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
             } 
@@ -859,7 +885,7 @@
         async function clearDatabase() { 
             if (confirm('🚨 전체 초기화하시겠습니까?')) { 
                 toggleGlobalLoadingOverlay(true, "데이터베이스 마스터 이력 제거 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { for(let t of db) { if(t) await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); } } 
+                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { for(let t of db) { if(t) await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}&ts=${Date.now()}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); } } 
                 catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
             } 
         }
@@ -876,7 +902,7 @@
             toggleGlobalLoadingOverlay(true, "마스터 권한 구글 클라우드 보안 동기화 검증 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim();
             if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
                 try {
-                    const res = await fetch(CLEAN_URL + "?action=verify_admin&password=" + encodeURIComponent(input));
+                    const res = await fetch(CLEAN_URL + "?action=verify_admin&password=" + encodeURIComponent(input) + "&ts=" + Date.now());
                     const data = await res.json();
                     if (data && data.success) { switchPage('pageAdmin'); } else { alert('❌ 인증 실패: 암호 오류'); }
                 } catch(e) {
@@ -890,7 +916,7 @@
             toggleGlobalLoadingOverlay(true, "구글 클라우드 마스터 보안 세션 암호 갱신 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim();
             if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
                 try {
-                    const res = await fetch(`${CLEAN_URL}?action=change_password&password=${encodeURIComponent(newPw)}`); const data = await res.json();
+                    const res = await fetch(`${CLEAN_URL}?action=change_password&password=${encodeURIComponent(newPw)}&ts=${Date.now()}`); const data = await res.json();
                     if (data && data.success) alert('🔑 암호 변경 성공');
                 } catch(e) { console.error(e); } finally { toggleGlobalLoadingOverlay(false); }
             }
@@ -921,7 +947,7 @@
                 for (let nickname in window.pendingCrewUpdates) { for (let field in window.pendingCrewUpdates[nickname]) { let sheetHeaderField = field; if (field === 'grade') sheetHeaderField = '회원 등급'; let val = window.pendingCrewUpdates[nickname][field]; tasks.push({ nickname, field: sheetHeaderField, value: val }); } }
                 for (let i = 0; i < tasks.length; i++) {
                     let task = tasks[i];
-                    await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(task.nickname)}&field=${encodeURIComponent(task.field)}&value=${encodeURIComponent(task.value)}`, { mode: 'no-cors' }); 
+                    await fetch(`${CLEAN_URL}?action=update_crew&nickname=${encodeURIComponent(task.nickname)}&field=${encodeURIComponent(task.field)}&value=${encodeURIComponent(task.value)}&ts=${Date.now()}`, { mode: 'no-cors' }); 
                     await new Promise(resolve => setTimeout(resolve, 350));
                 }
                 window.pendingCrewUpdates = {}; document.getElementById('btnSaveAllCrewEdits').classList.add('hidden');
@@ -940,7 +966,7 @@
                 const aBody = document.getElementById('monthAttendeeListBody'); 
                 if(aBody) { 
                     aBody.innerHTML = ''; 
-                    if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; } 
+                    if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">名단 없음</td></tr>`; } 
                     else { 
                         targetRecords.sort((a,b) => Number(a.startDay) - Number(b.startDay)).forEach(r => { 
                             if(!r) return;
