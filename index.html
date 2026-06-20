@@ -137,7 +137,7 @@
                     <div class="flex items-center gap-2 border-b border-gray-800 pb-3"><i class="fa-solid fa-circle-info text-red-500 text-lg"></i><h4 class="text-sm font-bold text-gray-400">이용 안내 가이드</h4></div>
                     <ul class="space-y-3 text-sm sm:text-base font-medium leading-relaxed mt-4">
                         <li class="flex items-start gap-2.5"><span class="bg-red-500/10 text-red-500 text-xs w-5 h-5 mt-0.5 rounded-full flex items-center justify-center font-bold border border-red-500/20 shrink-0">1</span><p>한 번 누르면 <span class="text-red-500 font-black underline underline-offset-4">무박</span> 일정이 선택이 됩니다.</p></li>
-                        <li class="flex items-start gap-2.5"><span class="bg-gray-800 text-gray-400 text-xs w-5 h-5 mt-0.5 rounded-full flex items-center justify-center font-bold shrink-0">2</span><p>시작일과 마감일 설정 시 일정이 자동 계산됩니다.</p></li>
+                        <li class="flex items-start gap-2.5"><span class="bg-gray-800 text-gray-400 text-xs w-5 h-5 mt-0.5 rounded-full flex items-center justify-center font-bold shrink-0">2</span><p>시작일 and 마감일 설정 시 일정이 자동 계산됩니다.</p></li>
                     </ul>
                 </div>
                 <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 shadow-xl" id="configCard">
@@ -435,9 +435,9 @@
                 const res = await fetch(`${CLEAN_URL}?action=get`); const data = await res.json();
                 if (data.db) db = data.db;
                 if (data.crews) {
-                    const serverNicknames = new Set(data.crews.map(m => m.nickname.trim()));
-                    const currentPendingNewCrews = staticCrewMembers.filter(m => !serverNicknames.has(m.nickname.trim()));
-                    staticCrewMembers = [...data.crews, ...currentPendingNewCrews];
+                    const serverNicknames = new Set(data.crews.map(m => m && m.nickname ? m.nickname.trim() : ''));
+                    const currentPendingNewCrews = staticCrewMembers.filter(m => m && m.nickname && !serverNicknames.has(m.nickname.trim()));
+                    staticCrewMembers = [...data.crews.filter(m => m && m.nickname), ...currentPendingNewCrews];
                 }
                 if (data.notice) noticeText = data.notice; 
                 else noticeText = localStorage.getItem('azit_notice') || JSON.stringify(defaultNotices);
@@ -535,7 +535,7 @@
                 const numSpan = document.createElement('span'); numSpan.className = 'block text-center w-full'; numSpan.innerText = day; dayCell.appendChild(numSpan);
                 const badgeContainer = document.createElement('div'); badgeContainer.className = 'absolute bottom-1 left-0 right-0 flex flex-row flex-nowrap justify-center items-center gap-0.5 w-full overflow-hidden select-none pointer-events-none text-[10px]';
                 const matches = db.filter(item => {
-                    if(!item.year || !item.month) return false;
+                    if(!item || !item.year || !item.month) return false;
                     let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear;
                     let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth);
                     return cleanYear === currentYear && cleanMonth === currentMonth && day >= Number(item.startDay) && day <= Number(item.endDay);
@@ -602,7 +602,7 @@
             const diff = rangeEnd.day - rangeStart.day; let type = selectedActivity; if(diff === 0 && type === '캠핑') type = '게스트캠핑';
             const isDateOverlapping = (s1, e1, s2, e2) => Math.max(s1, s2) <= Math.min(e1, e2);
             const overlappingSchedule = db.find(item => {
-                if(!item.year || !item.month) return false;
+                if(!item || !item.year || !item.month) return false;
                 let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear;
                 let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth);
                 return item.name === nick && cleanYear === currentYear && cleanMonth === currentMonth && isDateOverlapping(Number(item.startDay), Number(item.endDay), rangeStart.day, rangeEnd.day);
@@ -610,7 +610,7 @@
             if (overlappingSchedule) { alert(`⚠️ 중복 선택 제한 알림:\n[${nick}] 크루님은 지정하신 기간에 이미 [${overlappingSchedule.type}] 일정(${overlappingSchedule.startDay}일~${overlappingSchedule.endDay}일)이 등록되어 있습니다.`); isSubmitting = false; toggleGlobalLoadingOverlay(false); return; }
             const timestamp = new Date().toLocaleDateString(); const CLEAN_URL = GOOGLE_SHEET_URL.trim();
             
-            const crewExists = staticCrewMembers.some(m => m.nickname.trim() === nick);
+            const crewExists = staticCrewMembers.some(m => m && m.nickname && m.nickname.trim() === nick);
             if (!crewExists) {
                 const todayStr = new Date().toISOString().split('T')[0];
                 const newCrewObj = { nickname: nick, name: encryptData('-'), gender: '-', birthYear: '-', phone: encryptData('-'), grade: '준회원', joinDate: todayStr, cancelCount: '0' };
@@ -619,9 +619,7 @@
                 if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
                     try {
                         const crewQuery = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData('-'))}&gender=${encodeURIComponent('-')}&birthYear=${encodeURIComponent('-')}&phone=${encodeURIComponent(encryptData('-'))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(todayStr)}&cancelCount=${encodeURIComponent('0')}`;
-                        // 🔒 [동기화 락 이식]: 비동기 충돌로 인한 패킷 누락을 방지하기 위해 가입 요청에 await를 강제 부여하여 완료를 대기합니다.
                         await fetch(CLEAN_URL + crewQuery, { mode: 'no-cors' });
-                        // ⏳ GAS 백엔드가 데이터 세션을 안전하게 커밋하고 리셋할 수 있도록 800ms의 완충 시간을 부여합니다.
                         await new Promise(resolve => setTimeout(resolve, 800));
                     } catch(e) { console.error("Auto Background Register Error", e); }
                 }
@@ -650,7 +648,7 @@
             let joinDate = document.getElementById('regJoinDate').value; if (!joinDate) joinDate = new Date().toISOString().split('T')[0];
             if(!nick) { alert('⚠️ 닉네임 기입은 필수입니다.'); return; }
             
-            if(staticCrewMembers.some(m => m.nickname.trim() === nick)) { 
+            if(staticCrewMembers.some(m => m && m.nickname && m.nickname.trim() === nick)) { 
                 alert('⚠️ 동일한 닉네임이 있습니다.'); 
                 return; 
             }
@@ -673,23 +671,26 @@
         }
 
         function renderHostRankTable() {
-            const hostBody = document.getElementById('hostRankTableBody'); if (!hostBody) return; hostBody.innerHTML = '';
-            const hostFreq = {}; staticCrewMembers.forEach(m => hostFreq[m.nickname] = 0);
-            let filteredDb = db.filter(item => {
-                let isHostTrue = Number(item.isHost) === 1 || item.isHost === true || String(item.isHost).toLowerCase() === 'true';
-                let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0; return cleanYear === currentYear && isHostTrue;
-            });
-            const f = currentHostFilter;
-            if (f === 'h1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 6; }); 
-            else if (f === 'h2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 12; }); 
-            else if (f === 'q1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 3; }); 
-            else if (f === 'q2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 4 && m <= 6; }); 
-            else if (f === 'q3') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 9; }); 
-            else if (f === 'q4') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 10 && m <= 12; });
-            filteredDb.forEach(item => { hostFreq[item.name] = (hostFreq[item.name] || 0) + 1; });
-            const sortedHosts = Object.keys(hostFreq).map(name => ({ name, count: hostFreq[name] })).sort((a, b) => b.count - a.count);
-            if (sortedHosts.filter(h => h.count > 0).length === 0) { hostBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">개설 내역이 없습니다.</td></tr>`; } 
-            else { sortedHosts.forEach((h, i) => { if (h.count > 0) { hostBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-amber-400 font-mono font-bold">${h.count}회 개설</td></tr>`; } }); }
+            try {
+                const hostBody = document.getElementById('hostRankTableBody'); if (!hostBody) return; hostBody.innerHTML = '';
+                const hostFreq = {}; staticCrewMembers.forEach(m => { if(m && m.nickname) hostFreq[m.nickname] = 0; });
+                let filteredDb = db.filter(item => {
+                    if(!item) return false;
+                    let isHostTrue = Number(item.isHost) === 1 || item.isHost === true || String(item.isHost).toLowerCase() === 'true';
+                    let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0; return cleanYear === currentYear && isHostTrue;
+                });
+                const f = currentHostFilter;
+                if (f === 'h1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 6; }); 
+                else if (f === 'h2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 12; }); 
+                else if (f === 'q1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 3; }); 
+                else if (f === 'q2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 4 && m <= 6; }); 
+                else if (f === 'q3') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 9; }); 
+                else if (f === 'q4') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 10 && m <= 12; });
+                filteredDb.forEach(item => { if(item && item.name) hostFreq[item.name] = (hostFreq[item.name] || 0) + 1; });
+                const sortedHosts = Object.keys(hostFreq).map(name => ({ name, count: hostFreq[name] })).sort((a, b) => b.count - a.count);
+                if (sortedHosts.filter(h => h.count > 0).length === 0) { hostBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">개설 내역이 없습니다.</td></tr>`; } 
+                else { sortedHosts.forEach((h, i) => { if (h.count > 0) { hostBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-amber-400 font-mono font-bold">${h.count}회 개설</td></tr>`; } }); }
+            } catch(e) { console.error("Host Rank Error Handled Safely", e); }
         }
 
         function setSponsorRankFilter(type) {
@@ -699,27 +700,30 @@
         }
 
         function renderSponsorRankTable() {
-            const sponsorBody = document.getElementById('sponsorRankTableBody'); if (!sponsorBody) return; sponsorBody.innerHTML = '';
-            const sponsorFreq = {}; staticCrewMembers.forEach(m => sponsorFreq[m.nickname] = 0);
-            let filteredDb = db.filter(item => {
-                let isSponsorTrue = Number(item.isSponsor) === 1 || item.isSponsor === true || String(item.isSponsor).toLowerCase() === 'true';
-                let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0; return cleanYear === currentYear && isSponsorTrue;
-            });
-            const f = currentSponsorFilter;
-            if (f === 'h1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 6; }); 
-            else if (f === 'h2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 12; }); 
-            else if (f === 'q1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 3; }); 
-            else if (f === 'q2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 4 && m <= 6; }); 
-            else if (f === 'q3') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 9; }); 
-            else if (f === 'q4') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 10 && m <= 12; });
-            filteredDb.forEach(item => { sponsorFreq[item.name] = (sponsorFreq[item.name] || 0) + 1; });
-            const sortedSponsors = Object.keys(sponsorFreq).map(name => ({ name, count: sponsorFreq[name] })).sort((a, b) => b.count - a.count);
-            if (sortedSponsors.filter(h => h.count > 0).length === 0) { sponsorBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">찬조 내역이 없습니다.</td></tr>`; } 
-            else { sortedSponsors.forEach((h, i) => { if (h.count > 0) { sponsorBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-emerald-400 font-mono font-bold">${h.count}회 찬조</td></tr>`; } }); }
+            try {
+                const sponsorBody = document.getElementById('sponsorRankTableBody'); if (!sponsorBody) return; sponsorBody.innerHTML = '';
+                const sponsorFreq = {}; staticCrewMembers.forEach(m => { if(m && m.nickname) sponsorFreq[m.nickname] = 0; });
+                let filteredDb = db.filter(item => {
+                    if(!item) return false;
+                    let isSponsorTrue = Number(item.isSponsor) === 1 || item.isSponsor === true || String(item.isSponsor).toLowerCase() === 'true';
+                    let cleanYear = item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0; return cleanYear === currentYear && isSponsorTrue;
+                });
+                const f = currentSponsorFilter;
+                if (f === 'h1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 6; }); 
+                else if (f === 'h2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 12; }); 
+                else if (f === 'q1') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 1 && m <= 3; }); 
+                else if (f === 'q2') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 4 && m <= 6; }); 
+                else if (f === 'q3') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 7 && m <= 9; }); 
+                else if (f === 'q4') filteredDb = filteredDb.filter(item => { let m = item.month ? parseInt(String(item.month).replace(/\D/g, '')) : 0; return m >= 10 && m <= 12; });
+                filteredDb.forEach(item => { if(item && item.name) sponsorFreq[item.name] = (sponsorFreq[item.name] || 0) + 1; });
+                const sortedSponsors = Object.keys(sponsorFreq).map(name => ({ name, count: sponsorFreq[name] })).sort((a, b) => b.count - a.count);
+                if (sortedSponsors.filter(h => h.count > 0).length === 0) { sponsorBody.innerHTML = `<tr><td class="text-center py-8 text-gray-600 font-light text-xs">찬조 내역이 없습니다.</td></tr>`; } 
+                else { sortedSponsors.forEach((h, i) => { if (h.count > 0) { sponsorBody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-emerald-400 font-mono font-bold">${h.count}회 찬조</td></tr>`; } }); }
+            } catch(e) { console.error("Sponsor Rank Error Handled Safely", e); }
         }
 
         async function toggleHostStatus(recordId, isChecked) {
-            const record = db.find(item => item.id == recordId);
+            const record = db.find(item => item && item.id == recordId);
             if (record) { 
                 record.isHost = isChecked; localStorage.setItem('azit_db', JSON.stringify(db)); refreshUI(); 
                 const CLEAN_URL = GOOGLE_SHEET_URL.trim(); if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { try { fetch(`${CLEAN_URL}?action=update_schedule_host&id=${recordId}&isHost=${isChecked}`, { mode: 'no-cors' }); } catch(e) { console.error(e); } }
@@ -727,7 +731,7 @@
         }
 
         async function toggleSponsorStatus(recordId, isChecked) {
-            const record = db.find(item => item.id == recordId);
+            const record = db.find(item => item && item.id == recordId);
             if (record) { 
                 record.isSponsor = isChecked; localStorage.setItem('azit_db', JSON.stringify(db)); refreshUI(); 
                 const CLEAN_URL = GOOGLE_SHEET_URL.trim(); if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { try { fetch(`${CLEAN_URL}?action=update_schedule_sponsor&id=${recordId}&isSponsor=${isChecked}`, { mode: 'no-cors' }); } catch(e) { console.error(e); } }
@@ -736,7 +740,7 @@
 
         function startInlineEdit(cellElement, nickname, objectFieldKey) {
             if (cellElement.querySelector('input') || document.querySelector('.custom-datepicker')) return; 
-            closeAllInlinePickers(); const currentMember = staticCrewMembers.find(m => m.nickname === nickname); if (!currentMember) return;
+            closeAllInlinePickers(); const currentMember = staticCrewMembers.find(m => m && m.nickname === nickname); if (!currentMember) return;
             let rawValue = currentMember[objectFieldKey] || '-'; if(objectFieldKey === 'name' || objectFieldKey === 'phone') rawValue = decryptData(rawValue);
             if (objectFieldKey === 'joinDate' && rawValue !== '-') { try { let d = new Date(rawValue); if (!isNaN(d.getTime())) rawValue = d.toISOString().split('T')[0]; } catch(e){} }
             const CLEAN_URL = GOOGLE_SHEET_URL.trim();
@@ -811,7 +815,7 @@
         async function deleteMemberRecord(nickname) { 
             if(confirm(`⚠️ 정말로 [${nickname}] 크루원을 탈퇴/영구 삭제 조치하시겠습니까?`)) { 
                 toggleGlobalLoadingOverlay(true, `[${nickname}] 크루 명부 제명 처리 중...`); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_crew&nickname=${encodeURIComponent(nickname)}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { staticCrewMembers = staticCrewMembers.filter(m => m.nickname !== nickname); localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); } } 
+                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_crew&nickname=${encodeURIComponent(nickname)}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { staticCrewMembers = staticCrewMembers.filter(m => m && m.nickname !== nickname); localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); } } 
                 catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
             } 
         }
@@ -819,7 +823,7 @@
         async function deleteScheduleRecord(recordId) { 
             if (confirm('⚠️ 해당 일정을 영구 삭제하시겠습니까?')) { 
                 toggleGlobalLoadingOverlay(true, "요청하신 개별 크루 스케줄 블록 삭제 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${recordId}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { db = db.filter(item => item.id != recordId); localStorage.setItem('azit_db', JSON.stringify(db)); } } 
+                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${recordId}`, { mode: 'no-cors' }); await new Promise(resolve => setTimeout(resolve, 1000)); } else { db = db.filter(item => item && item.id != recordId); localStorage.setItem('azit_db', JSON.stringify(db)); } } 
                 catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
             } 
         }
@@ -829,10 +833,10 @@
                 toggleGlobalLoadingOverlay(true, `${currentMonth}월 스케줄 벌크 삭제 진행 중...`); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
                 try {
                     if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { 
-                        const targets = db.filter(item => { if(!item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return cleanYear === currentYear && cleanMonth === currentMonth; }); 
+                        const targets = db.filter(item => { if(!item || !item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return cleanYear === currentYear && cleanMonth === currentMonth; }); 
                         for(let t of targets) { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); 
                     } else { 
-                        db = db.filter(item => { if(!item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return !(cleanYear === currentYear && cleanMonth === currentMonth); }); 
+                        db = db.filter(item => { if(!item || !item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return !(cleanYear === currentYear && cleanMonth === currentMonth); }); 
                         localStorage.setItem('azit_db', JSON.stringify(db)); 
                     }
                 } catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
@@ -842,7 +846,7 @@
         async function clearDatabase() { 
             if (confirm('🚨 전체 초기화하시겠습니까?')) { 
                 toggleGlobalLoadingOverlay(true, "데이터베이스 마스터 이력 제거 중..."); const CLEAN_URL = GOOGLE_SHEET_URL.trim(); 
-                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { for(let t of db) { await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); } else { db = []; localStorage.removeItem('azit_db'); } } 
+                try { if(CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { for(let t of db) { if(t) await fetch(`${CLEAN_URL}?action=delete_schedule&id=${t.id}`, { mode: 'no-cors' }); } await new Promise(resolve => setTimeout(resolve, 1500)); } else { db = []; localStorage.removeItem('azit_db'); } } 
                 catch(e) { console.error(e); } await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false);
             } 
         }
@@ -885,13 +889,15 @@
         function setHalfYearRankFilter(h) { currentHalfYearRankFilter = h; document.getElementById('btnHalfFirst').className = h === 1 ? 'px-3 py-1 rounded bg-sky-500 text-white font-bold' : 'px-3 py-1 rounded text-gray-400'; document.getElementById('btnHalfSecond').className = h === 2 ? 'px-3 py-1 rounded bg-sky-500 text-white font-bold' : 'px-3 py-1 rounded text-gray-400'; renderHalfYearRankTable(); }
 
         function renderHalfYearRankTable() {
-            const tbody = document.getElementById('halfRankTableBody'); if(!tbody) return; tbody.innerHTML = '';
-            const startMonth = currentHalfYearRankFilter === 1 ? 1 : 7, endMonth = currentHalfYearRankFilter === 1 ? 6 : 12;
-            const halfRecords = db.filter(item => { if(!item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return cleanYear === currentYear && cleanMonth >= startMonth && cleanMonth <= endMonth; });
-            const freqMap = {}; halfRecords.forEach(r => { freqMap[r.name] = (freqMap[r.name] || 0) + 1; });
-            const sortedList = Object.keys(freqMap).map(k => ({name:k, count:freqMap[k]})).sort((a,b) => b.count - a.count);
-            if(sortedList.length === 0) { tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-600 text-sm">데이터 없음</td></tr>`; }
-            else { sortedList.forEach((crew, index) => { tbody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/20 transition"><td class="py-4 text-center font-bold text-gray-400">${index+1}위</td><td class="py-4 font-semibold text-gray-200">${crew.name}</td><td class="py-4 text-right pr-6 font-mono text-sky-400 font-bold">${crew.count}회</td></tr>`; }); }
+            try {
+                const tbody = document.getElementById('halfRankTableBody'); if(!tbody) return; tbody.innerHTML = '';
+                const startMonth = currentHalfYearRankFilter === 1 ? 1 : 7, endMonth = currentHalfYearRankFilter === 1 ? 6 : 12;
+                const halfRecords = db.filter(item => { if(!item || !item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return cleanYear === currentYear && cleanMonth >= startMonth && cleanMonth <= endMonth; });
+                const freqMap = {}; halfRecords.forEach(r => { if(r && r.name) freqMap[r.name] = (freqMap[r.name] || 0) + 1; });
+                const sortedList = Object.keys(freqMap).map(k => ({name:k, count:freqMap[k]})).sort((a,b) => b.count - a.count);
+                if(sortedList.length === 0) { tbody.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-600 text-sm">데이터 없음</td></tr>`; }
+                else { sortedList.forEach((crew, index) => { tbody.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/20 transition"><td class="py-4 text-center font-bold text-gray-400">${index+1}위</td><td class="py-4 font-semibold text-gray-200">${crew.name}</td><td class="py-4 text-right pr-6 font-mono text-sky-400 font-bold">${crew.count}회</td></tr>`; }); }
+            } catch(e) { console.error("Half Year Rank Error Handled Safely", e); }
         }
 
         async function submitAllCrewEdits() {
@@ -916,82 +922,107 @@
         }
 
         function updateAdminDashboard() {
-            const targetRecords = db.filter(item => { if(!item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return cleanYear === currentYear && cleanMonth === currentMonth; });
-            const rBody = document.getElementById('rankTableBody'); if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => freq[r.name] = (freq[r.name] || 0) + 1); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}위</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
-            const aBody = document.getElementById('monthAttendeeListBody'); 
-            if(aBody) { 
-                aBody.innerHTML = ''; 
-                if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; } 
-                else { 
-                    targetRecords.sort((a,b) => Number(a.startDay) - Number(b.startDay)).forEach(r => { 
-                        let isHostChecked = Number(r.isHost) === 1 || r.isHost === true || String(r.isHost).toLowerCase() === 'true'; let isSponsorChecked = Number(r.isSponsor) === 1 || r.isSponsor === true || String(r.isSponsor).toLowerCase() === 'true';
-                        aBody.innerHTML += `<tr class="border-b border-gray-800/20 hover:bg-gray-800/10 transition">
-                            <td class="py-3 pl-1 font-bold text-gray-200 flex items-center gap-2 min-w-[145px]">
-                                <div class="flex items-center gap-1.5 shrink-0 select-none">
-                                    <span class="text-[9px] text-gray-500 font-black">방</span><input type="checkbox" ${isHostChecked ? 'checked' : ''} onchange="toggleHostStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-red-500 rounded bg-[#121212] border-gray-700 cursor-pointer">
-                                    <span class="text-[9px] text-gray-500 font-black ml-0.5">찬</span><input type="checkbox" ${isSponsorChecked ? 'checked' : ''} onchange="toggleSponsorStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-emerald-500 rounded bg-[#121212] border-gray-700 cursor-pointer">
-                                </div>
-                                <span class="truncate max-w-[65px]">👤 ${r.name}</span>
-                            </td>
-                            <td class="py-3 text-gray-400 text-[11px] font-mono">${r.startDay}일~${r.endDay}일</td>
-                            <td class="py-3 text-right pr-1 flex items-center justify-end gap-2"><span class="text-orange-400 font-bold text-[11px] shrink-0">${r.type}</span><button onclick="deleteScheduleRecord(${r.id})" class="bg-red-500/10 border border-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0">삭제</button></td>
-                        </tr>`; 
-                    }); 
-                } 
-            }
-            renderHostRankTable(); renderSponsorRankTable(); renderHalfYearRankTable();
+            // 🔒 [오류 경계 보안 레이어]: 각 출력 영역을 try-catch 블록으로 분리 격리하여 연쇄적 렌더링 중단 결함을 완전히 방어했습니다.
+            const targetRecords = db.filter(item => { if(!item || !item.year || !item.month) return false; let cleanYear = parseInt(String(item.year).replace(/\D/g, '')) || currentYear; let cleanMonth = String(item.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(item.month).replace(/\D/g, '')) || currentMonth); return cleanYear === currentYear && cleanMonth === currentMonth; });
             
-            let displayedMembers = [...staticCrewMembers];
-            if (memberSortCriteria === 'gender') { displayedMembers.sort((a, b) => (a.gender || '').localeCompare(b.gender || '')); } 
-            else if (memberSortCriteria === 'birthYear') { displayedMembers.sort((a, b) => (a.birthYear || '99').localeCompare(b.birthYear || '99')); } 
-            else if (memberSortCriteria === 'grade') { const gradeOrder = { '방장': 1, '부방장': 2, '아지트人': 3, '아지트': 3, '정회원': 4, '준회원': 5 }; displayedMembers.sort((a, b) => (gradeOrder[a.grade] || 6) - (gradeOrder[b.grade] || 6)); }
-            const sortCriteriaList = ['gender', 'birthYear', 'grade', 'none'];
-            sortCriteriaList.forEach(crit => { const btn = document.getElementById('sortBtn_' + crit); if (btn) btn.className = (memberSortCriteria === crit) ? "bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition" : "bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition"; });
+            try {
+                const rBody = document.getElementById('rankTableBody'); if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => { if(r && r.name) freq[r.name] = (freq[r.name] || 0) + 1; }); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}위</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
+            } catch(e) { console.error("Rank Table Render Dropped Safely", e); }
 
-            const mBody = document.getElementById('masterCrewTableBody'); 
-            if(mBody) { 
-                mBody.innerHTML = ''; let isPending = (nk, fd) => (window.pendingCrewUpdates && window.pendingCrewUpdates[nk] && window.pendingCrewUpdates[nk][fd] !== undefined);
-                displayedMembers.forEach(m => { 
-                    let decryptedName = decryptData(m.name); let decryptedPhone = decryptData(m.phone); let displayJoinDate = m.joinDate ? formatKoreanDate(m.joinDate) : '-';
-                    let displayGrade = m.grade && m.grade !== '-' ? m.grade : '준회원'; let gradeColor = "text-gray-400"; let renderedGrade = displayGrade;
-                    if (displayGrade === '아지트') displayGrade = '아지트人';
-                    if(displayGrade === '정회원') gradeColor = "text-green-400 font-bold";
-                    else if(displayGrade === '아지트人') { renderedGrade = '아지트人'; gradeColor = "text-red-500 font-black tracking-wide"; }
-                    else if(displayGrade === '방장') { renderedGrade = '방&nbsp;&nbsp;장'; gradeColor = "text-[#FFEA00] font-black tracking-wider animate-pulse"; }
-                    else if(displayGrade === '부방장') { renderedGrade = '부방장'; gradeColor = "text-sky-400 font-bold tracking-wide"; }
-                    
-                    mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
-                        <td class="py-4.5 px-4 font-bold text-white select-none">👤 ${m.nickname}</td>
-                        <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decryptedName} ${isPending(m.nickname, 'name') ? '⚡' : ''}</td>
-                        <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold ${isPending(m.nickname, 'gender') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender} ${isPending(m.nickname, 'gender') ? '⚡' : ''}</td>
-                        <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold ${isPending(m.nickname, 'birthYear') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'} ${isPending(m.nickname, 'birthYear') ? '⚡' : ''}</td>
-                        <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400 ${isPending(m.nickname, 'phone') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decryptedPhone} ${isPending(m.nickname, 'phone') ? '⚡' : ''}</td>
-                        <td class="py-4.5 px-3.5 editable-cell ${isPending(m.nickname, 'grade') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : gradeColor}" onclick="startInlineEdit(this, '${m.nickname}', 'grade')">${renderedGrade} ${isPending(m.nickname, 'grade') ? '⚡' : ''}</td>
-                        <td class="py-4.5 px-3.5 editable-cell text-gray-300 font-mono tracking-tight ${isPending(m.nickname, 'joinDate') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'joinDate')">${displayJoinDate} ${isPending(m.nickname, 'joinDate') ? '⚡' : ''}</td>
-                        <td class="py-4.5 px-4 text-center"><button class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl font-black text-xs transition active:scale-95" onclick="deleteMemberRecord('${m.nickname}')">삭제</button></td>
-                    </tr>`; 
-                }); 
-            }
-            
-            const timelineContainer = document.getElementById('groupedCrewTimeline');
-            if(timelineContainer) { 
-                timelineContainer.innerHTML = ''; if (db.length === 0) { timelineContainer.innerHTML = `<div class="text-center py-12 text-gray-600 text-xs">기록 없음</div>`; return; }
-                const groupMap = {}; db.forEach(item => { if (!groupMap[item.name]) groupMap[item.name] = []; groupMap[item.name].push(item); });
-                for (let crewNickname in groupMap) {
-                    let innerListHTML = `<div class="bg-[#1c1c1c] rounded-xl p-4 border border-gray-800/60"><div class="text-sm font-black text-gray-200 border-b border-gray-800 pb-2 mb-2 flex justify-between items-center"><span>👤 크루: <span class="text-red-400">${crewNickname}</span></span><span class="text-[11px] bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-0.5 rounded-full font-bold">누적 ${groupMap[crewNickname].length}건</span></div><div class="space-y-2">`;
-                    groupMap[crewNickname].sort((a,b) => Number(b.id) - Number(a.id)).forEach(s => { 
-                        let typeIcon = '⛺'; if (s.type === '등산') typeIcon = '🥾'; else if (s.type === '번개') typeIcon = '⚡'; else if (s.type === '캠핑' || s.type === '게스트캠핑') typeIcon = '⛺'; else if (s.type === '백패킹') typeIcon = '🎒';
-                        let crownMarkup = s.isHost ? '<span class="text-amber-500 font-bold ml-1">👑</span>' : ''; let sponsorMarkup = s.isSponsor ? '<span class="text-emerald-400 font-bold ml-1">💚</span>' : '';
-                        let displayMonth = s.month; if (!displayMonth || String(displayMonth).toLowerCase() === 'null' || String(displayMonth).trim() === '') { displayMonth = currentMonth; } else { displayMonth = parseInt(String(displayMonth).replace(/\D/g, '')) || currentMonth; }
-                        let displayYear = s.year ? (parseInt(String(s.year).replace(/\D/g, '')) || currentYear) : currentYear;
-                        innerListHTML += `<div class="flex justify-between items-center gap-3 bg-[#121212] p-3 rounded-lg border border-gray-800/40 w-full">
-                            <div class="flex items-center gap-3"><span class="text-base shrink-0 select-none">${typeIcon}</span><div class="flex flex-col"><span class="text-xs font-bold text-gray-300">${displayYear}년 ${displayMonth}월 ${s.startDay}일 ~ ${s.endDay}일</span><span class="text-[10px] font-bold text-orange-400 mt-0.5">${s.durationText} · ${s.type}${crownMarkup}${sponsorMarkup}</span></div></div>
-                            <button onclick="deleteScheduleRecord(${s.id})" class="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0 active:scale-95">강제 삭제</button>
-                        </div>`; 
-                    });
-                    innerListHTML += `</div></div>`; timelineContainer.innerHTML += innerListHTML;
+            try {
+                const aBody = document.getElementById('monthAttendeeListBody'); 
+                if(aBody) { 
+                    aBody.innerHTML = ''; 
+                    if(targetRecords.length === 0) { aBody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-600 text-xs">명단 없음</td></tr>`; } 
+                    else { 
+                        targetRecords.sort((a,b) => Number(a.startDay) - Number(b.startDay)).forEach(r => { 
+                            if(!r) return;
+                            let isHostChecked = Number(r.isHost) === 1 || r.isHost === true || String(r.isHost).toLowerCase() === 'true'; let isSponsorChecked = Number(r.isSponsor) === 1 || r.isSponsor === true || String(r.isSponsor).toLowerCase() === 'true';
+                            aBody.innerHTML += `<tr class="border-b border-gray-800/20 hover:bg-gray-800/10 transition">
+                                <td class="py-3 pl-1 font-bold text-gray-200 flex items-center gap-2 min-w-[145px]">
+                                    <div class="flex items-center gap-1.5 shrink-0 select-none">
+                                        <span class="text-[9px] text-gray-500 font-black">방</span><input type="checkbox" ${isHostChecked ? 'checked' : ''} onchange="toggleHostStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-red-500 rounded bg-[#121212] border-gray-700 cursor-pointer">
+                                        <span class="text-[9px] text-gray-500 font-black ml-0.5">찬</span><input type="checkbox" ${isSponsorChecked ? 'checked' : ''} onchange="toggleSponsorStatus(${r.id}, this.checked)" class="w-3.5 h-3.5 accent-emerald-500 rounded bg-[#121212] border-gray-700 cursor-pointer">
+                                    </div>
+                                    <span class="truncate max-w-[65px]">👤 ${r.name}</span>
+                                </td>
+                                <td class="py-3 text-gray-400 text-[11px] font-mono">${r.startDay}일~${r.endDay}일</td>
+                                <td class="py-3 text-right pr-1 flex items-center justify-end gap-2"><span class="text-orange-400 font-bold text-[11px] shrink-0">${r.type}</span><button onclick="deleteScheduleRecord(${r.id})" class="bg-red-500/10 border border-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0">삭제</button></td>
+                            </tr>`; 
+                        }); 
+                    } 
                 }
-            }
+            } catch(e) { console.error("Attendee List Render Dropped Safely", e); }
+
+            // 하위 통계 모듈 격리 실행
+            renderHostRankTable(); 
+            renderSponsorRankTable(); 
+            renderHalfYearRankTable();
+            
+            // 🛡️ [마스터 명부 독립 실행]: 앞선 통계에 데이터 결함이 있어도 무조건 완벽하게 명부를 렌더링하도록 쉴드를 쳤습니다.
+            try {
+                let displayedMembers = staticCrewMembers.filter(m => m && m.nickname);
+                if (memberSortCriteria === 'gender') { displayedMembers.sort((a, b) => (a.gender || '').localeCompare(b.gender || '')); } 
+                else if (memberSortCriteria === 'birthYear') { displayedMembers.sort((a, b) => (a.birthYear || '99').localeCompare(b.birthYear || '99')); } 
+                else if (memberSortCriteria === 'grade') { const gradeOrder = { '방장': 1, '부방장': 2, '아지트人': 3, '아지트': 3, '정회원': 4, '준회원': 5 }; displayedMembers.sort((a, b) => (gradeOrder[a.grade] || 6) - (gradeOrder[b.grade] || 6)); }
+                
+                const sortCriteriaList = ['gender', 'birthYear', 'grade', 'none'];
+                sortCriteriaList.forEach(crit => { const btn = document.getElementById('sortBtn_' + crit); if (btn) btn.className = (memberSortCriteria === crit) ? "bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition" : "bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition"; });
+
+                const mBody = document.getElementById('masterCrewTableBody'); 
+                if(mBody) { 
+                    mBody.innerHTML = ''; let isPending = (nk, fd) => (window.pendingCrewUpdates && window.pendingCrewUpdates[nk] && window.pendingCrewUpdates[nk][fd] !== undefined);
+                    
+                    if(displayedMembers.length === 0) {
+                        mBody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-gray-500 text-xs font-bold">📂 현재 동기화된 마스터 명부 데이터 패킷이 존재하지 않습니다.</td></tr>`;
+                    } else {
+                        displayedMembers.forEach(m => { 
+                            try {
+                                let decryptedName = decryptData(m.name || '-'); let decryptedPhone = decryptData(m.phone || '-'); let displayJoinDate = m.joinDate ? formatKoreanDate(m.joinDate) : '-';
+                                let displayGrade = m.grade && m.grade !== '-' ? m.grade : '준회원'; let gradeColor = "text-gray-400"; let renderedGrade = displayGrade;
+                                if (displayGrade === '아지트') displayGrade = '아지트人';
+                                if(displayGrade === '정회원') gradeColor = "text-green-400 font-bold";
+                                else if(displayGrade === '아지트人') { renderedGrade = '아지트人'; gradeColor = "text-red-500 font-black tracking-wide"; }
+                                else if(displayGrade === '방장') { renderedGrade = '방&nbsp;&nbsp;장'; gradeColor = "text-[#FFEA00] font-black tracking-wider animate-pulse"; }
+                                else if(displayGrade === '부방장') { renderedGrade = '부방장'; gradeColor = "text-sky-400 font-bold tracking-wide"; }
+                                
+                                mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
+                                    <td class="py-4.5 px-4 font-bold text-white select-none">👤 ${m.nickname}</td>
+                                    <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decryptedName} ${isPending(m.nickname, 'name') ? '⚡' : ''}</td>
+                                    <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold ${isPending(m.nickname, 'gender') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender} ${isPending(m.nickname, 'gender') ? '⚡' : ''}</td>
+                                    <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold ${isPending(m.nickname, 'birthYear') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'} ${isPending(m.nickname, 'birthYear') ? '⚡' : ''}</td>
+                                    <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400 ${isPending(m.nickname, 'phone') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decryptedPhone} ${isPending(m.nickname, 'phone') ? '⚡' : ''}</td>
+                                    <td class="py-4.5 px-3.5 editable-cell ${isPending(m.nickname, 'grade') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : gradeColor}" onclick="startInlineEdit(this, '${m.nickname}', 'grade')">${renderedGrade} ${isPending(m.nickname, 'grade') ? '⚡' : ''}</td>
+                                    <td class="py-4.5 px-3.5 editable-cell text-gray-300 font-mono tracking-tight ${isPending(m.nickname, 'joinDate') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'joinDate')">${displayJoinDate} ${isPending(m.nickname, 'joinDate') ? '⚡' : ''}</td>
+                                    <td class="py-4.5 px-4 text-center"><button class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl font-black text-xs transition active:scale-95" onclick="deleteMemberRecord('${m.nickname}')">삭제</button></td>
+                                </tr>`; 
+                            } catch(innerErr) { console.error("Individual row render failure", innerErr); }
+                        });
+                    }
+                }
+            } catch(e) { console.error("Master Crew Table Critical Error Shielded", e); }
+            
+            try {
+                const timelineContainer = document.getElementById('groupedCrewTimeline');
+                if(timelineContainer) { 
+                    timelineContainer.innerHTML = ''; if (db.length === 0) { timelineContainer.innerHTML = `<div class="text-center py-12 text-gray-600 text-xs">기록 없음</div>`; return; }
+                    const groupMap = {}; db.forEach(item => { if (item && item.name) { if (!groupMap[item.name]) groupMap[item.name] = []; groupMap[item.name].push(item); } });
+                    for (let crewNickname in groupMap) {
+                        let innerListHTML = `<div class="bg-[#1c1c1c] rounded-xl p-4 border border-gray-800/60"><div class="text-sm font-black text-gray-200 border-b border-gray-800 pb-2 mb-2 flex justify-between items-center"><span>👤 크루: <span class="text-red-400">${crewNickname}</span></span><span class="text-[11px] bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-0.5 rounded-full font-bold">누적 ${groupMap[crewNickname].length}건</span></div><div class="space-y-2">`;
+                        groupMap[crewNickname].sort((a,b) => Number(b.id) - Number(a.id)).forEach(s => { 
+                            let typeIcon = '⛺'; if (s.type === '등산') typeIcon = '🥾'; else if (s.type === '번개') typeIcon = '⚡'; else if (s.type === '캠핑' || s.type === '게스트캠핑') typeIcon = '⛺'; else if (s.type === '백패킹') typeIcon = '🎒';
+                            let crownMarkup = s.isHost ? '<span class="text-amber-500 font-bold ml-1">👑</span>' : ''; let sponsorMarkup = s.isSponsor ? '<span class="text-emerald-400 font-bold ml-1">💚</span>' : '';
+                            let displayMonth = s.month; if (!displayMonth || String(displayMonth).toLowerCase() === 'null' || String(displayMonth).trim() === '') { displayMonth = currentMonth; } else { displayMonth = parseInt(String(displayMonth).replace(/\D/g, '')) || currentMonth; }
+                            let displayYear = s.year ? (parseInt(String(s.year).replace(/\D/g, '')) || currentYear) : currentYear;
+                            innerListHTML += `<div class="flex justify-between items-center gap-3 bg-[#121212] p-3 rounded-lg border border-gray-800/40 w-full">
+                                <div class="flex items-center gap-3"><span class="text-base shrink-0 select-none">${typeIcon}</span><div class="flex flex-col"><span class="text-xs font-bold text-gray-300">${displayYear}년 ${displayMonth}월 ${s.startDay}일 ~ ${s.endDay}일</span><span class="text-[10px] font-bold text-orange-400 mt-0.5">${s.durationText} · ${s.type}${crownMarkup}${sponsorMarkup}</span></div></div>
+                                <button onclick="deleteScheduleRecord(${s.id})" class="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 px-2.5 py-1 rounded font-black text-[10px] transition shrink-0 active:scale-95">강제 삭제</button>
+                        </div>`; 
+                        });
+                        innerListHTML += `</div></div>`; timelineContainer.innerHTML += innerListHTML;
+                    }
+                }
+            } catch(e) { console.error("Timeline Grouping Dropped Safely", e); }
         }
     </script>
 </body>
