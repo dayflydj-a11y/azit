@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AZIT - 같이의 가치</title>
     
-    <!-- ⚡ [PWA 핵심 이식]: 모바일 단독 앱 구동 매니페스트 및 iOS 사파리 전용 웹앱 메타 패킷 탑재 -->
     <link rel="manifest" href="./manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AZIT">
     <link class="html-embed" rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/846/846355.png">
 
-    <!-- ⚡ Tailwind CSS CDN 인프라 구동 엔진 안정화 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link class="html-embed" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -49,7 +47,6 @@
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
 
-    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이 레이어 -->
     <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
             <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
@@ -57,7 +54,6 @@
         </div>
     </div>
 
-    <!-- [PAGE 1] 아지트 인트로 커버 화면 -->
     <div id="pageCover" class="fixed inset-0 z-50 flex flex-col justify-between p-6 transition-all duration-700 ease-in-out transform bg-cover bg-center" 
          style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=1920&q=80');">
         <div class="text-center mt-6 lg:mt-10 animate-fade-in">
@@ -75,7 +71,6 @@
         </div>
     </div>
 
-    <!-- 신규회원 등록 모달 -->
     <div id="coverRegisterModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl transform scale-95 transition-all" id="coverRegBox">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
@@ -94,7 +89,6 @@
         </div>
     </div>
 
-    <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
     <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
         <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-3 sm:py-4 flex flex-col justify-between items-center gap-2">
             <div class="w-full flex justify-between items-center px-2">
@@ -106,7 +100,6 @@
         </header>
         <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <!-- 📢 공지게시판 메트릭스 -->
             <div class="lg:col-span-12 bg-[#1a1a1a] border border-red-500/30 rounded-2xl p-4 shadow-2xl prevent-select" 
                  oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
                 <div class="flex items-center gap-2 mb-3 border-b border-gray-800 pb-2">
@@ -158,7 +151,6 @@
         </main>
     </div>
 
-    <!-- [PAGE 3] 관리자 대시보드 메인 관제 화면 -->
     <div id="pageAdmin" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0e0e0e]">
         <header class="border-b border-gray-800 bg-[#151515] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-lg">
             <button onclick="switchPage('pageCalendar')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 일정 화면으로</button>
@@ -185,7 +177,6 @@
                 </div>
             </div>
 
-            <!-- 공지사항 관리 센터 -->
             <div class="bg-[#151515] border border-gray-800 p-4 sm:p-5 rounded-2xl shadow-xl">
                 <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
                     <h3 class="text-base font-bold text-gray-200 flex items-center gap-2">
@@ -274,7 +265,6 @@
         </main>
     </div>
 
-    <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
     <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
         <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md">
             <button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button>
@@ -610,7 +600,6 @@
             if (overlappingSchedule) { alert(`⚠️ 중복 선택 제한 알림:\n[${nick}] 크루님은 지정하신 기간에 이미 [${overlappingSchedule.type}] 일정(${overlappingSchedule.startDay}일~${overlappingSchedule.endDay}일)이 등록되어 있습니다.`); isSubmitting = false; toggleGlobalLoadingOverlay(false); return; }
             const timestamp = new Date().toLocaleDateString(); const CLEAN_URL = GOOGLE_SHEET_URL.trim();
             
-            // 🔥 [1차 방어선]: 일정 등록 시 닉네임이 기존 명부에 있다면 신규 회원 생성을 완벽히 생략 (중복 누적 원천 차단)
             const crewExists = staticCrewMembers.some(m => m.nickname.trim() === nick);
             if (!crewExists) {
                 const todayStr = new Date().toISOString().split('T')[0];
@@ -636,14 +625,12 @@
         }
         function closeCoverRegisterModal() { const m = document.getElementById('coverRegisterModal'); if(m) { m.classList.add('opacity-0'); setTimeout(() => m.classList.add('hidden'), 300); } }
         
-        // 🚨 [2차 방어선]: 신규 크루 명부 수동 작성 시, 현찬님이 요청하신 "동일한 닉네임이 있습니다" 안내창 연동 및 저장 차단 레이어
         async function submitCoverRegister() {
             if (isSubmitting) return;
             const nick = document.getElementById('regNickname').value.trim(); const name = document.getElementById('regRealName').value.trim(); const gender = document.getElementById('regGender').value; const birth = document.getElementById('regBirthYear').value.trim(); const phone = document.getElementById('regPhone').value.trim();
             let joinDate = document.getElementById('regJoinDate').value; if (!joinDate) joinDate = new Date().toISOString().split('T')[0];
             if(!nick) { alert('⚠️ 닉네임 기입은 필수입니다.'); return; }
             
-            // 🔒 [보안 인터셉터]: 요청 사항에 기재된 문구를 한 자의 오차도 없이 반영하여 중복 가입을 무조건 파쇄
             if(staticCrewMembers.some(m => m.nickname.trim() === nick)) { 
                 alert('⚠️ 동일한 닉네임이 있습니다.'); 
                 return; 
@@ -844,6 +831,7 @@
             setTimeout(() => { pages.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); }); const target = document.getElementById(p); if(target) { target.classList.remove('hidden'); setTimeout(() => { target.classList.remove('opacity-0', 'scale-95'); }, 50); } }, 300);
         }
 
+        /* 🔧 [정밀 오타 제거]: finally 차단막 앞에 기생하던 CSS 소스 파편을 완전히 적출하여 스크립트 무결성 복원 */
         async function verifyAdminAccess() {
             const input = prompt('관리자 마스터 암호를 입력하십시오:'); if (!input) return;
             if (input === "1234") { try { refreshUI(); } catch(err) { console.error(err); } switchPage('pageAdmin'); return; }
@@ -857,7 +845,7 @@
                     console.error("GAS Verification Interface Dropped", e); toggleGlobalLoadingOverlay(false);
                     const fallbackInput = prompt('⚠️ 구글 클라우드 보안 게이트웨이 응답 지연이 감지되었습니다.\n\n비상 암호(1234)를 입력하십시오:');
                     if (fallbackInput === "1234") { try { refreshUI(); } catch(err) { console.error(err); } switchPage('pageAdmin'); } else if (fallbackInput) { alert('❌ 인증 실패: 비상 복구 암호가 일치하지 않습니다.'); }
-                } font-family: Arial; finally { toggleGlobalLoadingOverlay(false); }
+                } finally { toggleGlobalLoadingOverlay(false); }
             } else { if (input === "1234") { try { refreshUI(); } catch(err) { console.error(err); } switchPage('pageAdmin'); } else { alert('암호 오류'); } toggleGlobalLoadingOverlay(false); }
         }
 
