@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AZIT - 같이의 가치</title>
     
+    <!-- ⚡ [PWA 핵심 이식]: 모바일 단독 앱 구동 매니페스트 및 iOS 사파리 전용 웹앱 메타 패킷 탑재 -->
     <link rel="manifest" href="./manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AZIT">
     <link class="html-embed" rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/846/846355.png">
 
+    <!-- ⚡ Tailwind CSS CDN 인프라 구동 엔진 안정화 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link class="html-embed" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -47,6 +49,7 @@
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
 
+    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이 레이어 -->
     <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
             <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
@@ -54,6 +57,7 @@
         </div>
     </div>
 
+    <!-- [PAGE 1] 아지트 인트로 커버 화면 -->
     <div id="pageCover" class="fixed inset-0 z-50 flex flex-col justify-between p-6 transition-all duration-700 ease-in-out transform bg-cover bg-center" 
          style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=1920&q=80');">
         <div class="text-center mt-6 lg:mt-10 animate-fade-in">
@@ -71,6 +75,7 @@
         </div>
     </div>
 
+    <!-- 신규회원 등록 모달 -->
     <div id="coverRegisterModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl transform scale-95 transition-all" id="coverRegBox">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
@@ -89,6 +94,7 @@
         </div>
     </div>
 
+    <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
     <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
         <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-3 sm:py-4 flex flex-col justify-between items-center gap-2">
             <div class="w-full flex justify-between items-center px-2">
@@ -100,6 +106,7 @@
         </header>
         <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
+            <!-- 📢 공지게시판 메트릭스 -->
             <div class="lg:col-span-12 bg-[#1a1a1a] border border-red-500/30 rounded-2xl p-4 shadow-2xl prevent-select" 
                  oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
                 <div class="flex items-center gap-2 mb-3 border-b border-gray-800 pb-2">
@@ -151,6 +158,7 @@
         </main>
     </div>
 
+    <!-- [PAGE 3] 관리자 대시보드 메인 관제 화면 -->
     <div id="pageAdmin" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0e0e0e]">
         <header class="border-b border-gray-800 bg-[#151515] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-lg">
             <button onclick="switchPage('pageCalendar')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 일정 화면으로</button>
@@ -177,6 +185,7 @@
                 </div>
             </div>
 
+            <!-- 공지사항 관리 센터 -->
             <div class="bg-[#151515] border border-gray-800 p-4 sm:p-5 rounded-2xl shadow-xl">
                 <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
                     <h3 class="text-base font-bold text-gray-200 flex items-center gap-2">
@@ -265,6 +274,7 @@
         </main>
     </div>
 
+    <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
     <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
         <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md">
             <button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button>
@@ -605,7 +615,16 @@
                 const todayStr = new Date().toISOString().split('T')[0];
                 const newCrewObj = { nickname: nick, name: encryptData('-'), gender: '-', birthYear: '-', phone: encryptData('-'), grade: '준회원', joinDate: todayStr, cancelCount: '0' };
                 staticCrewMembers.push(newCrewObj); localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers));
-                if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") { try { const crewQuery = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData('-'))}&gender=${encodeURIComponent('-')}&birthYear=${encodeURIComponent('-')}&phone=${encodeURIComponent(encryptData('-'))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(todayStr)}&cancelCount=${encodeURIComponent('0')}`; fetch(CLEAN_URL + crewQuery, { mode: 'no-cors' }); } catch(e) { console.error("Auto Background Register Error", e); } }
+                
+                if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
+                    try {
+                        const crewQuery = `?action=insert_crew&nickname=${encodeURIComponent(nick)}&name=${encodeURIComponent(encryptData('-'))}&gender=${encodeURIComponent('-')}&birthYear=${encodeURIComponent('-')}&phone=${encodeURIComponent(encryptData('-'))}&grade=${encodeURIComponent('준회원')}&joinDate=${encodeURIComponent(todayStr)}&cancelCount=${encodeURIComponent('0')}`;
+                        // 🔒 [동기화 락 이식]: 비동기 충돌로 인한 패킷 누락을 방지하기 위해 가입 요청에 await를 강제 부여하여 완료를 대기합니다.
+                        await fetch(CLEAN_URL + crewQuery, { mode: 'no-cors' });
+                        // ⏳ GAS 백엔드가 데이터 세션을 안전하게 커밋하고 리셋할 수 있도록 800ms의 완충 시간을 부여합니다.
+                        await new Promise(resolve => setTimeout(resolve, 800));
+                    } catch(e) { console.error("Auto Background Register Error", e); }
+                }
             }
             if (CLEAN_URL && CLEAN_URL !== "아지트크루여기로") {
                 try {
@@ -737,6 +756,7 @@
 
                     btn.onclick = (e) => {
                         e.stopPropagation(); e.preventDefault(); closeAllInlinePickers();
+                        if (!window.pendingCrewUpdates) window.pendingCrewUpdates = {};
                         if (!window.pendingCrewUpdates[nickname]) window.pendingCrewUpdates[nickname] = {};
                         window.pendingCrewUpdates[nickname][objectFieldKey] = optVal; currentMember[objectFieldKey] = optVal;
                         const saveBtn = document.getElementById('btnSaveAllCrewEdits'); if (saveBtn) saveBtn.classList.remove('hidden');
@@ -762,6 +782,7 @@
                         const dayCell = document.createElement('div'); dayCell.innerText = d; dayCell.className = 'py-1 rounded cursor-pointer hover:bg-amber-500 hover:text-black font-bold transition text-gray-300'; const currentStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; if(currentStr === rawValue) dayCell.className = 'py-1 rounded bg-amber-500 text-black font-black';
                         dayCell.onclick = (e) => { 
                             e.stopPropagation(); e.preventDefault(); closeAllInlinePickers();
+                            if (!window.pendingCrewUpdates) window.pendingCrewUpdates = {};
                             if (!window.pendingCrewUpdates[nickname]) window.pendingCrewUpdates[nickname] = {};
                             window.pendingCrewUpdates[nickname]['joinDate'] = currentStr; currentMember.joinDate = currentStr;
                             const saveBtn = document.getElementById('btnSaveAllCrewEdits'); if (saveBtn) saveBtn.classList.remove('hidden');
@@ -777,6 +798,7 @@
                 const saveChanges = () => { 
                     let updatedValue = inputComponent.value.trim(); if (!updatedValue) updatedValue = '-'; 
                     let finalVal = (objectFieldKey=='name' || objectFieldKey=='phone') ? encryptData(updatedValue) : updatedValue; 
+                    if (!window.pendingCrewUpdates) window.pendingCrewUpdates = {};
                     if (!window.pendingCrewUpdates[nickname]) window.pendingCrewUpdates[nickname] = {};
                     window.pendingCrewUpdates[nickname][objectFieldKey] = finalVal; currentMember[objectFieldKey] = finalVal;
                     const saveBtn = document.getElementById('btnSaveAllCrewEdits'); if (saveBtn) saveBtn.classList.remove('hidden');
@@ -831,7 +853,6 @@
             setTimeout(() => { pages.forEach(id => { const el = document.getElementById(id); if(el) el.classList.add('hidden'); }); const target = document.getElementById(p); if(target) { target.classList.remove('hidden'); setTimeout(() => { target.classList.remove('opacity-0', 'scale-95'); }, 50); } }, 300);
         }
 
-        /* 🔧 [정밀 오타 제거]: finally 차단막 앞에 기생하던 CSS 소스 파편을 완전히 적출하여 스크립트 무결성 복원 */
         async function verifyAdminAccess() {
             const input = prompt('관리자 마스터 암호를 입력하십시오:'); if (!input) return;
             if (input === "1234") { try { refreshUI(); } catch(err) { console.error(err); } switchPage('pageAdmin'); return; }
