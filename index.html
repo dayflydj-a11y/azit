@@ -87,7 +87,7 @@
                 <div><label class="block text-gray-400 font-bold mb-1">본명 (실명)</label><input type="text" id="regRealName" placeholder="예시: 홍길동" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
                 <div><label class="block text-gray-400 font-bold mb-1">성별</label><select id="regGender" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"><option value="-">미기입</option><option value="남성">남성</option><option value="여성">여성</option></select></div>
                 <div><label class="block text-gray-400 font-bold mb-1">출생 연도</label><input type="text" id="regBirthYear" placeholder="예시: 82" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
-                <div><label class="block text-gray-400 font-bold mb-1">연락처 (전화번호)</label><input type="text" id="regPhone" placeholder="예시: 000-0000-0000" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
+                <div><label class="block text-gray-400 font-bold mb-1">連絡처 (전화번호)</label><input type="text" id="regPhone" placeholder="예시: 000-0000-0000" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
                 <div><label class="block text-gray-400 font-bold mb-1">단톡방 입장 날짜</label><input type="date" id="regJoinDate" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition text-gray-300"></div>
             </div>
             <button id="btnSubmitCrew" onclick="submitCoverRegister()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl text-xs mt-5 shadow-lg flex items-center justify-center transition active:scale-95">크루 가입 명부 저장하기 <i class="fa-solid fa-check ml-1"></i></button>
@@ -229,7 +229,7 @@
                 </div>
             </div>
             
-            <!-- 명단 체크(20260620_204542.jpg 대응) 및 개설자 순위 매트릭스 -->
+            <!-- 명단 체크 및 개설자 순위 매트릭스 -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
                     <h3 class="text-base font-bold text-gray-200 mb-3 flex items-center gap-2 border-b border-gray-800 pb-3"><i class="fa-solid fa-users text-blue-400"></i> <span id="summaryMonthAttendeesLabel">6월</span> 일정 참여 명단 (방장/찬조/운전자 체크)</h3>
@@ -253,7 +253,7 @@
                 </div>
             </div>
 
-            <!-- 찬조자 순위 및 [신설] 운전자 마스터 순위 매트릭스 -->
+            <!-- 찬조자 순위 및 운전자 마스터 순위 매트릭스 -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
                     <div class="flex flex-col xl:flex-row xl:items-center justify-between border-b border-gray-800 pb-2 mb-4 gap-2">
@@ -271,7 +271,7 @@
                     <div class="max-h-[300px] overflow-y-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="sponsorRankTableBody" class="divide-y divide-gray-800/40"></tbody></table></div>
                 </div>
 
-                <!-- 🚗 [신설]: 아지트 카풀 운전자 영예의 마스터 랭킹 카드 -->
+                <!-- 🚗 운전자 영예의 마스터 랭킹 카드 -->
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
                     <div class="flex flex-col xl:flex-row xl:items-center justify-between border-b border-gray-800 pb-2 mb-4 gap-2">
                         <h3 class="text-base font-bold text-gray-200 flex items-center gap-2"><i class="fa-solid fa-car text-sky-400"></i> 🏆 운전자 순위</h3>
@@ -401,14 +401,22 @@
             } catch (e) { return dateStr; }
         }
 
+        // 🔒 [비동기 레이스 컨디션 전면 개편]: 서버 데이터 로딩 수신이 완전 완료된 후 렌더러를 후속 기동합니다.
         window.onload = async function() { 
-            await fetchCloudData(); refreshUI(); 
+            toggleGlobalLoadingOverlay(true, "📋 아지트 실시간 보안 관제 명부 동기화 중...");
+            await fetchCloudData(); 
+            refreshUI(); 
+            toggleGlobalLoadingOverlay(false);
             document.addEventListener('click', function(e) { if(!e.target.closest('.editable-cell') && !e.target.closest('.custom-datepicker')) closeAllInlinePickers(); });
         };
         
         function refreshUI() { 
             if (!Array.isArray(db)) db = []; if (!Array.isArray(staticCrewMembers)) staticCrewMembers = [];
-            try { renderCalendar(); updateLabels(); updateAdminDashboard(); renderNoticeDOM(); } catch(e) { console.error("UI Core Refresh Break Guard:", e); }
+            // 예외 샌드박스를 개별 가동하여 스크립트 도중 멈춤을 철저히 방어합니다.
+            try { renderCalendar(); } catch(e){ console.error("Cal crash buster:", e); }
+            try { updateLabels(); } catch(e){ console.error("Label crash buster:", e); }
+            try { updateAdminDashboard(); } catch(e){ console.error("Dashboard crash buster:", e); }
+            try { renderNoticeDOM(); } catch(e){ console.error("Notice crash buster:", e); }
         }
         
         function moveMonth(dir) { currentMonth += dir; if(currentMonth > 12) { currentMonth = 1; currentYear++; } else if(currentMonth < 1) { currentMonth = 12; currentYear--; } clearSelection(); refreshUI(); }
@@ -615,7 +623,6 @@
             } catch(e) {} finally { isSubmitting = false; toggleGlobalLoadingOverlay(false); await fetchCloudData(); refreshUI(); }
         }
 
-        // --- 다차원 동적 랭킹 필터링 엔진 (Host / Sponsor / Driver) ---
         function setHostRankFilter(type) { currentHostFilter = type; ['all', 'h1', 'h2', 'q1', 'q2', 'q3', 'q4'].forEach(f => { const b = document.getElementById(`btnHost_${f}`); if(b) b.className = (f === type) ? 'px-2.5 py-1 rounded bg-amber-500 text-black font-black transition shrink-0' : 'px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0'; }); renderHostRankTable(); }
         function renderHostRankTable() {
             const b = document.getElementById('hostRankTableBody'); if (!b) return; b.innerHTML = ''; const freq = {}; staticCrewMembers.forEach(m => { if(m && m.nickname) freq[m.nickname] = 0; });
@@ -650,8 +657,7 @@
             sorted.forEach((h, i) => { if(h.count > 0) b.innerHTML += `<tr class="border-b border-gray-800/40 hover:bg-gray-800/10 transition"><td class="py-3 pl-2 font-bold text-gray-500 w-12">${i+1}위</td><td class="py-3 font-semibold text-gray-200">👤 ${h.name}</td><td class="py-3 text-right pr-4 text-emerald-400 font-mono font-bold">${h.count}회 찬조</td></tr>`; });
         }
 
-        // 🚗 [신설]: 카풀 운전자 필터 제어 엔진 및 렌더링 스레드
-        function setDriverRankFilter(type) { currentDriverFilter = type; ['all', 'h1', 'h2', 'q1', 'q2', 'q3', 'q4'].forEach(f => { const b = document.getElementById(`btnDriver_${f}`); if(b) b.className = (f === type) ? 'px-2.5 py-1 rounded bg-sky-500 text-black font-mono font-black transition shrink-0' : 'px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0'; }); renderDriverRankTable(); }
+        function setDriverRankFilter(type) { currentDriverFilter = type; ['all', 'h1', 'h2', 'q1', 'q2', 'q3', 'q4'].forEach(f => { const b = document.getElementById(`btnDriver_${f}`); if(b) b.className = (f === type) ? 'px-2.5 py-1 rounded bg-sky-500 text-white font-mono font-black transition shrink-0' : 'px-2.5 py-1 rounded text-gray-400 hover:text-white transition shrink-0'; }); renderDriverRankTable(); }
         function renderDriverRankTable() {
             const b = document.getElementById('driverRankTableBody'); if (!b) return; b.innerHTML = ''; const freq = {}; staticCrewMembers.forEach(m => { if(m && m.nickname) freq[m.nickname] = 0; });
             let fList = db.filter(item => { if(!item) return false; let chk = Number(item.isDriver) === 1 || item.isDriver === true || String(item.isDriver).toLowerCase() === 'true'; return (item.year ? parseInt(String(item.year).replace(/\D/g, '')) : 0) === currentYear && chk; });
@@ -670,15 +676,7 @@
 
         async function toggleHostStatus(id, chk) { const r = db.find(i => i && i.id == id); if(r) { r.isHost = chk; refreshUI(); try { fetch(`${GOOGLE_SHEET_URL}?action=update_schedule_host&id=${id}&isHost=${chk}&ts=${Date.now()}`, { mode: 'no-cors' }); } catch(e){} } }
         async function toggleSponsorStatus(id, chk) { const r = db.find(i => i && i.id == id); if(r) { r.isSponsor = chk; refreshUI(); try { fetch(`${GOOGLE_SHEET_URL}?action=update_schedule_sponsor&id=${id}&isSponsor=${chk}&ts=${Date.now()}`, { mode: 'no-cors' }); } catch(e){} } }
-        
-        // 🚗 [신설]: 명단 다이어로그 내 운전자 토글 체킹 백엔드 전송 스레드
-        async function toggleDriverStatus(id, chk) { 
-            const r = db.find(i => i && i.id == id); 
-            if(r) { 
-                r.isDriver = chk; refreshUI(); 
-                try { fetch(`${GOOGLE_SHEET_URL}?action=update_schedule_driver&id=${id}&isDriver=${chk}&ts=${Date.now()}`, { mode: 'no-cors' }); } catch(e){} 
-            } 
-        }
+        async function toggleDriverStatus(id, chk) { const r = db.find(i => i && i.id == id); if(r) { r.isDriver = chk; refreshUI(); try { fetch(`${GOOGLE_SHEET_URL}?action=update_schedule_driver&id=${id}&isDriver=${chk}&ts=${Date.now()}`, { mode: 'no-cors' }); } catch(e){} } }
 
         function startInlineEdit(cellElement, nickname, objectFieldKey) {
             if (cellElement.querySelector('input') || document.querySelector('.custom-datepicker')) return; closeAllInlinePickers();
@@ -748,7 +746,7 @@
             }
         }
 
-        async function deleteMemberRecord(nickname) { if(confirm(`⚠️ 정말로 [${nickname}] 크루원을 제명 조치하시겠습니까?`)) { toggleGlobalLoadingOverlay(true, `제명 처리 중...`); try { await fetch(`${GOOGLE_SHEET_URL}?action=delete_crew&nickname=${encodeURIComponent(nickname)}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(r => setTimeout(r, 1000)); } catch(e){} await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false); } }
+        async function deleteMemberRecord(nickname) { if(confirm(`⚠️ 정말로 [${nickname}] 크루원을 제명 조치하시겠습니까?`)) { toggleGlobalLoadingOverlay(true, "제명 처리 중..."); try { await fetch(`${GOOGLE_SHEET_URL}?action=delete_crew&nickname=${encodeURIComponent(nickname)}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(r => setTimeout(r, 1000)); } catch(e){} await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false); } }
         async function deleteScheduleRecord(id) { if (confirm('⚠️ 해당 일정을 영구 삭제하시겠습니까?')) { toggleGlobalLoadingOverlay(true, "크루 스케줄 제거 중..."); try { await fetch(`${GOOGLE_SHEET_URL}?action=delete_schedule&id=${id}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(r => setTimeout(r, 1000)); } catch(e){} await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false); } }
         async function clearTargetMonthDatabase() { if (confirm(`${currentMonth}월의 일정 데이터만 전부 삭제하시겠습니까?`)) { toggleGlobalLoadingOverlay(true, "월별 스케줄 리셋 중..."); try { const targets = db.filter(i => { let y = parseInt(String(i.year).replace(/\D/g, '')) || currentYear, m = String(i.month).toLowerCase() === 'null' ? currentMonth : (parseInt(String(i.month).replace(/\D/g, '')) || currentMonth); return y === currentYear && m === currentMonth; }); for(let t of targets) await fetch(`${GOOGLE_SHEET_URL}?action=delete_schedule&id=${t.id}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(r => setTimeout(r, 1500)); } catch(e){} await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false); } }
         async function clearDatabase() { if (confirm('🚨 마스터 데이터베이스 전체 초기화하시겠습니까?')) { toggleGlobalLoadingOverlay(true, "전체 이력 데이터 제거 중..."); try { for(let t of db) if(t) await fetch(`${GOOGLE_SHEET_URL}?action=delete_schedule&id=${t.id}&ts=${Date.now()}`, { mode: 'no-cors' }); await new Promise(r => setTimeout(r, 1500)); } catch(e){} await fetchCloudData(); refreshUI(); toggleGlobalLoadingOverlay(false); } }
@@ -797,7 +795,6 @@
             
             const rBody = document.getElementById('rankTableBody'); if(rBody) { rBody.innerHTML = ''; const freq = {}; targetRecords.forEach(r => { if(r && r.name) freq[r.name] = (freq[r.name] || 0) + 1; }); Object.keys(freq).sort((a,b) => freq[b]-freq[a]).forEach((n, i) => { rBody.innerHTML += `<tr class="border-b border-gray-800/40"><td class="py-4 text-center">${i+1}위</td><td class="py-4 font-bold">${n}</td><td class="py-4 text-right pr-4 text-green-400 font-mono">${freq[n]}회 참여</td></tr>`; }); }
 
-            // 🚗 명단 렌더러 레이어 개편 (20260620_204542.jpg 완벽 연동)
             const aBody = document.getElementById('monthAttendeeListBody'); 
             if(aBody) { 
                 aBody.innerHTML = ''; 
@@ -827,7 +824,6 @@
 
             renderHostRankTable(); renderSponsorRankTable(); renderDriverRankTable(); renderHalfYearRankTable();
             
-            // 명부 빌더 레이어
             let dMembers = staticCrewMembers.filter(m => m && m.nickname);
             if (memberSortCriteria === 'gender') dMembers.sort((a, b) => (a.gender || '').localeCompare(b.gender || ''));
             else if (memberSortCriteria === 'birthYear') dMembers.sort((a, b) => (a.birthYear || '99').localeCompare(b.birthYear || '99'));
@@ -854,7 +850,6 @@
                 });
             }
             
-            // 타임라인 컴포넌트 렌더러
             const tContainer = document.getElementById('groupedCrewTimeline'); if(tContainer) { tContainer.innerHTML = ''; if (db.length === 0) return; const gMap = {}; db.forEach(i => { if (i && i.name) { if (!gMap[i.name]) gMap[i.name] = []; gMap[i.name].push(i); } });
                 for (let cNick in gMap) {
                     let innerHTML = `<div class="bg-[#1c1c1c] rounded-xl p-4 border border-gray-800/60"><div class="text-sm font-black text-gray-200 border-b border-gray-800 pb-2 mb-2 flex justify-between items-center"><span>👤 크루: <span class="text-red-400">${cNick}</span></span><span class="text-[11px] bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-0.5 rounded-full font-bold">누적 ${gMap[cNick].length}건</span></div><div class="space-y-2">`;
