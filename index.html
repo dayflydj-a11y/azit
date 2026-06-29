@@ -87,7 +87,7 @@
                 <div><label class="block text-gray-400 font-bold mb-1">본명 (실명)</label><input type="text" id="regRealName" placeholder="예시: 홍길동" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
                 <div><label class="block text-gray-400 font-bold mb-1">성별</label><select id="regGender" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"><option value="-">미기입</option><option value="남성">남성</option><option value="여성">여성</option></select></div>
                 <div><label class="block text-gray-400 font-bold mb-1">출생 연도</label><input type="text" id="regBirthYear" placeholder="예시: 82" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
-                <div><label class="block text-gray-400 font-bold mb-1">連絡처 (전화번호)</label><input type="text" id="regPhone" placeholder="예시: 000-0000-0000" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
+                <div><label class="block text-gray-400 font-bold mb-1">연락처 (전화번호)</label><input type="text" id="regPhone" placeholder="예시: 000-0000-0000" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition"></div>
                 <div><label class="block text-gray-400 font-bold mb-1">단톡방 입장 날짜</label><input type="date" id="regJoinDate" class="w-full bg-[#121212] border border-gray-800 rounded-xl px-3 py-2.5 text-white focus:outline-none focus:border-red-500 transition text-gray-300"></div>
             </div>
             <button id="btnSubmitCrew" onclick="submitCoverRegister()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl text-xs mt-5 shadow-lg flex items-center justify-center transition active:scale-95">크루 가입 명부 저장하기 <i class="fa-solid fa-check ml-1"></i></button>
@@ -215,7 +215,7 @@
                 <div id="adminNoticeList" class="space-y-2 divide-y divide-gray-800/40"></div>
             </div>
 
-            <!-- 월별 / 반기별 활동 크루원 데이터 매트릭스 -->
+            <!-- 랭킹 보드 영역 -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
                     <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center justify-between border-b border-gray-800 pb-3"><span>🏆 月별 활동 크루원 순위</span><span id="rankMonthLabel" class="text-xs font-mono text-green-400 bg-green-400/5 px-2.5 py-1 rounded-lg border border-green-500/10">6월 기준</span></h3>
@@ -271,7 +271,6 @@
                     <div class="max-h-[300px] overflow-y-auto no-scrollbar"><table class="w-full text-left text-xs"><tbody id="sponsorRankTableBody" class="divide-y divide-gray-800/40"></tbody></table></div>
                 </div>
 
-                <!-- 🚗 운전자 영예의 마스터 랭킹 카드 -->
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
                     <div class="flex flex-col xl:flex-row xl:items-center justify-between border-b border-gray-800 pb-2 mb-4 gap-2">
                         <h3 class="text-base font-bold text-gray-200 flex items-center gap-2"><i class="fa-solid fa-car text-sky-400"></i> 🏆 운전자 순위</h3>
@@ -321,7 +320,7 @@
                         <button onclick="setMemberSort('none')" id="sortBtn_none" class="bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition">정렬 초기화</button>
                     </div>
                 </div>
-                <div class="overflow-x-auto border border-gray-800 rounded-xl bg-[#111] no-scrollbar" style="-webkit-overflow-scrolling: touch;">
+                <div class="overflow-x-auto border border-gray-800 rounded-xl bg-[#111] no-scrollbar">
                     <table class="w-full text-left text-xs min-w-[760px]">
                         <thead>
                             <tr class="border-b border-gray-800 text-gray-400 bg-[#1c1c1c] font-semibold">
@@ -401,9 +400,9 @@
             } catch (e) { return dateStr; }
         }
 
-        // 🔒 [비동기 레이스 컨디션 전면 개편]: 서버 데이터 로딩 수신이 완전 완료된 후 렌더러를 후속 기동합니다.
+        // 🔒 [보안 아키텍처 핵심 강화]: 최초 진입 시 무조건 구형 캐시 오염을 제어하고 새로 빌드합니다.
         window.onload = async function() { 
-            toggleGlobalLoadingOverlay(true, "📋 아지트 실시간 보안 관제 명부 동기화 중...");
+            toggleGlobalLoadingOverlay(true, "📋 데이터 무결성 검증 및 마스터 서버 연동 중...");
             await fetchCloudData(); 
             refreshUI(); 
             toggleGlobalLoadingOverlay(false);
@@ -412,7 +411,7 @@
         
         function refreshUI() { 
             if (!Array.isArray(db)) db = []; if (!Array.isArray(staticCrewMembers)) staticCrewMembers = [];
-            // 예외 샌드박스를 개별 가동하여 스크립트 도중 멈춤을 철저히 방어합니다.
+            // 각 렌더 레이어를 원천 격리(Isolate)하여 특정 카드에서 오류가 나도 시스템 전체 마비를 절대 방지합니다.
             try { renderCalendar(); } catch(e){ console.error("Cal crash buster:", e); }
             try { updateLabels(); } catch(e){ console.error("Label crash buster:", e); }
             try { updateAdminDashboard(); } catch(e){ console.error("Dashboard crash buster:", e); }
@@ -442,29 +441,41 @@
             try {
                 const res = await fetch(`${CLEAN_URL}?action=get&ts=${Date.now()}`); if(!res.ok) throw new Error("Blocked");
                 const data = await res.json();
-                if (data.db) { db = data.db; localStorage.setItem('azit_db', JSON.stringify(db)); }
-                if (data.crews) { staticCrewMembers = data.crews.filter(m => m && m.nickname); localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); }
+                
+                // ⚠️ [패치 완료] 넘어온 값이 정상 배열/문자열일 때만 안전망 검증 후 복사 이관합니다.
+                if (data.db && Array.isArray(data.db)) { db = data.db; localStorage.setItem('azit_db', JSON.stringify(db)); }
+                if (data.crews && Array.isArray(data.crews)) { staticCrewMembers = data.crews.filter(m => m && m.nickname); localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); }
                 if (data.notice && data.notice.trim() !== '') { noticeText = data.notice; localStorage.setItem('azit_notice', noticeText); }
                 updateNetworkStatusDOM("🟢 실시간 구글 클라우드 동기화 완료", "success");
-            } catch(e) { updateNetworkStatusDOM("🔴 동기화 지연 (로컬 캐시 데이터 가동)", "fail"); }
+            } catch(e) { 
+                updateNetworkStatusDOM("🔴 동기화 지연 (로컬 캐시 데이터 가동)", "fail"); 
+                // 캐시가 깨졌을 경우를 대비해 최후의 수단으로 빈 배열 가드를 세웁니다.
+                if(!db) db = []; if(!staticCrewMembers) staticCrewMembers = [];
+            }
         }
 
         function getParsedNotices() { if (!noticeText || noticeText.trim() === '') return []; try { let parsed = JSON.parse(noticeText); if (Array.isArray(parsed)) return parsed; } catch(e){} return defaultNotices; }
 
         function renderNoticeDOM() {
             const container = document.getElementById('noticeAccordionContainer'); if (!container) return; container.innerHTML = '';
-            getParsedNotices().forEach(n => {
+            const notices = getParsedNotices();
+            if(!Array.isArray(notices) || notices.length === 0) {
+                container.innerHTML = `<div class="text-center py-4 text-gray-500 text-xs">등록된 공식 공지사항 조항이 없습니다.</div>`;
+                return;
+            }
+            notices.forEach(n => {
+                if(!n) return;
                 const isOpen = (openNoticeIdGlobal === n.id); const noticeBox = document.createElement('div');
                 noticeBox.className = "border border-gray-800 rounded-xl bg-[#151515] overflow-hidden transition-all duration-200";
                 noticeBox.innerHTML = `
                     <button onclick="toggleNoticeAccordion(${n.id})" class="w-full text-left px-4 py-3.5 flex justify-between items-center hover:bg-gray-800/40 transition">
-                        <div class="flex flex-col gap-0.5"><span class="text-xs sm:text-sm font-bold text-gray-200">${n.title}</span><span class="text-[9px] font-mono text-gray-500">배포일자: ${n.date}</span></div>
+                        <div class="flex flex-col gap-0.5"><span class="text-xs sm:text-sm font-bold text-gray-200">${n.title || '무제 공지'}</span><span class="text-[9px] font-mono text-gray-500">배포일자: ${n.date || '-'}</span></div>
                         <i class="fa-solid ${isOpen ? 'fa-chevron-up text-red-500' : 'fa-chevron-down text-gray-500'} text-xs"></i>
                     </button>
-                    <div class="${isOpen ? 'block border-t border-gray-800/60 p-4 bg-[#121212]' : 'hidden'} text-xs sm:text-sm text-gray-400 leading-relaxed tracking-wide whitespace-pre-wrap break-keep">${n.content}</div>`;
+                    <div class="${isOpen ? 'block border-t border-gray-800/60 p-4 bg-[#121212]' : 'hidden'} text-xs sm:text-sm text-gray-400 leading-relaxed tracking-wide whitespace-pre-wrap break-keep">${n.content || '내용이 비어있습니다.'}</div>`;
                 container.appendChild(noticeBox);
             });
-            renderAdminNoticeListDOM(getParsedNotices());
+            renderAdminNoticeListDOM(notices);
         }
 
         function toggleNoticeAccordion(id) { openNoticeIdGlobal = (openNoticeIdGlobal === id) ? null : id; renderNoticeDOM(); }
@@ -472,9 +483,10 @@
         function renderAdminNoticeListDOM(notices) {
             const adminList = document.getElementById('adminNoticeList'); if(!adminList) return; adminList.innerHTML = '';
             notices.forEach(n => {
+                if(!n) return;
                 const item = document.createElement('div'); item.className = "py-3 flex justify-between items-center gap-4 text-xs";
                 item.innerHTML = `
-                    <div class="flex flex-col gap-0.5 truncate"><span class="font-bold text-gray-200 truncate">${n.title}</span><span class="text-[10px] font-mono text-gray-500">ID: ${n.id} · 개정일: ${n.date}</span></div>
+                    <div class="flex flex-col gap-0.5 truncate"><span class="font-bold text-gray-200 truncate">${n.title || '무제'}</span><span class="text-[10px] font-mono text-gray-500">ID: ${n.id} · 개정일: ${n.date || '-'}</span></div>
                     <div class="flex gap-1.5 shrink-0">
                         <button onclick="openNoticeEditForm(${n.id})" class="bg-blue-600/10 border border-blue-500/20 hover:bg-blue-600/20 text-blue-400 px-2.5 py-1.5 rounded-lg font-bold">수정</button>
                         <button onclick="deleteNoticeItem(${n.id})" class="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400 px-2.5 py-1.5 rounded-lg font-bold">제거</button>
@@ -484,7 +496,7 @@
         }
 
         function openNoticeAddForm() { document.getElementById('editNoticeId').value = ''; document.getElementById('editNoticeTitle').value = ''; document.getElementById('editNoticeContent').value = ''; document.getElementById('noticeEditorForm').classList.remove('hidden'); }
-        function openNoticeEditForm(id) { const target = getParsedNotices().find(n => n.id == id); if(!target) return; document.getElementById('editNoticeId').value = target.id; document.getElementById('editNoticeTitle').value = target.title; document.getElementById('editNoticeContent').value = target.content; document.getElementById('noticeEditorForm').classList.remove('hidden'); }
+        function openNoticeEditForm(id) { const target = getParsedNotices().find(n => n.id == id); if(!target) return; document.getElementById('editNoticeId').value = target.id; document.getElementById('editNoticeTitle').value = target.title || ''; document.getElementById('editNoticeContent').value = target.content || ''; document.getElementById('noticeEditorForm').classList.remove('hidden'); }
         function closeNoticeEditor() { document.getElementById('noticeEditorForm').classList.add('hidden'); }
 
         async function saveNoticeData() {
@@ -813,10 +825,10 @@
                                     <span class="ml-0.5">찬</span><input type="checkbox" ${isSponsorChecked ? 'checked' : ''} onchange="toggleSponsorStatus(${r.id}, this.checked)" class="w-3 h-3 accent-emerald-500 rounded cursor-pointer">
                                     <span class="ml-0.5 text-sky-400">운</span><input type="checkbox" ${isDriverChecked ? 'checked' : ''} onchange="toggleDriverStatus(${r.id}, this.checked)" class="w-3 h-3 accent-sky-500 rounded cursor-pointer">
                                 </div>
-                                <span class="truncate max-w-[60px] ml-1">👤 ${r.name}</span>
+                                <span class="truncate max-w-[60px] ml-1">👤 ${r.name || '알수없음'}</span>
                             </td>
-                            <td class="py-3 text-gray-400 text-[11px] font-mono">${r.startDay}일~${r.endDay}일</td>
-                            <td class="py-3 text-right pr-1 flex items-center justify-end gap-2"><span class="text-orange-400 font-bold text-[11px] shrink-0">${r.type}</span><button onclick="deleteScheduleRecord(${r.id})" class="bg-red-500/10 border border-red-500/20 text-red-400 px-2 py-0.5 rounded font-black text-[10px] transition shrink-0">삭제</button></td>
+                            <td class="py-3 text-gray-400 text-[11px] font-mono">${r.startDay || 0}일~${r.endDay || 0}일</td>
+                            <td class="py-3 text-right pr-1 flex items-center justify-end gap-2"><span class="text-orange-400 font-bold text-[11px] shrink-0">${r.type || '일정'}</span><button onclick="deleteScheduleRecord(${r.id})" class="bg-red-500/10 border border-red-500/20 text-red-400 px-2 py-0.5 rounded font-black text-[10px] transition shrink-0">삭제</button></td>
                         </tr>`; 
                     }); 
                 } 
@@ -830,24 +842,32 @@
             else if (memberSortCriteria === 'grade') { const gOrder = { '방장': 1, '부방장': 2, '아지트人': 3, '아지트': 3, '정회원': 4, '준회원': 5 }; dMembers.sort((a, b) => (gOrder[a.grade] || 6) - (gOrder[b.grade] || 6)); }
             
             ['gender', 'birthYear', 'grade', 'none'].forEach(crit => { const btn = document.getElementById('sortBtn_' + crit); if (btn) btn.className = (memberSortCriteria === crit) ? "bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition" : "bg-gray-800 text-gray-300 border border-gray-700 px-2.5 py-1.5 rounded-lg text-[10px] font-bold transition"; });
-            const mBody = document.getElementById('masterCrewTableBody'); if(mBody) { mBody.innerHTML = ''; let isPending = (nk, fd) => (window.pendingCrewUpdates && window.pendingCrewUpdates[nk] && window.pendingCrewUpdates[nk][fd] !== undefined);
-                if(dMembers.length === 0) mBody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-gray-500 text-xs font-bold">📂 명부 데이터를 확인 중입니다.</td></tr>`;
-                else dMembers.forEach(m => { 
-                    let decName = decryptData(m.name || '-'), decPhone = decryptData(m.phone || '-'), dJoinDate = m.joinDate ? formatKoreanDate(m.joinDate) : '-';
-                    let dGrade = m.grade && m.grade !== '-' ? m.grade : '준회원', gColor = "text-gray-400", rGrade = dGrade; if (dGrade === '아지트') dGrade = '아지트人';
-                    if(dGrade === '정회원') gColor = "text-green-400 font-bold"; else if(dGrade === '아지트人') { rGrade = '아지트人'; gColor = "text-red-500 font-black tracking-wide"; } else if(dGrade === '방장') { rGrade = '방&nbsp;&nbsp;장'; gColor = "text-[#FFEA00] font-black tracking-wider animate-pulse"; } else if(dGrade === '부방장') { rGrade = '부방장'; gColor = "text-sky-400 font-bold tracking-wide"; }
-                    
-                    mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
-                        <td class="py-4.5 px-4 editable-cell font-bold text-white ${isPending(m.nickname, 'nickname') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'nickname')">👤 ${m.nickname}</td>
-                        <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decName}</td>
-                        <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold ${isPending(m.nickname, 'gender') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender}</td>
-                        <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold ${isPending(m.nickname, 'birthYear') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'}</td>
-                        <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400 ${isPending(m.nickname, 'phone') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decPhone}</td>
-                        <td class="py-4.5 px-3.5 editable-cell ${isPending(m.nickname, 'grade') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : gColor}" onclick="startInlineEdit(this, '${m.nickname}', 'grade')">${rGrade}</td>
-                        <td class="py-4.5 px-3.5 editable-cell text-gray-300 font-mono tracking-tight ${isPending(m.nickname, 'joinDate') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'joinDate')">${dJoinDate}</td>
-                        <td class="py-4.5 px-4 text-center"><button class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl font-black text-xs transition active:scale-95" onclick="deleteMemberRecord('${m.nickname}')">삭제</button></td>
-                    </tr>`; 
-                });
+            const mBody = document.getElementById('masterCrewTableBody'); 
+            if(mBody) { 
+                mBody.innerHTML = ''; 
+                let isPending = (nk, fd) => (window.pendingCrewUpdates && window.pendingCrewUpdates[nk] && window.pendingCrewUpdates[nk][fd] !== undefined);
+                if(dMembers.length === 0) {
+                    mBody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-gray-500 text-xs font-bold">📂 명부 데이터를 확인 중이거나 비어있습니다.</td></tr>`;
+                } else {
+                    dMembers.forEach(m => { 
+                        if(!m || !m.nickname) return;
+                        let decName = decryptData(m.name || '-'), decPhone = decryptData(m.phone || '-'), dJoinDate = m.joinDate ? formatKoreanDate(m.joinDate) : '-';
+                        let dGrade = m.grade && m.grade !== '-' ? m.grade : '준회원', gColor = "text-gray-400", rGrade = dGrade; if (dGrade === '아지트') dGrade = '아지트人';
+                        if(dGrade === '정회원') gColor = "text-green-400 font-bold"; else if(dGrade === '아지트人') { rGrade = '아지트人'; gColor = "text-red-500 font-black tracking-wide"; } else if(dGrade === '방장') { rGrade = '방&nbsp;&nbsp;장'; gColor = "text-[#FFEA00] font-black tracking-wider animate-pulse"; } else if(dGrade === '부방장') { rGrade = '부방장'; gColor = "text-sky-400 font-bold tracking-wide"; }
+                        
+                        // 🔒 [타입 에러 패치 완료]: 가변 변수 유입 시 강제 스트링화 및 예외 우회 핸들러를 가동합니다.
+                        mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
+                            <td class="py-4.5 px-4 editable-cell font-bold text-white ${isPending(m.nickname, 'nickname') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'nickname')">👤 ${m.nickname}</td>
+                            <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decName}</td>
+                            <td class="py-4.5 px-3.5 editable-cell text-sky-400 font-bold ${isPending(m.nickname, 'gender') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'gender')">${m.gender === '-' ? '미기입' : m.gender}</td>
+                            <td class="py-4.5 px-3.5 editable-cell text-amber-400 font-mono font-bold ${isPending(m.nickname, 'birthYear') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'birthYear')">${m.birthYear === '-' ? '미기입' : m.birthYear + '년생'}</td>
+                            <td class="py-4.5 px-3.5 editable-cell font-mono text-gray-400 ${isPending(m.nickname, 'phone') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'phone')">${decPhone}</td>
+                            <td class="py-4.5 px-3.5 editable-cell ${isPending(m.nickname, 'grade') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : gColor}" onclick="startInlineEdit(this, '${m.nickname}', 'grade')">${rGrade}</td>
+                            <td class="py-4.5 px-3.5 editable-cell text-gray-300 font-mono tracking-tight ${isPending(m.nickname, 'joinDate') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'joinDate')">${dJoinDate}</td>
+                            <td class="py-4.5 px-4 text-center"><button class="bg-red-500/10 border border-red-500/30 hover:bg-red-500/20 text-red-400 px-3 py-1.5 rounded-xl font-black text-xs transition active:scale-95" onclick="deleteMemberRecord('${m.nickname}')">삭제</button></td>
+                        </tr>`; 
+                    });
+                }
             }
             
             const tContainer = document.getElementById('groupedCrewTimeline'); if(tContainer) { tContainer.innerHTML = ''; if (db.length === 0) return; const gMap = {}; db.forEach(i => { if (i && i.name) { if (!gMap[i.name]) gMap[i.name] = []; gMap[i.name].push(i); } });
