@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AZIT - 같이의 가치</title>
     
-    <!-- ⚡ [PWA 핵심 이식]: 모바일 단독 앱 구동 매니페스트 및 iOS 사파리 전용 웹앱 메타 패킷 탑재 -->
     <link rel="manifest" href="./manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AZIT">
     <link class="html-embed" rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/846/846355.png">
 
-    <!-- ⚡ Tailwind CSS CDN 인프라 구동 엔진 안정화 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link class="html-embed" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -49,7 +47,6 @@
 </head>
 <body class="bg-[#121212] text-white font-sans antialiased selection:bg-red-500 selection:text-white">
 
-    <!-- ⏳ 글로벌 구글 클라우드 동기화 관제 모래시계 오버레이 레이어 -->
     <div id="globalLoadingOverlay" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 p-6 rounded-2xl flex flex-col items-center gap-4 shadow-2xl max-w-xs w-full text-center">
             <i class="fa-solid fa-hourglass-half text-4xl text-red-500 animate-spin"></i>
@@ -57,7 +54,6 @@
         </div>
     </div>
 
-    <!-- [PAGE 1] 아지트 인트로 커버 화면 -->
     <div id="pageCover" class="fixed inset-0 z-50 flex flex-col justify-between p-6 transition-all duration-700 ease-in-out transform bg-cover bg-center" 
          style="background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1501555088652-021faa106b9b?auto=format&fit=crop&w=1920&q=80');">
         <div class="text-center mt-6 lg:mt-10 animate-fade-in">
@@ -75,7 +71,6 @@
         </div>
     </div>
 
-    <!-- 신규회원 등록 모달 -->
     <div id="coverRegisterModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md hidden opacity-0 transition-all duration-300">
         <div class="bg-[#1e1e1e] border border-gray-800 rounded-2xl p-5 max-w-sm w-full shadow-2xl transform scale-95 transition-all" id="coverRegBox">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
@@ -94,7 +89,6 @@
         </div>
     </div>
 
-    <!-- [PAGE 2] 메인 일정 등록 캘린더 화면 -->
     <div id="pageCalendar" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95">
         <header class="border-b border-gray-800 bg-[#1a1a1a]/80 backdrop-blur sticky top-0 z-40 px-4 py-2 sm:py-4 flex flex-col justify-between items-center gap-1 sm:gap-2">
             <div class="w-full flex justify-between items-center px-1">
@@ -106,7 +100,6 @@
         </header>
         <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
-            <!-- 📢 공지게시판 메트릭스 -->
             <div class="lg:col-span-12 bg-[#1a1a1a] border border-red-500/30 rounded-2xl p-4 shadow-2xl prevent-select" 
                  oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 mb-3 border-b border-gray-800 pb-2">
@@ -160,7 +153,6 @@
         </main>
     </div>
 
-    <!-- [PAGE 3] 관리자 대시보드 메인 관제 화면 -->
     <div id="pageAdmin" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0e0e0e]">
         <header class="border-b border-gray-800 bg-[#151515] sticky top-0 z-40 px-4 py-3 sm:py-4 flex justify-between items-center shadow-lg">
             <button onclick="switchPage('pageCalendar')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold flex items-center gap-1 transition"><i class="fa-solid fa-arrow-left"></i> 일정 화면으로</button>
@@ -187,7 +179,6 @@
                 </div>
             </div>
 
-            <!-- 공지사항 관리 센터 -->
             <div class="bg-[#151515] border border-gray-800 p-4 sm:p-5 rounded-2xl shadow-xl">
                 <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-4">
                     <h3 class="text-base font-bold text-gray-200 flex items-center gap-2">
@@ -215,7 +206,6 @@
                 <div id="adminNoticeList" class="space-y-2 divide-y divide-gray-800/40"></div>
             </div>
 
-            <!-- 랭킹 보드 영역 -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
                     <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center justify-between border-b border-gray-800 pb-3"><span>🏆 月별 활동 크루원 순위</span><span id="rankMonthLabel" class="text-xs font-mono text-green-400 bg-green-400/5 px-2.5 py-1 rounded-lg border border-green-500/10">6월 기준</span></h3>
@@ -229,7 +219,6 @@
                 </div>
             </div>
             
-            <!-- 명단 체크 및 개설자 순위 매트릭스 -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
                     <h3 class="text-base font-bold text-gray-200 mb-3 flex items-center gap-2 border-b border-gray-800 pb-3"><i class="fa-solid fa-users text-blue-400"></i> <span id="summaryMonthAttendeesLabel">6월</span> 일정 참여 명단 (방장/찬조/운전자 체크)</h3>
@@ -253,7 +242,6 @@
                 </div>
             </div>
 
-            <!-- 찬조자 순위 및 운전자 마스터 순위 매트릭스 -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-6 bg-[#151515] border border-gray-800 rounded-2xl p-4 sm:p-5 shadow-xl">
                     <div class="flex flex-col xl:flex-row xl:items-center justify-between border-b border-gray-800 pb-2 mb-4 gap-2">
@@ -288,7 +276,6 @@
                 </div>
             </div>
 
-            <!-- 타임라인 섹션 -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div class="lg:col-span-12 bg-[#151515] p-4 sm:p-5 rounded-2xl flex flex-col max-h-[640px] shadow-xl">
                     <h3 class="text-base font-bold text-gray-200 mb-4 flex items-center gap-2 border-b border-gray-800 pb-3 shrink-0"><i class="fa-folder-open fa-solid text-green-400"></i> 전체 누적 타임라인</h3>
@@ -298,7 +285,6 @@
         </main>
     </div>
 
-    <!-- [PAGE 4] 멤버 데이터 독립 관리 명부 페이지 -->
     <div id="pageMemberManage" class="hidden min-h-screen flex flex-col transition-all duration-500 opacity-0 transform scale-95 bg-[#0a0a0a]">
         <header class="border-b border-gray-800 bg-[#111] sticky top-0 z-40 px-4 py-4 flex justify-between items-center shadow-md">
             <button onclick="switchPage('pageAdmin')" class="text-xs sm:text-sm text-green-400 hover:text-green-300 font-bold transition">← 관제소로</button>
@@ -381,14 +367,21 @@
             for(let i=0; i<text.length; i++) { result += String.fromCharCode(text.charCodeAt(i) + 3); }
             return btoa(unescape(encodeURIComponent(result)));
         }
+
+        // 🔒 [원천 크래시 패치 완료]: 암호화되지 않은 날것의 데이터가 들어오면 복호화를 패스하고 원본을 반환하여 강제로 살려냅니다.
         function decryptData(cipher) {
-            if(!cipher || cipher === '-' || cipher === '미등록') return cipher;
+            if(!cipher || cipher === '-' || cipher === '미등록' || cipher === 'null') return cipher;
             try {
-                let decoded = decodeURIComponent(escape(atob(cipher)));
+                // Base64 포맷인지 먼저 정규식으로 안전 검증을 수행합니다.
+                if(!/^[A-Za-z0-9+/=]+$/.test(cipher.trim())) return cipher; 
+                let decoded = decodeURIComponent(escape(atob(cipher.trim())));
                 let result = '';
                 for(let i=0; i<decoded.length; i++) { result += String.fromCharCode(decoded.charCodeAt(i) - 3); }
                 return result;
-            } catch(e) { return cipher; } 
+            } catch(e) { 
+                // 복호화 엔진이 튕기더라도 절대 멈추지 않고 원본 데이터를 그대로 뱉어냅니다.
+                return cipher; 
+            } 
         }
 
         function formatKoreanDate(dateStr) {
@@ -400,9 +393,8 @@
             } catch (e) { return dateStr; }
         }
 
-        // 🔒 [보안 아키텍처 핵심 강화]: 최초 진입 시 무조건 구형 캐시 오염을 제어하고 새로 빌드합니다.
         window.onload = async function() { 
-            toggleGlobalLoadingOverlay(true, "📋 데이터 무결성 검증 및 마스터 서버 연동 중...");
+            toggleGlobalLoadingOverlay(true, "📋 아지트 실시간 보안 관제 명부 동기화 중...");
             await fetchCloudData(); 
             refreshUI(); 
             toggleGlobalLoadingOverlay(false);
@@ -411,11 +403,10 @@
         
         function refreshUI() { 
             if (!Array.isArray(db)) db = []; if (!Array.isArray(staticCrewMembers)) staticCrewMembers = [];
-            // 각 렌더 레이어를 원천 격리(Isolate)하여 특정 카드에서 오류가 나도 시스템 전체 마비를 절대 방지합니다.
-            try { renderCalendar(); } catch(e){ console.error("Cal crash buster:", e); }
-            try { updateLabels(); } catch(e){ console.error("Label crash buster:", e); }
-            try { updateAdminDashboard(); } catch(e){ console.error("Dashboard crash buster:", e); }
-            try { renderNoticeDOM(); } catch(e){ console.error("Notice crash buster:", e); }
+            try { renderCalendar(); } catch(e){ console.error("Cal crash:", e); }
+            try { updateLabels(); } catch(e){ console.error("Label crash:", e); }
+            try { updateAdminDashboard(); } catch(e){ console.error("Dashboard crash:", e); }
+            try { renderNoticeDOM(); } catch(e){ console.error("Notice crash:", e); }
         }
         
         function moveMonth(dir) { currentMonth += dir; if(currentMonth > 12) { currentMonth = 1; currentYear++; } else if(currentMonth < 1) { currentMonth = 12; currentYear--; } clearSelection(); refreshUI(); }
@@ -441,15 +432,12 @@
             try {
                 const res = await fetch(`${CLEAN_URL}?action=get&ts=${Date.now()}`); if(!res.ok) throw new Error("Blocked");
                 const data = await res.json();
-                
-                // ⚠️ [패치 완료] 넘어온 값이 정상 배열/문자열일 때만 안전망 검증 후 복사 이관합니다.
                 if (data.db && Array.isArray(data.db)) { db = data.db; localStorage.setItem('azit_db', JSON.stringify(db)); }
                 if (data.crews && Array.isArray(data.crews)) { staticCrewMembers = data.crews.filter(m => m && m.nickname); localStorage.setItem('azit_crews', JSON.stringify(staticCrewMembers)); }
                 if (data.notice && data.notice.trim() !== '') { noticeText = data.notice; localStorage.setItem('azit_notice', noticeText); }
                 updateNetworkStatusDOM("🟢 실시간 구글 클라우드 동기화 완료", "success");
             } catch(e) { 
                 updateNetworkStatusDOM("🔴 동기화 지연 (로컬 캐시 데이터 가동)", "fail"); 
-                // 캐시가 깨졌을 경우를 대비해 최후의 수단으로 빈 배열 가드를 세웁니다.
                 if(!db) db = []; if(!staticCrewMembers) staticCrewMembers = [];
             }
         }
@@ -855,7 +843,6 @@
                         let dGrade = m.grade && m.grade !== '-' ? m.grade : '준회원', gColor = "text-gray-400", rGrade = dGrade; if (dGrade === '아지트') dGrade = '아지트人';
                         if(dGrade === '정회원') gColor = "text-green-400 font-bold"; else if(dGrade === '아지트人') { rGrade = '아지트人'; gColor = "text-red-500 font-black tracking-wide"; } else if(dGrade === '방장') { rGrade = '방&nbsp;&nbsp;장'; gColor = "text-[#FFEA00] font-black tracking-wider animate-pulse"; } else if(dGrade === '부방장') { rGrade = '부방장'; gColor = "text-sky-400 font-bold tracking-wide"; }
                         
-                        // 🔒 [타입 에러 패치 완료]: 가변 변수 유입 시 강제 스트링화 및 예외 우회 핸들러를 가동합니다.
                         mBody.innerHTML += `<tr class="hover:bg-gray-800/30 transition text-gray-300 border-b border-gray-800/40 text-xs sm:text-sm">
                             <td class="py-4.5 px-4 editable-cell font-bold text-white ${isPending(m.nickname, 'nickname') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'nickname')">👤 ${m.nickname}</td>
                             <td class="py-4.5 px-3.5 editable-cell font-medium ${isPending(m.nickname, 'name') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : ''}" onclick="startInlineEdit(this, '${m.nickname}', 'name')">${decName}</td>
